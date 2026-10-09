@@ -38,6 +38,7 @@ function Audit() {
   const [chain, setChain] = useState<{ state: "idle" | "checking" | "done" | "error"; report?: ChainReport; text?: string }>({ state: "idle" });
   const [exportNote, setExportNote] = useState<string | null>(null);
   const loads = useRef(0);
+  const [more, setMore] = useState(false);
   const days = localDaysFromRange(filters.from, filters.to);
 
   useEffect(() => {
@@ -202,13 +203,26 @@ function Audit() {
           <button
             className="btn btn-secondary"
             style={{ alignSelf: "center" }}
+            disabled={more}
             onClick={async () => {
-              const page = await api<Page>(`/audit?limit=50&before=${next}${query ? `&${query}` : ""}`);
-              setEntries((current) => [...(current ?? []), ...page.items]);
-              setNext(page.next_before);
+              const ticket = loads.current;
+              setMore(true);
+              try {
+                const page = await api<Page>(`/audit?limit=50&before=${next}${query ? `&${query}` : ""}`);
+                if (ticket !== loads.current) return;
+                setEntries((current) => {
+                  const seen = new Set((current ?? []).map((entry) => entry.id));
+                  return [...(current ?? []), ...page.items.filter((entry) => !seen.has(entry.id))];
+                });
+                setNext(page.next_before);
+              } catch (caught) {
+                setError(caught instanceof ApiError ? caught.detail : "More entries could not be loaded.");
+              } finally {
+                setMore(false);
+              }
             }}
           >
-            Load more
+            {more ? "Loading…" : "Load more"}
           </button>
         )}
       </div>

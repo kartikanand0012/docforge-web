@@ -75,13 +75,18 @@ function Documents() {
   }, [type, stage]);
 
   const loadMore = async () => {
-    if (!next) return;
+    if (!next || more) return;
+    const ticket = loads.current; // a filter change meanwhile makes these rows stale
     setMore(true);
     try {
       const page = await api<Page>(query(next));
+      if (ticket !== loads.current) return;
       // Older rows go after the ones shown, each once.
       setItems((current) => [...current, ...page.items.filter((item) => !current.some((shown) => shown.id === item.id))]);
       setNext(page.next_before);
+    } catch (caught) {
+      setError(caught instanceof ApiError ? caught.detail : "More documents could not be loaded.");
+      setState("error");
     } finally {
       setMore(false);
     }

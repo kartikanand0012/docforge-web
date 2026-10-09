@@ -3,7 +3,7 @@
 import { Book, Plus } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useCallback, useEffect, useState, type FormEvent } from "react";
+import { useCallback, useEffect, useRef, useState, type FormEvent } from "react";
 import { ConfirmDialog, Dialog } from "@/components/Dialog";
 import { useToast } from "@/components/Toast";
 import { Alert, DocTypeTag, EmptyPanel, StatusBadge, Time } from "@/components/ui";
@@ -42,10 +42,14 @@ export default function CollectionsPage() {
     void reload();
   }, [reload]);
 
-  const loadMembers = useCallback(
-    (id: string) => api<Member[]>(`/collections/${id}/documents`).then(setMembers, () => setMembers([])),
-    [],
-  );
+  const membersFor = useRef<string | null>(null);
+  const loadMembers = useCallback((id: string) => {
+    membersFor.current = id;
+    return api<Member[]>(`/collections/${id}/documents`).then(
+      (found) => membersFor.current === id && setMembers(found),
+      () => membersFor.current === id && setMembers([]),
+    );
+  }, []);
   useEffect(() => {
     if (selected) void loadMembers(selected);
   }, [selected, loadMembers]);
