@@ -56,13 +56,19 @@ export default function CollectionsPage() {
 
   const current = collections?.find((collection) => collection.id === selected) ?? null;
 
+  const [removing, setRemoving] = useState<string | null>(null);
+  const [deletingBusy, setDeletingBusy] = useState(false);
+
   const remove = async (member: Member) => {
-    if (!current) return;
+    if (!current || removing) return;
+    setRemoving(member.id);
     try {
       await api(`/collections/${current.id}/documents/${member.id}`, { method: "DELETE" });
       toast(`${member.filename} removed from ${current.name}. It stays in DocForge.`);
     } catch (caught) {
       setError(caught instanceof ApiError ? `Not removed: ${caught.detail}` : "It was not removed. Try again.");
+    } finally {
+      setRemoving(null);
     }
     void loadMembers(current.id);
     void reload();
@@ -173,7 +179,7 @@ export default function CollectionsPage() {
                               <Time iso={member.added_at} />
                             </td>
                             <td className="right">
-                              <button className="btn btn-ghost btn-danger" aria-label={`Remove ${member.filename} from ${current.name}`} onClick={() => void remove(member)}>
+                              <button className="btn btn-ghost btn-danger" aria-label={`Remove ${member.filename} from ${current.name}`} disabled={removing === member.id} onClick={() => void remove(member)}>
                                 Remove
                               </button>
                             </td>
@@ -212,8 +218,11 @@ export default function CollectionsPage() {
           title={`Delete ${current.name}?`}
           body={`The knowledge base goes; its ${current.documents} document${current.documents === 1 ? "" : "s"} stay in DocForge. Conversations asked within it can no longer take follow-ups.`}
           action="Delete knowledge base"
+          busy={deletingBusy}
           onClose={() => setDeleting(false)}
           onConfirm={async () => {
+            if (deletingBusy) return;
+            setDeletingBusy(true);
             try {
               await api(`/collections/${current.id}`, { method: "DELETE" });
               toast(`${current.name} deleted. Its documents stay in DocForge.`);
@@ -221,6 +230,7 @@ export default function CollectionsPage() {
             } catch (caught) {
               setError(caught instanceof ApiError ? `Not deleted: ${caught.detail}` : "It was not deleted. Try again.");
             } finally {
+              setDeletingBusy(false);
               setDeleting(false);
               void reload();
             }

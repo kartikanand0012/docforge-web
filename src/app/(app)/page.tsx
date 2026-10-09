@@ -215,7 +215,7 @@ export default function QueuePage() {
             aria-label="Documents that need a person"
             tabIndex={0}
             aria-activedescendant={current ? `queue-${current.document_id}` : undefined}
-            onKeyDown={onListKey}
+            onKeyDown={(event) => event.target === event.currentTarget && onListKey(event)}
           >
             {items.map((item, index) => (
               <li

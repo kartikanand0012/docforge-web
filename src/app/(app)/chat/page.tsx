@@ -49,6 +49,11 @@ function Chat() {
   // The conversation a question here just began: its streamed turns already hold more than
   // the stored messages do (the reason an answer was not found), so they are kept.
   const begun = useRef<string | null>(null);
+  // The thread keeps its key when its first answer names the conversation, so a draft being
+  // typed and the focus on the answer survive; choosing another conversation still remounts it.
+  const wanted = conversation ?? `new-${documentId ?? ""}-${collectionId ?? ""}`;
+  const [adopted, setAdopted] = useState<{ id: string; key: string } | null>(null);
+  const threadKey = adopted && adopted.id === conversation ? adopted.key : wanted;
 
   const refreshList = useCallback(() => api<Summary[]>("/conversations").then(setList).catch(() => undefined), []);
   useEffect(() => {
@@ -130,13 +135,14 @@ function Chat() {
         </header>
         <div className="chat-body">
           <ChatThread
-            key={conversation ?? `new-${documentId ?? ""}-${collectionId ?? ""}`}
+            key={threadKey}
             turns={turns}
             onTurns={setTurns}
             conversationId={conversation}
             scope={{ documentId, collectionId }}
             onConversation={(id) => {
               begun.current = id;
+              setAdopted({ id, key: threadKey });
               void refreshList();
               router.replace(`/chat?c=${id}`);
             }}

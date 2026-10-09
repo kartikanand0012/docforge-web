@@ -44,6 +44,7 @@ function Documents() {
   const [state, setState] = useState<"loading" | "ok" | "error">("loading");
   const [error, setError] = useState("");
   const [more, setMore] = useState(false);
+  const [moreError, setMoreError] = useState<string | null>(null);
   const loads = useRef(0);
 
   const query = (before?: string) => {
@@ -78,6 +79,7 @@ function Documents() {
     if (!next || more) return;
     const ticket = loads.current; // a filter change meanwhile makes these rows stale
     setMore(true);
+    setMoreError(null);
     try {
       const page = await api<Page>(query(next));
       if (ticket !== loads.current) return;
@@ -85,8 +87,8 @@ function Documents() {
       setItems((current) => [...current, ...page.items.filter((item) => !current.some((shown) => shown.id === item.id))]);
       setNext(page.next_before);
     } catch (caught) {
-      setError(caught instanceof ApiError ? caught.detail : "More documents could not be loaded.");
-      setState("error");
+      if (ticket !== loads.current) return;
+      setMoreError(caught instanceof ApiError ? caught.detail : "More documents could not be loaded. Try again.");
     } finally {
       setMore(false);
     }
@@ -96,6 +98,7 @@ function Documents() {
   const live = useLiveStages(inProgress);
 
   const setFilter = (name: string, value: string) => {
+    setMoreError(null);
     const params = new URLSearchParams(search);
     if (value) params.set(name, value);
     else params.delete(name);
@@ -183,6 +186,7 @@ function Documents() {
         )}
         {state === "ok" && items.length > 0 && (
           <div style={{ textAlign: "center" }}>
+            {moreError && <Alert kind="warn" title="Not loaded.">{moreError}</Alert>}
             {next ? (
               <button className="btn btn-secondary" onClick={() => void loadMore()} disabled={more}>
                 {more ? "Loading…" : "Load more"}
