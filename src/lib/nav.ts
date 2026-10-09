@@ -36,10 +36,11 @@ export function isCurrent(href: string, pathname: string): boolean {
   return href === "/" ? pathname === "/" : pathname === href || pathname.startsWith(`${href}/`);
 }
 
-const OPEN = ["/login", "/signup", "/welcome", "/opengraph-image", "/api/", "/_next/", "/favicon"];
+const OPEN = ["/login", "/signup", "/welcome", "/opengraph-image", "/api/", "/_next/", "/favicon.ico", "/robots.txt"];
 
 /** An optimistic check for the proxy: a page without the session cookie goes to sign-in. The
  * API decides for real on every request. */
 export function needsSignIn(pathname: string, hasSession: boolean): boolean {
-  return !hasSession && !OPEN.some((prefix) => pathname === prefix || pathname.startsWith(prefix));
+  // A page is open by its exact path (or below it); a prefix ending in "/" opens everything under it.
+  return !hasSession && !OPEN.some((open) => pathname === open || pathname.startsWith(open.endsWith("/") ? open : `${open}/`));
 }
