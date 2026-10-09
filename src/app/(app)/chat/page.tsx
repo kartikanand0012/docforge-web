@@ -4,6 +4,7 @@ import { List, Plus } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useCallback, useEffect, useRef, useState } from "react";
 import { ChatThread, type Turn } from "@/components/chat/ChatThread";
+import { Dialog } from "@/components/Dialog";
 import { Tag } from "@/components/ui";
 import { api } from "@/lib/api";
 import type { Answer, Citation, ChatStatus } from "@/lib/chat";
@@ -54,7 +55,10 @@ function Chat() {
 
   // A conversation's messages, newest load only; a new question starts empty.
   useEffect(() => {
-    if (conversation && conversation === begun.current) return;
+    if (conversation && conversation === begun.current) {
+      begun.current = null; // once: coming back to it later loads it from the API
+      return;
+    }
     const ticket = ++loads.current;
     const loading = conversation
       ? api<{ id: string; messages: Message[] }>(`/conversations/${conversation}`).then((found) => toTurns(found.id, found.messages))
@@ -73,7 +77,13 @@ function Chat() {
     <nav className="conversations" aria-label="Conversations">
       <div className="conversations-head">
         <h1 style={{ fontSize: 26 }}>Chat</h1>
-        <button className="btn btn-secondary" onClick={() => router.push("/chat")}>
+        <button
+          className="btn btn-secondary"
+          onClick={() => {
+            setSheet(false);
+            router.push("/chat");
+          }}
+        >
           <Plus size={14} strokeWidth={1.5} aria-hidden="true" /> New question
         </button>
       </div>
@@ -104,11 +114,9 @@ function Chat() {
     <div className="chat-screen">
       <div className="chat-list">{conversations}</div>
       {sheet && (
-        <div className="dialog-backdrop" onMouseDown={(e) => e.target === e.currentTarget && setSheet(false)}>
-          <div className="dialog" role="dialog" aria-modal="true" aria-label="Conversations">
-            {conversations}
-          </div>
-        </div>
+        <Dialog title="Conversations" onClose={() => setSheet(false)} actions={<button className="btn btn-secondary" onClick={() => setSheet(false)}>Close</button>}>
+          {conversations}
+        </Dialog>
       )}
       <section className="chat-main" aria-label={title}>
         <header className="chat-header">
@@ -120,6 +128,7 @@ function Chat() {
         </header>
         <div className="chat-body">
           <ChatThread
+            key={conversation ?? `new-${documentId ?? ""}-${collectionId ?? ""}`}
             turns={turns}
             onTurns={setTurns}
             conversationId={conversation}

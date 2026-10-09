@@ -65,6 +65,7 @@ export function ChatThread({ turns, onTurns, conversationId, onConversation, sco
     if (conversationId) body.conversation_id = conversationId;
     else if (scope.documentId) body.document_id = scope.documentId;
     else if (scope.collectionId) body.collection_id = scope.collectionId;
+    let ended = false;
     try {
       for await (const message of stream("/chat/stream", { method: "POST", json: body, signal: abort.signal })) {
         if (message.name === "stage") {
@@ -74,13 +75,25 @@ export function ChatThread({ turns, onTurns, conversationId, onConversation, sco
         } else if (message.name === "answer") {
           const answer = message.data as unknown as Answer;
           onTurns((current) => current.map((turn) => (turn.id === id ? { ...turn, answer } : turn)));
+          ended = true;
           if (!conversationId) onConversation(answer.conversation_id);
           setAnnounce(`Answer ready: ${answerBadge(answer).word}`);
-          requestAnimationFrame(() => newest.current?.focus());
+          // Focus moves to the answer only if the person is not already typing the next question.
+          requestAnimationFrame(() => {
+            const active = document.activeElement;
+            if (!active || active === document.body || active.closest("form.composer button")) newest.current?.focus();
+          });
         } else if (message.name === "error") {
+          ended = true;
           const detail = String((message.data as { detail?: string }).detail ?? "The question could not be answered.");
           onTurns((current) => current.map((turn) => (turn.id === id ? { ...turn, error: detail } : turn)));
         }
+      }
+      if (!ended && !abort.signal.aborted) {
+        // The connection closed without an answer: say so rather than leave the question bare.
+        onTurns((current) =>
+          current.map((turn) => (turn.id === id ? { ...turn, error: "The answer was cut off. It may be kept in this conversation; try again." } : turn)),
+        );
       }
     } catch (caught) {
       if (abort.signal.aborted) {
@@ -184,7 +197,7 @@ function AnswerView({
   const badge = answerBadge(answer);
   const note = answerNote(answer);
   return (
-    <div className="answer" ref={anchor} tabIndex={-1}>
+    <div className="answer" ref={anchor} tabIndex={-1} role="region" aria-label="Answer">
       <p className="turn-meta" style={{ display: "flex", gap: 8, alignItems: "center" }}>
         DocForge · {localTime(asked)}
         <StatusBadge kind={badge.kind} icon={BADGE_ICONS[badge.kind]}>
