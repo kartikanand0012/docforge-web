@@ -6,13 +6,18 @@ import { SESSION_COOKIE, apiBase, cookieOptions, forwardedFor, sameOrigin } from
 export async function POST(request: Request) {
   if (!sameOrigin(request)) return NextResponse.json({ detail: "Cross-site request refused." }, { status: 403 });
   const body = await request.text();
-  const response = await fetch(`${apiBase()}/v1/sessions`, {
-    method: "POST",
-    // The client address is passed on only where the front proxy is trusted to have set it.
-    headers: { "Content-Type": "application/json", ...forwardedFor(request) },
-    body,
-    cache: "no-store",
-  });
+  let response: Response;
+  try {
+    response = await fetch(`${apiBase()}/v1/sessions`, {
+      method: "POST",
+      // The client address is passed on only where the front proxy is trusted to have set it.
+      headers: { "Content-Type": "application/json", ...forwardedFor(request) },
+      body,
+      cache: "no-store",
+    });
+  } catch {
+    return NextResponse.json({ detail: "Signing in is unavailable at the moment. Try again shortly." }, { status: 503 });
+  }
   const payload = (await response.json().catch(() => ({}))) as { token?: string; detail?: string };
   if (!response.ok || !payload.token) {
     const headers = response.headers.get("retry-after") ? { "Retry-After": response.headers.get("retry-after")! } : undefined;

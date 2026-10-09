@@ -23,12 +23,19 @@ async function forward(request: NextRequest, ctx: RouteContext<"/api/v1/[...path
   if (body && body.byteLength > MAX_BODY_BYTES) {
     return NextResponse.json({ detail: "The file is too large." }, { status: 413 });
   }
-  const upstream = await fetch(target, {
-    method: request.method,
-    headers,
-    body,
-    cache: "no-store",
-  });
+  let upstream: Response;
+  try {
+    upstream = await fetch(target, {
+      method: request.method,
+      headers,
+      body,
+      cache: "no-store",
+      // A closed tab or a stopped answer ends the API's stream too.
+      signal: request.signal,
+    });
+  } catch {
+    return NextResponse.json({ detail: "DocForge's API did not answer. Try again shortly." }, { status: 502 });
+  }
   const out = new Headers();
   for (const name of FORWARDED_HEADERS) {
     const value = upstream.headers.get(name);
