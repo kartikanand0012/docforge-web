@@ -138,3 +138,28 @@ export function answerNote(answer: Answer): string | null {
   const status = statusNote(answer.status, answer.dropped_citations, answer.dropped_statements);
   return [status, why].filter(Boolean).join(" ") || null;
 }
+
+/** The badge beside an answer (handoff screen 7): always a word. */
+export function answerBadge(answer: Answer): { kind: "ok" | "warn" | "fail" | "neutral"; word: string } {
+  if (answer.status === "supported") return { kind: "ok", word: "Every statement checked" };
+  if (answer.status === "not_found") return { kind: "neutral", word: "Not in the documents" };
+  if (answer.status === "unsupported") return { kind: "fail", word: "Withheld" };
+  const statements = answer.dropped_statements ?? 0;
+  const left = statements
+    ? `${statements} statement${statements === 1 ? "" : "s"}`
+    : `${answer.dropped_citations} quote${answer.dropped_citations === 1 ? "" : "s"}`;
+  return { kind: "warn", word: `Partly supported: ${left} left out` };
+}
+
+/** Opens a quote on its page: the boxes go with it (too many for a URL), the page in it. */
+export function openQuote(citation: Citation, n: number, source: string): string {
+  try {
+    sessionStorage.setItem(
+      `docforge.highlight.${citation.document_id}`,
+      JSON.stringify({ boxes: citation.boxes, label: `Quote ${n}`, quote: citation.quote, source, page: citation.page }),
+    );
+  } catch {
+    /* storage unavailable: the page opens without the boxes */
+  }
+  return `/documents/${citation.document_id}?page=${citation.page}`;
+}
