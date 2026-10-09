@@ -23,3 +23,15 @@ export function toOverlay(box: Box, page: PageSize): Overlay {
     height: percent((Math.max(0, y1 - y0) / page.height) * 100),
   };
 }
+
+/** Each box once: a value read from two blocks that share a box (a merged table cell) is
+ * outlined, and announced, once. */
+export function uniqueBoxes(boxes: Box[]): Box[] {
+  const seen = new Set<string>();
+  return boxes.filter((box) => {
+    const key = [box.page, box.x0, box.y0, box.x1, box.y1].join(",");
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+}

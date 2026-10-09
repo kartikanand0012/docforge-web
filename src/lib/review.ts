@@ -87,6 +87,9 @@ const sentence = (text: string) => {
 function display(value: unknown): string {
   const field = value as { value?: unknown; raw?: string | null } | undefined;
   if (!field) return "—";
+  // Shown as printed, unless the value is only part of what was printed: one string can hold
+  // two values ("Gujarat (24)" is the place and its code).
+  if (typeof field.value === "string" && field.value && field.raw && field.raw !== field.value && field.raw.includes(field.value)) return field.value;
   if (field.raw) return field.raw;
   if (field.value === null || field.value === undefined || field.value === "") return "—";
   return String(field.value);

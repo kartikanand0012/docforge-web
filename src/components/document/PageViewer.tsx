@@ -3,7 +3,7 @@
 import { Minus, Plus, X } from "lucide-react";
 import { Marks } from "@/components/ui";
 import { apiUrl } from "@/lib/api";
-import { toOverlay, type Box } from "@/lib/geometry";
+import { toOverlay, uniqueBoxes, type Box } from "@/lib/geometry";
 import type { FieldView, PageInfo } from "@/lib/review";
 
 export type Highlight = { boxes: Box[]; label: string; quote: string; source: string };
@@ -98,7 +98,7 @@ export function PageViewer(props: Props) {
             const active = field.path === activePath;
             const hovered = field.path === hoveredPath;
             if (!showAll && !field.flagged && !active && !hovered) return null;
-            return field.boxes
+            return uniqueBoxes(field.boxes)
               .filter((box) => box.page === page)
               .map((box, index) => {
                 const place = toOverlay(box, size);
@@ -119,7 +119,7 @@ export function PageViewer(props: Props) {
                 );
               });
           })}
-          {highlight?.boxes
+          {highlight && uniqueBoxes(highlight.boxes)
             .filter((box) => box.page === page)
             .map((box, index) => (
               <span key={`quote-${index}`} className="value-box quote" style={toOverlay(box, size)} aria-hidden="true">

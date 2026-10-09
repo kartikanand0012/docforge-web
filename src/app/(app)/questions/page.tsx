@@ -2,7 +2,8 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { Alert, Denied, Time } from "@/components/ui";
+import { MessageCircleQuestion } from "lucide-react";
+import { Alert, Denied, EmptyPanel, Time } from "@/components/ui";
 import { ApiError, api } from "@/lib/api";
 import { useTitle } from "@/lib/useTitle";
 
@@ -55,7 +56,19 @@ export default function QuestionsPage() {
       </header>
       <div className="screen-body">
         {error && <Alert kind="fail" title="Not loaded.">{error}</Alert>}
-        {data && (
+        {data && total === 0 && (
+          <EmptyPanel
+            icon={MessageCircleQuestion}
+            title="No unanswered questions"
+            text="In the last 30 days every question asked in Chat or Ask was answered from the documents. A question they cannot answer appears here with the reason."
+            action={
+              <Link className="btn btn-secondary" href="/chat">
+                Open Chat
+              </Link>
+            }
+          />
+        )}
+        {data && total > 0 && (
           <div style={{ display: "flex", gap: 8, flexWrap: "wrap", alignItems: "center" }}>
             <span>{total} in the last 30 days:</span>
             {Object.entries(data.by_reason).map(([reason, count]) => (
@@ -65,7 +78,7 @@ export default function QuestionsPage() {
             ))}
           </div>
         )}
-        {data && !shown.length && <p className="muted">Every question asked was answered from the documents.</p>}
+        {data && total > 0 && !shown.length && <p className="muted">None of this kind in the last 30 days.</p>}
         {shown.length > 0 && (
           <div className="table-wrap">
             <table className="table" style={{ minWidth: 900, fontSize: 13 }}>

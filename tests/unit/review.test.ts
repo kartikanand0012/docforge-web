@@ -58,6 +58,17 @@ describe("the values of a document", () => {
     expect(at("invoice_no").boxes).toEqual([box]);
   });
 
+  it("shows the place and its code apart when one printed string holds both", () => {
+    const place = { raw: "Gujarat (24)", block_ids: ["b5"] };
+    const both = buildFields({
+      ...review,
+      record: { ...review.record, place_of_supply: { ...place, value: "Gujarat" }, place_of_supply_code: { ...place, value: "24" } },
+      editable_paths: [...review.editable_paths, "place_of_supply", "place_of_supply_code"],
+    });
+    expect(both.find((field) => field.path === "place_of_supply")!.display).toBe("Gujarat");
+    expect(both.find((field) => field.path === "place_of_supply_code")!.display).toBe("24");
+  });
+
   it("says each check in words, the most serious first", () => {
     expect(at("invoice_no")).toMatchObject({ status: "passed", flagged: false });
     expect(at("lines[0].qty")).toMatchObject({ status: "uncertain", flagged: true });

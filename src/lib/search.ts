@@ -13,3 +13,14 @@ export function marked(text: string, query: string): Segment[] {
     .filter((part) => part !== "")
     .map((part) => ({ text: part, match: words.some((word) => word.toLowerCase() === part.toLowerCase()) }));
 }
+
+/** The line above the results: how many hold words of the search, and how many are only
+ * close in meaning (a search by meaning always finds something, even for nonsense). */
+export function searchSummary(results: { matched_words?: boolean }[], query: string): string {
+  const worded = results.filter((result) => result.matched_words !== false).length;
+  if (worded) {
+    const near = results.length - worded;
+    return `${worded} passage${worded === 1 ? "" : "s"} with words of “${query}”, best first${near ? `, then ${near} close in meaning` : ""}`;
+  }
+  return results.length ? `No passage contains “${query}”. ${results.length} close in meaning.` : "";
+}

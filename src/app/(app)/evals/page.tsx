@@ -68,7 +68,11 @@ export default function EvalsPage() {
         {evals && (
           <>
             <div className="metrics">
-              <Metric label="Fields correct" figure={percent(x?.fields_correct, x?.fields_total)} sub={`${count(x?.fields_correct ?? 0)} of ${count(x?.fields_total ?? 0)} labelled fields`} />
+              <Metric
+                label="Fields correct, born-digital invoices"
+                figure={percent(x?.fields_correct, x?.fields_total)}
+                sub={`${count(x?.fields_correct ?? 0)} of ${count(x?.fields_total ?? 0)} labelled fields; scans and long documents are in the table`}
+              />
               <Metric
                 label="Planted defects caught"
                 figure={`${t?.seeded_cases_caught ?? 0} of ${t?.seeded_cases ?? 0}`}

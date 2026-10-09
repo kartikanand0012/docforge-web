@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { toOverlay } from "@/lib/geometry";
+import { toOverlay, uniqueBoxes } from "@/lib/geometry";
 
 const page = { width: 600, height: 800 };
 
@@ -35,5 +35,13 @@ describe("toOverlay", () => {
 
   it("refuses a page without a size", () => {
     expect(() => toOverlay({ page: 1, x0: 0, y0: 0, x1: 1, y1: 1 }, { width: 0, height: 10 })).toThrow();
+  });
+});
+
+describe("uniqueBoxes", () => {
+  it("keeps each box once, in order", () => {
+    const a = { page: 1, x0: 1, y0: 2, x1: 3, y1: 4 };
+    const b = { page: 2, x0: 1, y0: 2, x1: 3, y1: 4 };
+    expect(uniqueBoxes([a, { ...a }, b, a])).toEqual([a, b]);
   });
 });

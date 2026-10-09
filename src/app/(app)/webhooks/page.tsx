@@ -1,10 +1,10 @@
 "use client";
 
-import { Plus } from "lucide-react";
+import { Plus, Webhook } from "lucide-react";
 import { useCallback, useEffect, useState, type FormEvent } from "react";
 import { ConfirmDialog, SecretDialog } from "@/components/Dialog";
 import { useToast } from "@/components/Toast";
-import { Alert, Denied, Seg, StatusBadge, Tag, Time } from "@/components/ui";
+import { Alert, Denied, EmptyPanel, Seg, StatusBadge, Tag, Time } from "@/components/ui";
 import { ApiError, api } from "@/lib/api";
 import { localTime } from "@/lib/format";
 import { DELIVERY_TEXT, maskedUrl, nextAttemptText } from "@/lib/webhooks";
@@ -90,7 +90,7 @@ export default function WebhooksPage() {
         </div>
         <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
           <span className="muted num">
-            {hooks?.length ?? 0} of {MAX}
+            {hooks?.length ?? 0} of {MAX} webhooks
           </span>
           <button className="btn btn-secondary" onClick={() => setMaking(true)}>
             <Plus size={14} strokeWidth={1.5} aria-hidden="true" /> New webhook
@@ -112,7 +112,18 @@ export default function WebhooksPage() {
             }}
           />
         )}
-        {hooks && !hooks.length && !making && <p className="muted">No webhooks yet. Make one to tell your ERP when documents are ready or signed.</p>}
+        {hooks && !hooks.length && !making && (
+          <EmptyPanel
+            icon={Webhook}
+            title="No webhooks yet"
+            text="Make one to tell your ERP or another system when a document is read, ready to ask about, or signed."
+            action={
+              <button className="btn btn-secondary" onClick={() => setMaking(true)}>
+                New webhook
+              </button>
+            }
+          />
+        )}
         <div className="hook-grid">
           {hooks?.map((hook) => (
             <article key={hook.id} className="hook-card" data-selected={hook.id === selected ? "true" : undefined} onClick={() => setSelected(hook.id)}>

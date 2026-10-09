@@ -3,13 +3,14 @@
 import { Search as SearchIcon } from "lucide-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useRef, useState } from "react";
-import { Alert, DocTypeTag, Seg } from "@/components/ui";
+import { Alert, DocTypeTag, Seg, Tag } from "@/components/ui";
 import { ApiError, api } from "@/lib/api";
 import type { CitationBox } from "@/lib/chat";
-import { marked } from "@/lib/search";
+import { marked, searchSummary } from "@/lib/search";
 import { useTitle } from "@/lib/useTitle";
 
-type Result = { document_id: string; filename: string; doc_type: string; page: number; text: string; score: number; boxes: CitationBox[] };
+// matched_words: the passage contains a word of the search, not only something close in meaning.
+type Result = { document_id: string; filename: string; doc_type: string; page: number; text: string; score: number; matched_words?: boolean; boxes: CitationBox[] };
 type Answer = { query: string; mode: string; words_only: boolean; results: Result[] };
 type Mode = "hybrid" | "keyword";
 
@@ -84,6 +85,9 @@ function Search() {
       .finally(() => ticket === latest.current && setBusy(false));
   }, [urlQuery, mode, type]);
 
+  const results = answer?.results ?? [];
+  const worded = results.filter((result) => result.matched_words !== false).length;
+
   const open = (result: Result) => {
     try {
       sessionStorage.setItem(
@@ -147,17 +151,16 @@ function Search() {
             ? "Type to search…"
             : busy && !answer
               ? "Searching…"
-              : answer && answer.results.length
-                ? `${answer.results.length} passages for “${urlQuery}”, best first`
-                : answer
-                  ? ""
-                  : ""}
+              : searchSummary(results, urlQuery)}
         </p>
 
-        {answer && urlQuery && !answer.results.length && (
+        {answer && urlQuery && !worded && (
           <div className="panel" style={{ margin: "12px 0" }}>
             <h2>No passages contain “{urlQuery}”</h2>
-            <p className="muted">Try fewer words, another spelling, or all types.</p>
+            <p className="muted">
+              Try fewer words, another spelling, or all types.
+              {results.length > 0 && " Below are the passages closest in meaning, which may not be related."}
+            </p>
           </div>
         )}
 
@@ -169,8 +172,8 @@ function Search() {
                   <span style={{ fontWeight: 500 }}>{result.filename}</span>
                   <DocTypeTag docType={result.doc_type} />
                   <span className="muted">Page {result.page}</span>
-                  <span className="muted num" style={{ marginLeft: "auto" }}>
-                    Match {result.score.toFixed(2)}
+                  <span style={{ marginLeft: "auto" }}>
+                    {result.matched_words === false ? <Tag tone="neutral">Close in meaning</Tag> : <Tag>Has your words</Tag>}
                   </span>
                 </span>
                 <span className="result-text num">
