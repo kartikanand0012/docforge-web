@@ -14,6 +14,7 @@ import { useToast } from "@/components/Toast";
 import { Alert, DocTypeTag, Marks, StageProgress, StatusBadge, Time } from "@/components/ui";
 import { ApiError, api } from "@/lib/api";
 import { hashGroups, hashShort } from "@/lib/format";
+import { isId } from "@/lib/ids";
 import { buildFields, type Review } from "@/lib/review";
 import { stream } from "@/lib/sse";
 import { isFinished, stageKind, stageWord } from "@/lib/stages";
@@ -26,13 +27,32 @@ type Detail = { document: DocumentOut; versions: { version_no: number; status: s
 type QueueItem = { document_id: string; filename: string };
 type Tab = "values" | "order" | "certificates" | "timeline" | "audit" | "ask";
 
+// Where a key is text being typed: shortcuts stay out of the way. Checkboxes and radios are
+// not text, so J/K/C/S still work after one is used.
+const TEXT_INPUTS = new Set(["text", "email", "password", "search", "number", "tel", "url", "date"]);
 const typing = (target: EventTarget | null) =>
-  target instanceof HTMLElement && (target.isContentEditable || ["INPUT", "TEXTAREA", "SELECT"].includes(target.tagName));
+  target instanceof HTMLElement &&
+  (target.isContentEditable ||
+    target.tagName === "TEXTAREA" ||
+    target.tagName === "SELECT" ||
+    (target instanceof HTMLInputElement && TEXT_INPUTS.has(target.type)));
 
 export default function DocumentPage() {
+  const { id } = useParams<{ id: string }>();
+  if (!isId(id)) {
+    return (
+      <div className="screen">
+        <div className="screen-body">
+          <Alert kind="fail" title="No such document." action={<Link className="btn btn-secondary" href="/">Back to the review queue</Link>} />
+        </div>
+      </div>
+    );
+  }
+  // Keyed by the document: opening the next one starts clean, never with this one's values,
+  // page, zoom or Ask conversation.
   return (
     <Suspense fallback={<div className="screen" aria-busy="true" />}>
-      <DocumentView />
+      <DocumentView key={id} />
     </Suspense>
   );
 }
@@ -122,26 +142,52 @@ function DocumentView() {
     }
   }, [id]);
 
-  // While the document is still being read, its stages arrive live; at the end it reloads.
+  // While the document is still being read, its stages arrive live; at the end it reloads. One
+  // stream for the whole reading (not one per stage): the API replays every stage on connect,
+  // so steps already shown are skipped. If the stream ends early, polling takes over.
   const stage = detail?.document.stage;
+  const reading = Boolean(stage) && !isFinished(stage ?? "");
   useEffect(() => {
-    if (!stage || isFinished(stage)) return;
+    if (!reading) return;
     const controller = new AbortController();
+    let done = false;
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    const take = (step: TimelineStep) => {
+      setSteps((current) => (current.some((s) => s.stage === step.stage && s.at === step.at) ? current : [...current, step]));
+      setDetail((current) => (current ? { ...current, document: { ...current.document, stage: step.stage } } : current));
+      if (isFinished(step.stage)) {
+        done = true;
+        void load();
+      }
+    };
+    const poll = async () => {
+      try {
+        const found = await api<Detail>(`/documents/${id}`);
+        if (isFinished(found.document.stage)) {
+          done = true;
+          void load();
+          return;
+        }
+      } catch {
+        /* try again */
+      }
+      if (!controller.signal.aborted) timer = setTimeout(poll, 4000);
+    };
     (async () => {
       try {
         for await (const event of stream(`/documents/${id}/events`, { signal: controller.signal })) {
-          if (event.name !== "stage") continue;
-          const step = event.data as TimelineStep;
-          setSteps((current) => [...current, step]);
-          setDetail((current) => (current ? { ...current, document: { ...current.document, stage: step.stage } } : current));
-          if (isFinished(step.stage)) void load();
+          if (event.name === "stage") take(event.data as TimelineStep);
         }
       } catch {
-        /* the stream ended or is limited: the page keeps what it has */
+        /* refused or cut: polling below */
       }
+      if (!done && !controller.signal.aborted) timer = setTimeout(poll, 4000);
     })();
-    return () => controller.abort();
-  }, [id, stage, load]);
+    return () => {
+      controller.abort();
+      if (timer) clearTimeout(timer);
+    };
+  }, [id, reading, load]);
 
   const fields = useMemo(() => (review ? buildFields(review) : []), [review]);
   const visible = useMemo(() => (filter === "flagged" ? fields.filter((field) => field.flagged) : fields), [fields, filter]);
@@ -170,8 +216,10 @@ function DocumentView() {
     const onKey = (event: KeyboardEvent) => {
       if (event.metaKey || event.ctrlKey || event.altKey) return;
       if (event.key === "Escape") {
+        // Esc steps back out: first the correction form; back to the queue only when nothing
+        // else has focus, never from a field being typed in.
         if (editingPath) setEditingPath(null);
-        else if (!signing) router.push("/");
+        else if (!signing && document.activeElement === document.body) router.push("/");
         return;
       }
       if (typing(event.target) || signing || !review) return;
@@ -357,8 +405,8 @@ function DocumentView() {
             {currentTab === "certificates" && review && <CertificatesTab review={review} />}
             {currentTab === "timeline" && <TimelineTab steps={steps} live={!isFinished(doc.stage)} />}
             {currentTab === "audit" && <AuditTab entries={audit} />}
-            {currentTab === "ask" && (
-              <div>
+            {(currentTab === "ask" || askTurns.length > 0) && (
+              <div hidden={currentTab !== "ask"}>
                 <p className="muted" style={{ padding: "12px 16px 0", fontSize: 13 }}>
                   Questions here are answered from this document only.
                   {askConversation && (
@@ -401,6 +449,7 @@ function DocumentView() {
           }}
           onSigned={() => {
             setSigning(null);
+            setEditingPath(null);
             void load();
             if (next) toast(`Signed and recorded. Next in the queue: ${next.filename}`, { label: "Open next", onClick: () => router.push(`/documents/${next.document_id}`) });
             else toast("Signed and recorded. Nothing else waits in the queue.");
