@@ -7,6 +7,9 @@ import { SESSION_COOKIE } from "@/lib/server";
 export function proxy(request: NextRequest) {
   const { pathname, search } = request.nextUrl;
   if (!needsSignIn(pathname, request.cookies.has(SESSION_COOKIE))) return NextResponse.next();
+  // Someone arriving at the address itself, not signed in, sees what DocForge is (the link
+  // shared on LinkedIn stays the bare address).
+  if (pathname === "/") return NextResponse.rewrite(new URL("/welcome", request.url));
   const login = new URL("/login", request.url);
   if (pathname !== "/") login.searchParams.set("next", `${pathname}${search}`);
   return NextResponse.redirect(login);

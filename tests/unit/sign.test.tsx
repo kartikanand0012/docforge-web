@@ -22,7 +22,7 @@ function open(props: Partial<Parameters<typeof SignDialog>[0]> = {}) {
   return handlers;
 }
 
-const pin = () => screen.getByLabelText(/Enter your 6-digit PIN/);
+const pin = () => screen.getByLabelText(/Enter your PIN/);
 
 afterEach(() => vi.unstubAllGlobals());
 

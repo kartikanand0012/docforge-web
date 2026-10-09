@@ -3,6 +3,7 @@
 import { AlertTriangle, Check, HelpCircle, Info, Pencil, X } from "lucide-react";
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import { PinInput } from "@/components/PinInput";
+import { useSecret } from "@/components/Shell";
 import { ReasonLine, Seg } from "@/components/ui";
 import { ApiError, api } from "@/lib/api";
 import { fieldAt } from "@/lib/fields";
@@ -220,8 +221,14 @@ function CorrectionForm({
   const [text, setText] = useState(field.display === "—" ? "" : field.display);
   const [reason, setReason] = useState("");
   const [pin, setPin] = useState("");
+  const secret = useSecret();
+  // A refusal is brought into view: it can sit below the fold of a long form or dialog.
+  const errorBox = useRef<HTMLParagraphElement>(null);
   const [email, setEmail] = useState(() => callerEmail ?? savedEmail());
   const [error, setError] = useState<string | null>(null);
+  useEffect(() => {
+    if (error) errorBox.current?.scrollIntoView?.({ block: "nearest" });
+  }, [error]);
   const [busy, setBusy] = useState(false);
   const first = useRef<HTMLInputElement>(null);
   useEffect(() => first.current?.focus(), []);
@@ -231,7 +238,7 @@ function CorrectionForm({
     if (!text.trim()) return setError("Enter the value as it should read.");
     if (!reason.trim()) return setError("Say why the reading is wrong.");
     if (!callerEmail && !email.trim()) return setError("Enter the email you sign in with.");
-    if (pin.length < 6) return setError("Enter your 6-digit PIN.");
+    if (pin.length < 6) return setError(secret === "PIN" ? "Enter your 6-digit PIN." : "Enter your password.");
     setBusy(true);
     setError(null);
     try {
@@ -246,9 +253,9 @@ function CorrectionForm({
     } catch (caught) {
       setPin("");
       if (caught instanceof ApiError && (caught.status === 401 || caught.status === 403)) {
-        setError("Those details are not right. Check your email and PIN.");
+        setError(`Those details are not right. Check your email and ${secret}.`);
       } else if (caught instanceof ApiError && caught.status === 429) {
-        setError("Too many wrong PINs. Correcting is locked for 15 minutes.");
+        setError("Too many wrong tries. Correcting is locked for 15 minutes.");
       } else {
         setError(caught instanceof ApiError ? caught.detail : "The correction could not be saved. Try again.");
       }
@@ -274,11 +281,11 @@ function CorrectionForm({
         </div>
       )}
       <div className="field">
-        <span className="label">Your PIN</span>
-        <PinInput value={pin} onChange={setPin} label="Your PIN, to record the correction as yours" />
+        <span className="label">Your {secret}</span>
+        <PinInput value={pin} onChange={setPin} password={secret === "password"} label={`Your ${secret}, to record the correction as yours`} />
       </div>
       {error && (
-        <p role="alert" className="reason-box reason-fail" style={{ fontSize: 13 }}>
+        <p role="alert" ref={errorBox} className="reason-box reason-fail" style={{ fontSize: 13 }}>
           {error}
         </p>
       )}

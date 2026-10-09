@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useState, type FormEvent } from "react";
 import { Marks } from "@/components/ui";
 import type { DemoAccount } from "@/lib/demo";
@@ -15,6 +16,8 @@ export default function LoginPage() {
   const [error, setError] = useState<{ kind: "fail" | "warn"; text: string } | null>(null);
   const [busy, setBusy] = useState(false);
   const [demo, setDemo] = useState<DemoAccount | null>(null);
+  // A team's reviewer signs in to a named organisation with a PIN; an account needs neither.
+  const [team, setTeam] = useState(false);
 
   // A public demo offers its shared account; elsewhere this answers 404 and nothing shows.
   useEffect(() => {
@@ -25,7 +28,8 @@ export default function LoginPage() {
 
   const submit = async (event: FormEvent) => {
     event.preventDefault();
-    const invalid = validSignIn({ tenant, email, pin });
+    const organisation = team ? tenant : "";
+    const invalid = validSignIn({ tenant: organisation, email, pin });
     if (invalid) return setError({ kind: "fail", text: invalid });
     setBusy(true);
     setError(null);
@@ -33,7 +37,7 @@ export default function LoginPage() {
       const response = await fetch("/api/session", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ tenant: tenant.trim(), email: email.trim(), pin }),
+        body: JSON.stringify(organisation.trim() ? { tenant: organisation.trim(), email: email.trim(), pin } : { email: email.trim(), pin }),
       });
       if (!response.ok) {
         setPin("");
@@ -53,7 +57,9 @@ export default function LoginPage() {
     <main className="signin blueprint-grid">
       <form className="signin-card marked" onSubmit={submit} noValidate aria-describedby={error ? "signin-error" : undefined}>
         <Marks />
-        <p style={{ fontSize: 15, fontWeight: 600, color: "var(--color-accent-700)" }}>DocForge</p>
+        <Link href="/" style={{ fontSize: 15, fontWeight: 600, color: "var(--color-accent-700)", textDecoration: "none" }}>
+          DocForge
+        </Link>
         <h1 style={{ fontSize: 26 }}>Sign in</h1>
         {demo && (
           <div className="reason-box reason-info" style={{ display: "flex", flexDirection: "column", gap: 6, fontSize: 13 }}>
@@ -66,6 +72,7 @@ export default function LoginPage() {
               className="btn btn-secondary"
               style={{ alignSelf: "flex-start" }}
               onClick={() => {
+                setTeam(true);
                 setTenant(demo.organisation);
                 setEmail(demo.email);
                 setPin(demo.pin);
@@ -75,27 +82,33 @@ export default function LoginPage() {
             </button>
           </div>
         )}
-        <div className="field">
-          <label htmlFor="tenant">Organisation</label>
-          <input id="tenant" className="input" autoComplete="organization" value={tenant} onChange={(e) => setTenant(e.target.value)} autoFocus />
-        </div>
+        {team && (
+          <div className="field">
+            <label htmlFor="tenant">Organisation</label>
+            <input id="tenant" className="input" autoComplete="organization" value={tenant} onChange={(e) => setTenant(e.target.value)} />
+          </div>
+        )}
         <div className="field">
           <label htmlFor="email">Email</label>
-          <input id="email" className="input" type="email" autoComplete="username" value={email} onChange={(e) => setEmail(e.target.value)} />
+          <input id="email" className="input" type="email" autoComplete="username" value={email} onChange={(e) => setEmail(e.target.value)} autoFocus />
         </div>
         <div className="field">
-          <label htmlFor="pin">PIN</label>
+          <label htmlFor="pin">{team ? "PIN" : "Password"}</label>
           <input
             id="pin"
-            className="input pin-field num"
+            className={`input${team ? " pin-field num" : ""}`}
             type="password"
-            inputMode="numeric"
+            inputMode={team ? "numeric" : undefined}
             autoComplete="current-password"
-            maxLength={12}
+            maxLength={team ? 12 : 128}
             value={pin}
-            onChange={(e) => setPin(e.target.value.replace(/\D/g, ""))}
+            onChange={(e) => setPin(team ? e.target.value.replace(/\D/g, "") : e.target.value)}
           />
         </div>
+        <label style={{ display: "flex", gap: 8, alignItems: "center", fontSize: 13 }}>
+          <input type="checkbox" checked={team} onChange={(e) => (setTeam(e.target.checked), setPin(""))} />
+          I sign in to a team organisation with a PIN
+        </label>
         {error && (
           <p id="signin-error" role="alert" className={`reason-box reason-${error.kind}`} style={{ fontSize: 13 }}>
             {error.text}
@@ -105,6 +118,9 @@ export default function LoginPage() {
           <Marks />
           {busy ? "Signing in…" : "Sign in"}
         </button>
+        <p className="muted" style={{ fontSize: 13, textAlign: "center" }}>
+          New here? <Link href="/signup">Create a free account</Link>
+        </p>
         <p className="muted" style={{ fontSize: 12.5, textAlign: "center" }}>
           You stay signed in for 8 hours.
         </p>

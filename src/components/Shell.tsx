@@ -29,6 +29,11 @@ export function useCaller(): Caller {
   return caller;
 }
 
+/** What the signed-in person signs with: an account's password, or a team reviewer's PIN. */
+export function useSecret(): "PIN" | "password" {
+  return useContext(CallerContext)?.credential === "password" ? "password" : "PIN";
+}
+
 const THEME_EVENT = "docforge-theme";
 
 function subscribeTheme(change: () => void): () => void {

@@ -1,9 +1,10 @@
 "use client";
 
 import { AlertTriangle, RefreshCw } from "lucide-react";
-import { useState, type FormEvent } from "react";
+import { useEffect, useRef, useState, type FormEvent } from "react";
 import { Dialog } from "@/components/Dialog";
 import { PinInput } from "@/components/PinInput";
+import { useSecret } from "@/components/Shell";
 import { Seg } from "@/components/ui";
 import { ApiError, api } from "@/lib/api";
 import { label as fieldLabel } from "@/lib/fields";
@@ -32,8 +33,14 @@ export function SignDialog({ review, initial, callerName, callerEmail, onClose, 
   const [note, setNote] = useState("");
   const [override, setOverride] = useState("");
   const [pin, setPin] = useState("");
+  const secret = useSecret();
+  // A refusal is brought into view: it can sit below the fold of a long form or dialog.
+  const errorBox = useRef<HTMLParagraphElement>(null);
   const [email, setEmail] = useState(() => callerEmail ?? savedEmail());
   const [error, setError] = useState<string | null>(null);
+  useEffect(() => {
+    if (error) errorBox.current?.scrollIntoView?.({ block: "nearest" });
+  }, [error]);
   const [busy, setBusy] = useState(false);
   const [stale, setStale] = useState<Review | null>(null);
   const noun = NOUNS[review.doc_type] ?? "document";
@@ -48,7 +55,7 @@ export function SignDialog({ review, initial, callerName, callerEmail, onClose, 
     if (outcome === "rejected" && !note.trim()) return setError(`Say why you reject this ${noun}.`);
     if (outcome === "approved" && !note.trim()) return setError("Add a note for the record.");
     if (!callerEmail && !email.trim()) return setError("Enter the email you sign in with.");
-    if (pin.length < 6) return setError("Enter your 6-digit PIN.");
+    if (pin.length < 6) return setError(secret === "PIN" ? "Enter your 6-digit PIN." : "Enter your password.");
     setBusy(true);
     setError(null);
     const signer = callerEmail ?? email.trim();
@@ -75,9 +82,9 @@ export function SignDialog({ review, initial, callerName, callerEmail, onClose, 
         if (fresh && fresh.record_sha256 !== review.record_sha256) return setStale(fresh);
         setError(caught.detail);
       } else if (caught instanceof ApiError && (caught.status === 401 || caught.status === 403)) {
-        setError("Those details are not right. Your PIN locks for 15 minutes after five wrong tries.");
+        setError(`That ${secret} is not right. Signing locks for 15 minutes after five wrong tries.`);
       } else if (caught instanceof ApiError && caught.status === 429) {
-        setError("Too many wrong PINs. Signing is locked for 15 minutes.");
+        setError("Too many wrong tries. Signing is locked for 15 minutes.");
       } else {
         setError(caught instanceof ApiError ? caught.detail : "The signature could not be recorded. Try again.");
       }
@@ -192,11 +199,12 @@ export function SignDialog({ review, initial, callerName, callerEmail, onClose, 
             value={pin}
             onChange={setPin}
             autoFocus
-            label={`Signing as ${callerName || "you"}${callerEmail ? ` (${callerEmail})` : ""}. Enter your 6-digit PIN.`}
+            password={secret === "password"}
+            label={`Signing as ${callerName || "you"}${callerEmail ? ` (${callerEmail})` : ""}. Enter your ${secret}.`}
           />
           <span className="muted" style={{ fontSize: 12 }}>
             Signing as {callerName || "you"}
-            {callerEmail ? ` (${callerEmail})` : ""}. Enter your PIN.
+            {callerEmail ? ` (${callerEmail})` : ""}. Enter your {secret}.
           </span>
         </div>
 
@@ -208,7 +216,7 @@ export function SignDialog({ review, initial, callerName, callerEmail, onClose, 
         </div>
 
         {error && (
-          <p role="alert" className="reason-box reason-fail" style={{ fontSize: 13 }}>
+          <p role="alert" ref={errorBox} className="reason-box reason-fail" style={{ fontSize: 13 }}>
             {error}
           </p>
         )}

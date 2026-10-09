@@ -31,7 +31,7 @@ export function isCurrent(href: string, pathname: string): boolean {
   return href === "/" ? pathname === "/" : pathname === href || pathname.startsWith(`${href}/`);
 }
 
-const OPEN = ["/login", "/api/", "/_next/", "/favicon"];
+const OPEN = ["/login", "/signup", "/welcome", "/opengraph-image", "/api/", "/_next/", "/favicon"];
 
 /** An optimistic check for the proxy: a page without the session cookie goes to sign-in. The
  * API decides for real on every request. */

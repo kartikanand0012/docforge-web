@@ -42,7 +42,7 @@ describe("PIN entry", () => {
     render(<Pin />);
     const input = screen.getByLabelText("Signing as Priya. Enter your 6-digit PIN.");
     expect(input).toHaveAttribute("type", "password");
-    expect(input).toHaveAttribute("autocomplete", "off");
+    expect(input).toHaveAttribute("autocomplete", "one-time-code");
     await userEvent.type(input, "4a8-2 9");
     expect(input).toHaveValue("4829");
     expect(screen.getAllByText("•")).toHaveLength(4);
