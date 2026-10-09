@@ -173,26 +173,39 @@ function LinesTable({ review, fields }: { review: Review; fields: FieldView[] })
     const text = found?.raw ?? (found?.value === null || found?.value === undefined ? "—" : String(found.value));
     return <span className={flagged.has(path) ? "flag-text" : undefined}>{text}</span>;
   };
+  // A column only where the document type has it: an order prints no batch, an older
+  // reading of an order has no HSN or amount.
+  const has = (name: string) => lines.some((line) => typeof line === "object" && line !== null && name in line);
+  const rate = review.doc_type === "purchase_order" ? "rate" : "ptr";
+  const columns = [
+    { name: "batch_no", label: "Batch", right: false },
+    { name: "hsn", label: "HSN", right: false },
+    { name: "qty", label: "Qty", right: true },
+    { name: rate, label: "Rate", right: true },
+    { name: "amount", label: "Amount", right: true },
+  ].filter((column) => has(column.name));
   return (
     <div className="table-wrap lines-table">
       <table className="table num" style={{ fontSize: 13, minWidth: 460 }}>
         <thead>
           <tr>
             <th scope="col">Item</th>
-            <th scope="col">Batch</th>
-            <th scope="col" className="right">Qty</th>
-            <th scope="col" className="right">Rate</th>
-            <th scope="col" className="right">Amount</th>
+            {columns.map((column) => (
+              <th key={column.name} scope="col" className={column.right ? "right" : undefined}>
+                {column.label}
+              </th>
+            ))}
           </tr>
         </thead>
         <tbody>
           {lines.map((_, index) => (
             <tr key={index}>
               <td>{cell(index, "product_name")}</td>
-              <td>{cell(index, "batch_no")}</td>
-              <td className="right">{cell(index, "qty")}</td>
-              <td className="right">{review.doc_type === "purchase_order" ? cell(index, "rate") : cell(index, "ptr")}</td>
-              <td className="right">{cell(index, "amount")}</td>
+              {columns.map((column) => (
+                <td key={column.name} className={column.right ? "right" : undefined}>
+                  {cell(index, column.name)}
+                </td>
+              ))}
             </tr>
           ))}
         </tbody>
