@@ -1,7 +1,8 @@
 "use client";
 
-import { useState, type FormEvent } from "react";
+import { useEffect, useState, type FormEvent } from "react";
 import { Marks } from "@/components/ui";
+import type { DemoAccount } from "@/lib/demo";
 import { safeNext } from "@/lib/next";
 import { signInError, validSignIn } from "@/lib/signin";
 
@@ -11,6 +12,14 @@ export default function LoginPage() {
   const [pin, setPin] = useState("");
   const [error, setError] = useState<{ kind: "fail" | "warn"; text: string } | null>(null);
   const [busy, setBusy] = useState(false);
+  const [demo, setDemo] = useState<DemoAccount | null>(null);
+
+  // A public demo offers its shared account; elsewhere this answers 404 and nothing shows.
+  useEffect(() => {
+    fetch("/api/demo", { cache: "no-store" })
+      .then((response) => (response.ok ? (response.json() as Promise<DemoAccount>) : null))
+      .then(setDemo, () => setDemo(null));
+  }, []);
 
   const submit = async (event: FormEvent) => {
     event.preventDefault();
@@ -44,6 +53,26 @@ export default function LoginPage() {
         <Marks />
         <p style={{ fontSize: 15, fontWeight: 600, color: "var(--color-accent-700)" }}>DocForge</p>
         <h1 style={{ fontSize: 26 }}>Sign in</h1>
+        {demo && (
+          <div className="reason-box reason-info" style={{ display: "flex", flexDirection: "column", gap: 6, fontSize: 13 }}>
+            <p>
+              <b>Try the demo.</b> Organisation <span className="mono">{demo.organisation}</span>, email{" "}
+              <span className="mono">{demo.email}</span>, PIN <span className="mono">{demo.pin}</span>. It reads recorded sample documents.
+            </p>
+            <button
+              type="button"
+              className="btn btn-secondary"
+              style={{ alignSelf: "flex-start" }}
+              onClick={() => {
+                setTenant(demo.organisation);
+                setEmail(demo.email);
+                setPin(demo.pin);
+              }}
+            >
+              Fill in the demo account
+            </button>
+          </div>
+        )}
         <div className="field">
           <label htmlFor="tenant">Organisation</label>
           <input id="tenant" className="input" autoComplete="organization" value={tenant} onChange={(e) => setTenant(e.target.value)} autoFocus />
