@@ -4,6 +4,7 @@ import { ChevronLeft, RefreshCw, ShieldCheck } from "lucide-react";
 import Link from "next/link";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { ChatThread, type Turn } from "@/components/chat/ChatThread";
 import { AuditTab, CertificatesTab, OrderTab, TimelineTab, type AuditEntry, type TimelineStep } from "@/components/document/DocumentTabs";
 import { PageViewer, type Highlight } from "@/components/document/PageViewer";
 import { SignDialog } from "@/components/document/SignDialog";
@@ -23,7 +24,7 @@ type DocumentOut = {
 };  // prettier-ignore
 type Detail = { document: DocumentOut; versions: { version_no: number; status: string; error: string | null }[] };
 type QueueItem = { document_id: string; filename: string };
-type Tab = "values" | "order" | "certificates" | "timeline" | "audit";
+type Tab = "values" | "order" | "certificates" | "timeline" | "audit" | "ask";
 
 const typing = (target: EventTarget | null) =>
   target instanceof HTMLElement && (target.isContentEditable || ["INPUT", "TEXTAREA", "SELECT"].includes(target.tagName));
@@ -60,6 +61,8 @@ function DocumentView() {
   const [editingPath, setEditingPath] = useState<string | null>(null);
   const [signing, setSigning] = useState<"approved" | "rejected" | null>(null);
   const [highlight, setHighlight] = useState<Highlight | null>(null);
+  const [askTurns, setAskTurns] = useState<Turn[]>([]);
+  const [askConversation, setAskConversation] = useState<string | null>(null);
   const panel = useRef<HTMLDivElement>(null);
   const loads = useRef(0);
 
@@ -209,7 +212,7 @@ function DocumentView() {
   const party = review ? ((review.record.seller as { name?: { raw?: string } } | undefined)?.name?.raw ?? "") : "";
   const number = (review?.record.invoice_no as { raw?: string } | undefined)?.raw;
   const tabs: { id: Tab; label: string; count?: number; kind?: string }[] = general || !review
-    ? [{ id: "timeline", label: "Timeline" }, { id: "audit", label: "Audit trail" }]
+    ? [{ id: "timeline", label: "Timeline" }, { id: "audit", label: "Audit trail" }, { id: "ask", label: "Ask" }]
     : [
         { id: "values", label: "Values", count: flagged, kind: flagged ? "warn" : "ok" },
         ...(review.doc_type === "invoice"
@@ -220,6 +223,7 @@ function DocumentView() {
           : []),
         { id: "timeline", label: "Timeline" },
         { id: "audit", label: "Audit trail" },
+        { id: "ask", label: "Ask" },
       ];
   const currentTab = tabs.some((candidate) => candidate.id === tab) ? tab : tabs[0].id;
 
@@ -353,6 +357,31 @@ function DocumentView() {
             {currentTab === "certificates" && review && <CertificatesTab review={review} />}
             {currentTab === "timeline" && <TimelineTab steps={steps} live={!isFinished(doc.stage)} />}
             {currentTab === "audit" && <AuditTab entries={audit} />}
+            {currentTab === "ask" && (
+              <div>
+                <p className="muted" style={{ padding: "12px 16px 0", fontSize: 13 }}>
+                  Questions here are answered from this document only.
+                  {askConversation && (
+                    <>
+                      {" "}
+                      <Link href={`/chat?c=${askConversation}`}>Open in Chat</Link>
+                    </>
+                  )}
+                </p>
+                <ChatThread
+                  compact
+                  turns={askTurns}
+                  onTurns={setAskTurns}
+                  conversationId={askConversation}
+                  onConversation={setAskConversation}
+                  scope={{ documentId: id }}
+                  onQuote={(citation, n) => {
+                    setHighlight({ boxes: citation.boxes, label: `Quote ${n}`, quote: citation.quote, source: `quote ${n} from chat` });
+                    setPage(citation.page);
+                  }}
+                />
+              </div>
+            )}
           </div>
 
           {review && <SignBar review={review} onSign={setSigning} />}
