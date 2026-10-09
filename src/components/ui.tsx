@@ -1,6 +1,7 @@
 /** The small shared pieces of the design system (handoff README, Components). */
 
-import { AlertCircle, AlertTriangle, Check, GitCompare, HelpCircle, Info, X, type LucideIcon } from "lucide-react";
+import { AlertCircle, AlertTriangle, Check, GitCompare, HelpCircle, Info, Lock, X, type LucideIcon } from "lucide-react";
+import Link from "next/link";
 import type { ReactNode } from "react";
 import { localTime } from "@/lib/format";
 import { stageStep, stageWord, type StatusKind } from "@/lib/stages";
@@ -159,5 +160,21 @@ export function Time({ iso, seconds = false }: { iso: string; seconds?: boolean 
     <time dateTime={iso} suppressHydrationWarning>
       {localTime(iso, { seconds })}
     </time>
+  );
+}
+
+/** An admin page reached by someone who is not an administrator (or the API said 403). */
+export function Denied() {
+  return (
+    <EmptyPanel
+      icon={Lock}
+      title="Only administrators can see this page."
+      text="Ask an administrator in your organisation if you need it."
+      action={
+        <Link className="btn btn-secondary" href="/">
+          Back to the review queue
+        </Link>
+      }
+    />
   );
 }

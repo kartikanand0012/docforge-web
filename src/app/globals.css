@@ -494,3 +494,15 @@ textarea.input { min-height: 72px; resize: vertical; }
 .inline-form { display: flex; flex-direction: column; gap: 10px; padding: 16px; border: 1px solid var(--color-divider); border-radius: var(--radius-xl); max-width: 560px; }
 .pick-list { list-style: none; margin: 0; padding: 0; max-height: 320px; overflow-y: auto; display: flex; flex-direction: column; gap: 6px; }
 @media (max-width: 899px) { .kb-detail { grid-column: auto; } }
+
+/* — admin, evals — */
+.connect-card { display: flex; flex-direction: column; gap: 12px; padding: 18px; border: 1px solid var(--color-divider); }
+.copy-row { display: flex; gap: 8px; align-items: stretch; }
+.copy-row .secret { flex: 1; }
+.hook-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)); gap: 14px; }
+.hook-card { display: flex; flex-direction: column; gap: 10px; padding: 14px 16px; border: 1px solid var(--color-divider); border-radius: var(--radius-xl); cursor: pointer; }
+.hook-card[aria-current="true"] { border-color: var(--color-accent-400); }
+.metrics { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; }
+.metric { display: flex; flex-direction: column; gap: 6px; padding: 16px; border: 1px solid var(--color-divider); align-items: flex-start; }
+.metric-figure { font-size: 36px; font-weight: 600; line-height: 1.1; }
+@media (max-width: 759px) { .hook-grid { grid-template-columns: 1fr; } }
