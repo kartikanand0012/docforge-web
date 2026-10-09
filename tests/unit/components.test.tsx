@@ -113,3 +113,34 @@ describe("toasts", () => {
     vi.useRealTimers();
   });
 });
+
+describe("dialogs (review fixes)", () => {
+  it("give focus back to the opener even when something inside focuses itself first", async () => {
+    function Opener() {
+      const [open, setOpen] = useState(false);
+      return (
+        <>
+          <button onClick={() => setOpen(true)}>Sign</button>
+          {open && (
+            <Dialog title="Sign" onClose={() => setOpen(false)}>
+              <input aria-label="PIN" autoFocus />
+            </Dialog>
+          )}
+        </>
+      );
+    }
+    render(<Opener />);
+    await userEvent.click(screen.getByText("Sign"));
+    expect(screen.getByLabelText("PIN")).toHaveFocus();
+    await userEvent.keyboard("{Escape}");
+    expect(screen.getByText("Sign")).toHaveFocus();
+  });
+
+  it("keep a secret shown once until it is acknowledged", async () => {
+    const done = vi.fn();
+    render(<SecretDialog title="Your key" secret="dfk_x" onDone={done} />);
+    await userEvent.keyboard("{Escape}");
+    expect(done).not.toHaveBeenCalled();
+    expect(screen.getByRole("dialog")).toBeInTheDocument();
+  });
+});
