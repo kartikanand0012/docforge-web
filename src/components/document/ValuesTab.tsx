@@ -225,7 +225,8 @@ function CorrectionForm({
       const signer = callerEmail ?? email.trim();
       const next = await api<Review>(`/documents/${review.document_id}/corrections`, {
         method: "POST",
-        json: { path: field.path, text: text.trim(), reason: reason.trim(), email: signer, pin },
+        // The record as shown: a change made by someone else meanwhile is refused, not overwritten.
+        json: { path: field.path, text: text.trim(), reason: reason.trim(), email: signer, pin, expected_record_sha256: review.record_sha256 },
       });
       if (!callerEmail) rememberEmail(signer);
       onSaved(next);

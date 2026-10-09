@@ -4,7 +4,7 @@ import { Check, RefreshCw, WifiOff } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Alert, DocTypeTag, docTypeName, EmptyPanel, Marks, ReasonLine, Time } from "@/components/ui";
+import { Alert, DocTypeTag, docTypeName, EmptyPanel, Marks, ReasonLine, Tag, Time } from "@/components/ui";
 import { ApiError, api } from "@/lib/api";
 import { localTime, waiting } from "@/lib/format";
 import { classify, queueSummary } from "@/lib/reasons";
@@ -18,6 +18,7 @@ type QueueItem = {
   created_at: string;
   reasons: string[];
   match_status: string;
+  claimed_by?: string | null; // another reviewer has it open now
 };
 
 type Load =
@@ -231,6 +232,7 @@ export default function QueuePage() {
                 <div className="queue-type">
                   <DocTypeTag docType={item.doc_type} />
                   {item.version_no > 1 && <span className="muted" style={{ fontSize: 12 }}>Version {item.version_no}</span>}
+                  {item.claimed_by && <Tag tone="neutral">In review by {item.claimed_by}</Tag>}
                 </div>
                 <div className="queue-main">
                   <p className="queue-file">

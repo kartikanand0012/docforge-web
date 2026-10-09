@@ -16,6 +16,7 @@ import { ApiError, api } from "@/lib/api";
 import { hashGroups, hashShort } from "@/lib/format";
 import { isId } from "@/lib/ids";
 import { buildFields, type Review } from "@/lib/review";
+import { heldByOther, useReviewClaim } from "@/lib/claim";
 import { stream } from "@/lib/sse";
 import { isFinished, stageKind, stageWord } from "@/lib/stages";
 import { useTitle } from "@/lib/useTitle";
@@ -25,7 +26,7 @@ type DocumentOut = {
   ready_for_chat: boolean; created_at: string; media_type: string;
 };  // prettier-ignore
 type Detail = { document: DocumentOut; versions: { version_no: number; status: string; error: string | null }[] };
-type QueueItem = { document_id: string; filename: string };
+type QueueItem = { document_id: string; filename: string; claimed_by?: string | null };
 type Tab = "values" | "order" | "certificates" | "timeline" | "audit" | "ask";
 
 // Where a key is text being typed: shortcuts stay out of the way. Checkboxes and radios are
@@ -190,7 +191,13 @@ function DocumentView() {
     };
   }, [id, reading, load]);
 
-  const fields = useMemo(() => (review ? buildFields(review) : []), [review]);
+  const { claim, takeOver, takeOverError } = useReviewClaim(id, Boolean(review && !review.review && !review.superseded));
+  // Another reviewer has it open: everything reads, nothing changes (the API refuses it too).
+  const locked = heldByOther(claim);
+  const fields = useMemo(() => {
+    const all = review ? buildFields(review) : [];
+    return locked ? all.map((field) => ({ ...field, editable: false })) : all;
+  }, [review, locked]);
   useTitle(detail?.document.filename ?? "Document");
   const visible = useMemo(() => (filter === "flagged" ? fields.filter((field) => field.flagged) : fields), [fields, filter]);
 
@@ -231,14 +238,14 @@ function DocumentView() {
         if (next) activate(next.path);
       } else if (event.key === "c" && activePath && fields.find((field) => field.path === activePath)?.editable) {
         setEditingPath(activePath);
-      } else if (event.key === "s" && !review.review) {
+      } else if (event.key === "s" && !review.review && !locked) {
         setSigning("approved");
       } else return;
       event.preventDefault();
     };
     document.addEventListener("keydown", onKey);
     return () => document.removeEventListener("keydown", onKey);
-  }, [visible, activePath, editingPath, signing, review, fields, activate, router]);
+  }, [visible, activePath, editingPath, signing, review, fields, activate, router, locked]);
 
   if (failure) {
     return (
@@ -256,7 +263,8 @@ function DocumentView() {
   const doc = detail.document;
   const general = doc.doc_type === "general";
   const position = queue.findIndex((item) => item.document_id === id);
-  const next = queue.find((item, index) => item.document_id !== id && index >= Math.max(position, 0));
+  // The next one nobody else is reviewing.
+  const next = queue.find((item, index) => item.document_id !== id && !item.claimed_by && index >= Math.max(position, 0));
   const pages = review?.pages?.length ? review.pages : Array.from({ length: doc.page_count ?? 1 }, (_, i) => ({ number: i + 1, width: 595.28, height: 841.89 }));
   const flagged = fields.filter((field) => field.flagged).length;
   const party = review ? ((review.record.seller as { name?: { raw?: string } } | undefined)?.name?.raw ?? "") : "";
@@ -312,7 +320,7 @@ function DocumentView() {
               {position + 1} of {queue.length} in queue
             </span>
           )}
-          <button className="btn btn-secondary" onClick={() => void reprocess()}>
+          <button className="btn btn-secondary" onClick={() => void reprocess()} disabled={locked} title={locked ? "Another reviewer has this document open" : undefined}>
             <RefreshCw size={14} strokeWidth={1.5} aria-hidden="true" /> Read again
           </button>
         </div>
@@ -324,6 +332,23 @@ function DocumentView() {
             <b>A newer reading exists.</b> This is an earlier version; reload to see the latest.
           </p>
         </div>
+      )}
+
+      {locked && claim && (
+        <Alert
+          kind="warn"
+          title={`${claim.reviewer_name} is reviewing this document.`}
+          action={
+            caller.role === "admin" ? (
+              <button className="btn btn-secondary" onClick={() => void takeOver()}>
+                Take over
+              </button>
+            ) : undefined
+          }
+        >
+          They opened it at <Time iso={claim.claimed_at} />. You can read it; correcting, signing and reading it again open here when they close it.
+          {takeOverError && ` ${takeOverError}`}
+        </Alert>
       )}
 
       <div className="doc-body">
@@ -434,7 +459,7 @@ function DocumentView() {
             )}
           </div>
 
-          {review && <SignBar review={review} onSign={setSigning} />}
+          {review && <SignBar review={review} onSign={setSigning} locked={locked} />}
         </section>
       </div>
 
@@ -462,7 +487,7 @@ function DocumentView() {
   );
 }
 
-function SignBar({ review, onSign }: { review: Review; onSign: (outcome: "approved" | "rejected") => void }) {
+function SignBar({ review, onSign, locked }: { review: Review; onSign: (outcome: "approved" | "rejected") => void; locked: boolean }) {
   const signed = review.review;
   if (signed) {
     return (
@@ -504,10 +529,10 @@ function SignBar({ review, onSign }: { review: Review; onSign: (outcome: "approv
         <span className="muted" style={{ fontSize: 12, marginRight: "auto" }}>
           <kbd>S</kbd> sign
         </span>
-        <button className="btn btn-secondary" onClick={() => onSign("rejected")}>
+        <button className="btn btn-secondary" onClick={() => onSign("rejected")} disabled={locked}>
           Reject…
         </button>
-        <button className="btn btn-primary marked" onClick={() => onSign("approved")}>
+        <button className="btn btn-primary marked" onClick={() => onSign("approved")} disabled={locked}>
           <Marks />
           Approve…
         </button>
