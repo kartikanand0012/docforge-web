@@ -1,0 +1,1625 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/industry-97c202f4-5f00-4951-8309-d41fcb52032f/styles.css">
+<script src="_ds/industry-97c202f4-5f00-4951-8309-d41fcb52032f/_ds_bundle.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+html,body{margin:0;height:100%}
+[data-theme]{--font-heading:"IBM Plex Sans",system-ui,sans-serif;--font-body:"IBM Plex Sans",system-ui,sans-serif;--font-heading-weight:600}
+[data-theme] h1,[data-theme] h2,[data-theme] h3{letter-spacing:-0.01em}
+[data-theme] .btn,[data-theme] .input,[data-theme] .seg,[data-theme] .card,[data-theme] .blueprint,[data-theme] .table{border-radius:8px}
+[data-theme] .dialog{border-radius:12px}
+[data-theme] .tag{border-radius:5px}
+[data-theme] .btn{font-weight:500;font-size:13.5px}
+[data-theme] .seg-opt:first-child{border-radius:7px 0 0 7px}[data-theme] .seg-opt:last-child{border-radius:0 7px 7px 0}
+a{color:var(--color-accent-700)}a:hover{color:var(--color-accent-800)}
+[data-theme]{--st-ok-fg:oklch(0.45 0.09 155);--st-ok-bg:oklch(0.95 0.03 155);--st-ok-line:oklch(0.80 0.06 155);--st-warn-fg:oklch(0.47 0.10 65);--st-warn-bg:oklch(0.95 0.04 85);--st-warn-line:oklch(0.80 0.09 80);--st-fail-fg:oklch(0.48 0.15 27);--st-fail-bg:oklch(0.95 0.03 25);--st-fail-line:oklch(0.80 0.08 25);--st-info-fg:var(--color-accent-800);--st-info-bg:var(--color-accent-100);--st-info-line:var(--color-accent-300);--st-neutral-fg:var(--color-neutral-800);--st-neutral-bg:var(--color-neutral-200);--st-neutral-line:var(--color-neutral-300);--mono:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace}
+[data-theme="dark"]{--color-bg:#141719;--color-surface:#1c2023;--color-text:#e3e5e7;--color-accent:#7ea2c6;--color-divider:color-mix(in srgb,#e3e5e7 16%,transparent);--color-accent-100:#1d2d3d;--color-accent-200:#2c455d;--color-accent-300:#416180;--color-accent-400:#597ea3;--color-accent-500:#749dc4;--color-accent-600:#94bce3;--color-accent-700:#b5d9fd;--color-accent-800:#d6ebff;--color-accent-900:#eef6ff;--color-neutral-100:#2b2b2d;--color-neutral-200:#343437;--color-neutral-300:#424244;--color-neutral-400:#5d5d60;--color-neutral-500:#7a7a7d;--color-neutral-600:#98989b;--color-neutral-700:#b7b7ba;--color-neutral-800:#d4d4d7;--color-neutral-900:#f5f5f8;--st-ok-fg:oklch(0.80 0.10 155);--st-ok-bg:oklch(0.27 0.04 155);--st-ok-line:oklch(0.42 0.06 155);--st-warn-fg:oklch(0.84 0.11 80);--st-warn-bg:oklch(0.28 0.05 70);--st-warn-line:oklch(0.45 0.08 70);--st-fail-fg:oklch(0.79 0.12 25);--st-fail-bg:oklch(0.28 0.06 25);--st-fail-line:oklch(0.45 0.10 25);--shadow-lg:0 0 0 1px color-mix(in srgb,#fff 10%,transparent),0 16px 40px rgba(0,0,0,.5)}
+@media (prefers-reduced-motion: reduce){*{transition:none!important;animation:none!important}}
+</style>
+</helmet>
+<div data-theme="{{ theme }}" style="height:100vh;display:grid;grid-template-columns:{{ shellCols }};background:var(--color-bg);color:var(--color-text);font-family:var(--font-body);font-size:14px;overflow:hidden">
+
+<aside style="display:flex;flex-direction:column;gap:18px;padding:16px 12px;border-right:1px solid var(--color-divider);overflow:auto;min-height:0">
+  <div style="display:flex;align-items:center;gap:10px;padding:2px 6px">
+    <div class="blueprint" style="width:26px;height:26px;display:grid;place-items:center;border-color:var(--color-accent)"><i class="corner tl"></i><i class="corner br"></i><span style="font-family:var(--font-heading);font-weight:600;font-size:15px;color:var(--color-accent-700)">D</span></div>
+    <sc-if value="{{ notRail }}" hint-placeholder-val="{{ true }}"><div style="display:flex;flex-direction:column;line-height:1.15"><span style="font-family:var(--font-heading);font-weight:600;font-size:19px;letter-spacing:-0.01em">DocForge</span><span style="font-size:11.5px;color:var(--color-neutral-700)">Arogya Distributors LLP</span></div></sc-if>
+  </div>
+  <nav aria-label="Main" style="display:flex;flex-direction:column;gap:2px">
+    <sc-for list="{{ navMain }}" as="n" hint-placeholder-count="6">
+      <button onClick="{{ n.go }}" aria-current="{{ n.current }}" aria-label="{{ n.label }}" title="{{ n.label }}" style="display:flex;align-items:center;justify-content:{{ navJustify }};gap:10px;width:100%;padding:7px 10px;border:0;background:{{ n.bg }};color:{{ n.fg }};font:inherit;font-size:14px;text-align:left;cursor:pointer" style-hover="background:color-mix(in srgb,var(--color-text) 7%,transparent)">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{ n.icon }}"></path></svg>
+        <sc-if value="{{ notRail }}" hint-placeholder-val="{{ true }}"><span style="flex:1">{{ n.label }}</span></sc-if>
+        <sc-if value="{{ n.countShown }}"><span style="font-size:12px;font-variant-numeric:tabular-nums;color:var(--color-neutral-700)">{{ n.count }}</span></sc-if>
+      </button>
+    </sc-for>
+  </nav>
+  <sc-if value="{{ isAdmin }}" hint-placeholder-val="{{ false }}">
+    <nav aria-label="Administration" style="display:flex;flex-direction:column;gap:2px">
+      <h2 style="font-family:var(--font-body);font-size:11px;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;color:var(--color-neutral-700);margin:0 0 4px;padding:0 10px">Administration</h2>
+      <sc-for list="{{ navAdmin }}" as="n" hint-placeholder-count="5">
+        <button onClick="{{ n.go }}" aria-current="{{ n.current }}" aria-label="{{ n.label }}" title="{{ n.label }}" style="display:flex;align-items:center;justify-content:{{ navJustify }};gap:10px;width:100%;padding:7px 10px;border:0;background:{{ n.bg }};color:{{ n.fg }};font:inherit;font-size:14px;text-align:left;cursor:pointer" style-hover="background:color-mix(in srgb,var(--color-text) 7%,transparent)">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{ n.icon }}"></path></svg>
+          <sc-if value="{{ notRail }}" hint-placeholder-val="{{ true }}"><span style="flex:1">{{ n.label }}</span></sc-if>
+        </button>
+      </sc-for>
+    </nav>
+  </sc-if>
+  <sc-if value="{{ notRail }}" hint-placeholder-val="{{ true }}">
+  <div style="margin-top:auto;display:flex;flex-direction:column;gap:10px;padding:10px 6px 0;border-top:1px solid var(--color-divider)">
+    <div style="display:flex;flex-direction:column;line-height:1.3"><span style="font-weight:500">Priya Nair</span><span style="font-size:12px;color:var(--color-neutral-700)">{{ roleLabel }} · priya.nair@arogya.in</span></div>
+    <div style="display:flex;gap:6px">
+      <button class="btn btn-secondary" onClick="{{ toggleTheme }}" aria-label="Switch to the other colour theme" style="flex:1;font-size:13px">{{ themeLabel }}</button>
+      <button class="btn btn-secondary" onClick="{{ signOut }}" style="flex:1;font-size:13px">Sign out</button>
+    </div>
+  </div>
+  </sc-if>
+  <sc-if value="{{ isRail }}" hint-placeholder-val="{{ false }}">
+    <div style="margin-top:auto;display:flex;flex-direction:column;align-items:center;gap:8px;padding-top:10px;border-top:1px solid var(--color-divider)">
+      <span title="Priya Nair · {{ roleLabel }}" aria-label="Signed in as Priya Nair, {{ roleLabel }}" style="width:32px;height:32px;display:grid;place-items:center;border-radius:50%;background:var(--color-accent-100);color:var(--color-accent-800);font-size:12px;font-weight:600">PN</span>
+      <button class="btn btn-ghost" onClick="{{ toggleTheme }}" aria-label="Switch to the other colour theme" title="{{ themeLabel }}" style="width:36px;height:36px;padding:0;color:var(--color-text)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9z"></path></svg></button>
+      <button class="btn btn-ghost" onClick="{{ signOut }}" aria-label="Sign out" title="Sign out" style="width:36px;height:36px;padding:0;color:var(--color-text)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4 M16 17l5-5-5-5 M21 12H9"></path></svg></button>
+    </div>
+  </sc-if>
+</aside>
+
+<main style="min-width:0;min-height:0;display:flex;flex-direction:column;overflow:hidden">
+
+<sc-if value="{{ isQueue }}" hint-placeholder-val="{{ true }}">
+  <div style="display:flex;flex-direction:column;min-height:0;flex:1">
+    <header style="display:flex;align-items:flex-end;gap:20px;flex-wrap:wrap;padding:22px 28px 16px;border-bottom:1px solid var(--color-divider)">
+      <div style="flex:1;min-width:260px">
+        <h1 style="font-size:32px;margin:0">Review queue</h1>
+        <p style="margin:2px 0 0;color:var(--color-neutral-700)">{{ queueSummary }}</p>
+      </div>
+      <div style="display:flex;gap:14px;align-items:center;font-size:12.5px;color:var(--color-neutral-700)">
+        <span style="display:flex;gap:5px;align-items:center"><kbd style="font-family:var(--mono);font-size:11px;padding:1px 5px;border:1px solid var(--color-divider);border-radius:4px">J</kbd><kbd style="font-family:var(--mono);font-size:11px;padding:1px 5px;border:1px solid var(--color-divider);border-radius:4px">K</kbd> move</span>
+        <span style="display:flex;gap:5px;align-items:center"><kbd style="font-family:var(--mono);font-size:11px;padding:1px 5px;border:1px solid var(--color-divider);border-radius:4px">Enter</kbd> open</span>
+      </div>
+      <sc-if value="{{ showEp }}"><code style="font-family:var(--mono);font-size:10.5px;padding:2px 6px;background:var(--color-accent-900);color:var(--color-bg)">GET /v1/review/queue</code></sc-if>
+    </header>
+
+    <sc-if value="{{ qOffline }}">
+      <div role="status" style="display:flex;gap:10px;align-items:center;padding:9px 28px;background:var(--st-warn-bg);color:var(--st-warn-fg);border-bottom:1px solid var(--st-warn-line);font-size:13.5px">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 2l20 20 M8.5 16.5a5 5 0 0 1 7 0 M2 8.82a15 15 0 0 1 4.17-2.65 M10.66 5c4.01-.36 8.14.9 11.34 3.76 M16.85 11.25a10 10 0 0 1 2.22 1.68 M5 13a10 10 0 0 1 5.24-2.76 M12 20h.01"></path></svg>
+        <span><strong style="font-weight:500">You are offline.</strong> This is the queue as of 11:40. It refreshes when you reconnect; signing waits until then.</span>
+      </div>
+    </sc-if>
+
+    <div style="flex:1;min-height:0;display:grid;grid-template-columns:{{ queueCols }}">
+      <div style="overflow:auto;min-height:0">
+        <sc-if value="{{ qLoading }}">
+          <div aria-busy="true" aria-label="Loading the review queue" style="display:flex;flex-direction:column">
+            <sc-for list="{{ skeleton }}" as="k" hint-placeholder-count="6">
+              <div style="display:grid;grid-template-columns:84px minmax(0,1fr) 110px;gap:16px;padding:16px 28px;border-bottom:1px solid var(--color-divider)">
+                <div style="height:18px;background:var(--color-neutral-200)"></div>
+                <div style="display:flex;flex-direction:column;gap:8px"><div style="height:14px;width:55%;background:var(--color-neutral-200)"></div><div style="height:12px;width:80%;background:var(--color-neutral-200)"></div></div>
+                <div style="height:12px;background:var(--color-neutral-200)"></div>
+              </div>
+            </sc-for>
+          </div>
+        </sc-if>
+        <sc-if value="{{ qEmpty }}">
+          <div style="display:grid;place-items:center;padding:96px 28px">
+            <div class="blueprint" style="max-width:420px;padding:28px;text-align:center;display:flex;flex-direction:column;gap:8px;align-items:center"><i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--st-ok-fg)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg>
+              <h2 style="font-size:22px;margin:0">Nothing waits for a person</h2>
+              <p style="margin:0;color:var(--color-neutral-700)">Every document read so far passed its checks or has been signed. New documents that need a person appear here as soon as they are checked.</p>
+              <button class="btn btn-secondary" onClick="{{ goUpload }}" style="margin-top:6px">Upload documents</button>
+            </div>
+          </div>
+        </sc-if>
+        <sc-if value="{{ qError }}">
+          <div role="alert" style="margin:28px;padding:16px 18px;display:flex;gap:12px;background:var(--st-fail-bg);color:var(--st-fail-fg);border:1px solid var(--st-fail-line);border-radius:6px">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex:none;margin-top:2px"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20z M12 8v4 M12 16h.01"></path></svg>
+            <div style="display:flex;flex-direction:column;gap:8px"><strong style="font-weight:500">The review queue could not be loaded.</strong><span style="color:var(--color-text)">The database is unavailable at the moment (503). Nothing was lost; try again shortly.</span><div><button class="btn btn-secondary">Try again</button></div></div>
+          </div>
+        </sc-if>
+        <sc-if value="{{ qRL }}">
+          <div role="alert" style="margin:28px;padding:16px 18px;display:flex;gap:12px;background:var(--st-warn-bg);color:var(--st-warn-fg);border:1px solid var(--st-warn-line);border-radius:6px">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex:none;margin-top:2px"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20z M12 6v6l4 2"></path></svg>
+            <div style="display:flex;flex-direction:column;gap:8px"><strong style="font-weight:500">Too many requests in the last minute.</strong><span style="color:var(--color-text);font-variant-numeric:tabular-nums">Try again in {{ rl }} seconds. The queue reloads by itself then.</span></div>
+          </div>
+        </sc-if>
+        <sc-if value="{{ qList }}" hint-placeholder-val="{{ true }}">
+          <div role="listbox" aria-label="Documents waiting for a person, oldest first" aria-activedescendant="{{ selId }}" style="display:flex;flex-direction:column">
+            <sc-for list="{{ queue }}" as="q" hint-placeholder-count="8">
+              <div id="{{ q.domId }}" role="option" aria-selected="{{ q.selected }}" onClick="{{ q.onSelect }}" onDoubleClick="{{ q.onOpen }}" style="display:grid;grid-template-columns:{{ rowCols }};gap:16px;align-items:start;padding:14px 28px;border-bottom:1px solid var(--color-divider);background:{{ q.bg }};box-shadow:{{ q.ring }};cursor:pointer" style-hover="background:color-mix(in srgb,var(--color-text) 4%,transparent)">
+                <div style="display:flex;flex-direction:column;gap:4px;align-items:flex-start"><span class="tag tag-accent">{{ q.short }}</span><sc-if value="{{ q.v2 }}"><span style="font-size:11.5px;color:var(--color-neutral-700)">Version {{ q.v }}</span></sc-if></div>
+                <div style="min-width:0;display:flex;flex-direction:column;gap:5px">
+                  <div style="display:flex;gap:10px;align-items:baseline;flex-wrap:wrap"><span style="font-weight:500;font-size:15px">{{ q.file }}</span><span style="font-size:13px;color:var(--color-neutral-700);font-variant-numeric:tabular-nums">{{ q.who }}</span></div>
+                  <ul style="list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:3px">
+                    <sc-for list="{{ q.reasonsV }}" as="r">
+                      <li style="display:flex;gap:6px;align-items:flex-start;font-size:13px;line-height:1.4">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--st-{{ r.kind }}-fg)" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex:none;margin-top:2px"><path d="{{ r.icon }}"></path></svg>
+                        <span><strong style="font-weight:500;color:var(--st-{{ r.kind }}-fg)">{{ r.label }}:</strong> {{ r.text }}</span>
+                      </li>
+                    </sc-for>
+                  </ul>
+                </div>
+                <div style="text-align:{{ rowTimeAlign }};display:flex;flex-direction:column;gap:2px;font-size:12.5px;font-variant-numeric:tabular-nums"><span>Waiting {{ q.waited }}</span><time dateTime="{{ q.iso }}" style="color:var(--color-neutral-700)">{{ q.at }}</time></div>
+              </div>
+            </sc-for>
+          </div>
+        </sc-if>
+      </div>
+
+      <aside aria-label="Selected document" style="border-left:1px solid var(--color-divider);overflow:auto;min-height:0;padding:22px 24px;display:{{ previewDisplay }};flex-direction:column;gap:16px">
+        <sc-if value="{{ qList }}" hint-placeholder-val="{{ true }}">
+          <div style="display:flex;flex-direction:column;gap:16px">
+            <div style="display:flex;flex-direction:column;gap:4px">
+              <span style="font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:var(--color-neutral-700)">{{ selQ.type }} · {{ selPos }}</span>
+              <h2 style="font-size:24px;margin:0;overflow-wrap:anywhere">{{ selQ.file }}</h2>
+              <span style="color:var(--color-neutral-700);font-variant-numeric:tabular-nums">{{ selQ.who }}</span>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:10px">
+              <h3 style="font-size:16px;margin:0">Why a person is needed</h3>
+              <sc-for list="{{ selQ.reasonsV }}" as="r">
+                <div style="display:flex;gap:10px;padding:10px 12px;background:var(--st-{{ r.kind }}-bg);border:1px solid var(--st-{{ r.kind }}-line);border-radius:6px">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--st-{{ r.kind }}-fg)" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex:none;margin-top:2px"><path d="{{ r.icon }}"></path></svg>
+                  <div style="display:flex;flex-direction:column;gap:2px;font-size:13.5px;line-height:1.4"><strong style="font-weight:500;color:var(--st-{{ r.kind }}-fg)">{{ r.label }}</strong><span>{{ r.text }}</span></div>
+                </div>
+              </sc-for>
+            </div>
+            <dl style="display:grid;grid-template-columns:auto 1fr;gap:6px 16px;margin:0;font-size:13px;font-variant-numeric:tabular-nums">
+              <dt style="color:var(--color-neutral-700)">Received</dt><dd style="margin:0"><time dateTime="{{ selQ.iso }}">{{ selQ.at }}</time> · waiting {{ selQ.waited }}</dd>
+              <dt style="color:var(--color-neutral-700)">Reading</dt><dd style="margin:0">Version {{ selQ.v }}</dd>
+            </dl>
+            <button class="btn btn-primary blueprint" onClick="{{ openSel }}" style="align-self:flex-start;padding:9px 16px;font-size:15px"><i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>Open document<kbd style="font-family:var(--mono);font-size:10.5px;padding:0 4px;border:1px solid color-mix(in srgb,var(--color-bg) 50%,transparent);border-radius:4px">Enter</kbd></button>
+          </div>
+        </sc-if>
+      </aside>
+    </div>
+  </div>
+</sc-if>
+
+<sc-if value="{{ isDoc }}" hint-placeholder-val="{{ false }}">
+  <div style="display:flex;flex-direction:column;min-height:0;flex:1">
+    <header style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;padding:12px 20px;border-bottom:1px solid var(--color-divider)">
+      <button class="btn btn-ghost" onClick="{{ goQueue }}" aria-label="Back to the review queue" style="font-size:14px">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"></path></svg>Queue</button>
+      <div style="min-width:0;flex:1;display:flex;flex-direction:column;gap:2px">
+        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;font-size:12.5px">
+          <span class="tag tag-accent">Invoice</span>
+          <span style="display:inline-flex;align-items:center;gap:5px;padding:2px 8px;font-size:11.5px;background:var(--st-ok-bg);color:var(--st-ok-fg);border:1px solid var(--st-ok-line);border-radius:6px"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg>Ready</span>
+          <span style="color:var(--color-neutral-700)">Version 1 · 1 page · from ERP integration · <time dateTime="2026-10-06T03:42:04Z">6 Oct, 09:12</time></span>
+        </div>
+        <h1 style="font-size:24px;margin:0">MS-INV-04417.pdf <span style="font-family:var(--font-body);font-size:14px;font-weight:400;color:var(--color-neutral-700)">Medisynth Pharma · MS/24-25/04417</span></h1>
+      </div>
+      <span style="font-size:12.5px;color:var(--color-neutral-700)">1 of 9 in queue</span>
+      <button class="btn btn-secondary" onClick="{{ reprocess }}">Read again</button>
+      <sc-if value="{{ showEp }}"><code style="font-family:var(--mono);font-size:10.5px;padding:2px 6px;background:var(--color-accent-900);color:var(--color-bg)">GET /v1/documents/{id} · POST …/reprocess</code></sc-if>
+    </header>
+
+    <div style="flex:1;min-height:0;display:grid;grid-template-columns:{{ docCols }};grid-template-rows:{{ docRows }};overflow:{{ docOverflow }}">
+      <section aria-label="Page viewer" style="display:flex;flex-direction:column;min-height:0;border-right:1px solid var(--color-divider)">
+        <div style="display:flex;align-items:center;gap:12px;flex-wrap:nowrap;overflow-x:auto;white-space:nowrap;padding:8px 16px;border-bottom:1px solid var(--color-divider);font-size:13px">
+          <span style="font-variant-numeric:tabular-nums">Page 1 of 1</span>
+          <div style="display:flex;align-items:center;gap:2px">
+            <button class="btn btn-ghost" onClick="{{ zoomOut }}" aria-label="Zoom out" style="width:30px;height:30px;padding:0;color:var(--color-text)">−</button>
+            <span style="min-width:44px;text-align:center;font-variant-numeric:tabular-nums">{{ zoom }}%</span>
+            <button class="btn btn-ghost" onClick="{{ zoomIn }}" aria-label="Zoom in" style="width:30px;height:30px;padding:0;color:var(--color-text)">+</button>
+          </div>
+          <label style="display:flex;align-items:center;gap:6px;cursor:pointer;margin-left:auto"><input type="checkbox" checked="{{ allBoxes }}" onChange="{{ toggleBoxes }}" style="accent-color:var(--color-accent)">Show every box</label>
+          <span style="display:flex;gap:10px;font-size:12px;color:var(--color-neutral-700)"><span style="display:flex;gap:4px;align-items:center"><span style="width:12px;height:8px;border:1.5px solid #416180;border-radius:6px"></span>Read</span><span style="display:flex;gap:4px;align-items:center"><span style="width:12px;height:8px;border:1.5px dashed oklch(0.6 0.13 65);border-radius:6px"></span>Needs a person</span></span>
+          <sc-if value="{{ showEp }}"><code style="font-family:var(--mono);font-size:10.5px;padding:2px 6px;background:var(--color-accent-900);color:var(--color-bg)">GET …/pages/1 (PNG) + boxes from /review</code></sc-if>
+        </div>
+        <sc-if value="{{ cite }}">
+          <div role="status" style="display:flex;gap:10px;align-items:center;padding:8px 16px;background:var(--color-accent-100);color:var(--color-accent-800);font-size:13px;border-bottom:1px solid var(--color-accent-300)">
+            <span style="flex:1">Showing {{ cite.src }}: “{{ cite.quote }}”</span>
+            <button class="btn btn-ghost" onClick="{{ clearCite }}" style="font-size:13px">Clear</button>
+          </div>
+        </sc-if>
+        <div style="flex:1;min-height:0;overflow:auto;padding:28px;background-color:var(--color-surface);background-image:linear-gradient(color-mix(in srgb,var(--color-text) 5%,transparent) 1px,transparent 1px),linear-gradient(90deg,color-mix(in srgb,var(--color-text) 5%,transparent) 1px,transparent 1px);background-size:24px 24px">
+          <div class="blueprint" style="margin:0 auto;width:{{ pageW }};max-width:none;border-color:transparent"><i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+          <div role="img" aria-label="Page 1 of MS-INV-04417.pdf, with boxes around each value that was read" style="position:relative;width:100%;aspect-ratio:210/297;background:#fdfdfb;color:#262626;box-shadow:var(--shadow-md);container-type:inline-size;font-family:Arial,Helvetica,sans-serif;overflow:hidden">
+            <span style="position:absolute;left:6%;top:4.8%;font-size:2.4cqw;font-weight:700;letter-spacing:.02em;white-space:nowrap">MEDISYNTH PHARMA PVT. LTD.</span>
+            <span style="position:absolute;left:6%;top:8.2%;font-size:1.2cqw;white-space:nowrap;color:#444">Plot 14, GIDC Vatva, Ahmedabad 382445, Gujarat · CIN U24230GJ2009PTC134512</span>
+            <span style="position:absolute;left:6%;top:10.6%;font-size:1.45cqw;font-weight:700">GSTIN</span>
+            <span style="position:absolute;left:13%;top:10.6%;font-size:1.45cqw">24AABCM4521K1Z6</span>
+            <span style="position:absolute;left:64%;top:4.8%;width:30%;text-align:right;font-size:2.2cqw;font-weight:700;letter-spacing:.06em">TAX INVOICE</span>
+            <span style="position:absolute;left:64%;top:9.8%;font-size:1.45cqw;color:#555">Invoice no.</span>
+            <span style="position:absolute;left:76%;top:9.8%;width:18%;text-align:right;font-size:1.45cqw">MS/24-25/04417</span>
+            <span style="position:absolute;left:64%;top:12.8%;font-size:1.45cqw;color:#555">Date</span>
+            <span style="position:absolute;left:76%;top:12.8%;width:18%;text-align:right;font-size:1.45cqw">03-10-2026</span>
+            <span style="position:absolute;left:6%;top:15.6%;width:88%;height:0.15%;background:#333"></span>
+            <span style="position:absolute;left:6%;top:17%;font-size:1.1cqw;font-weight:700;letter-spacing:.08em;color:#666">BILL TO</span>
+            <span style="position:absolute;left:6%;top:19.4%;font-size:1.55cqw;font-weight:700;white-space:nowrap">Arogya Distributors LLP</span>
+            <span style="position:absolute;left:6%;top:22%;font-size:1.3cqw;white-space:nowrap;color:#444">Shop 3, Market Yard, Gultekdi, Pune 411037</span>
+            <span style="position:absolute;left:6%;top:24.2%;font-size:1.3cqw;white-space:nowrap;color:#444">GSTIN 27AAKFA7731P1ZQ</span>
+            <span style="position:absolute;left:64%;top:17%;font-size:1.45cqw;color:#555">Your order</span>
+            <span style="position:absolute;left:76%;top:17%;width:18%;text-align:right;font-size:1.45cqw">PO-88213</span>
+            <span style="position:absolute;left:64%;top:19.6%;font-size:1.45cqw;color:#555">Order date</span>
+            <span style="position:absolute;left:76%;top:19.6%;width:18%;text-align:right;font-size:1.45cqw">26-09-2026</span>
+            <span style="position:absolute;left:64%;top:22.2%;font-size:1.45cqw;color:#555">Place of supply</span>
+            <span style="position:absolute;left:76%;top:22.2%;width:18%;text-align:right;font-size:1.45cqw">27 Maharashtra</span>
+            <span style="position:absolute;left:6%;top:28%;width:88%;height:2.8%;background:#ececea"></span>
+            <span style="position:absolute;left:7%;top:28.7%;font-size:1.15cqw;font-weight:700">#</span>
+            <span style="position:absolute;left:10%;top:28.7%;font-size:1.15cqw;font-weight:700">Description</span>
+            <span style="position:absolute;left:44%;top:28.7%;font-size:1.15cqw;font-weight:700">Batch</span>
+            <span style="position:absolute;left:60%;top:28.7%;width:8%;text-align:right;font-size:1.15cqw;font-weight:700">Qty</span>
+            <span style="position:absolute;left:69%;top:28.7%;width:10%;text-align:right;font-size:1.15cqw;font-weight:700">Rate (₹)</span>
+            <span style="position:absolute;left:80%;top:28.7%;width:13%;text-align:right;font-size:1.15cqw;font-weight:700">Amount (₹)</span>
+            <span style="position:absolute;left:7%;top:32%;font-size:1.35cqw">1</span>
+            <span style="position:absolute;left:10%;top:32%;font-size:1.35cqw;white-space:nowrap">Amoxicillin 500 mg Caps 10×10</span>
+            <span style="position:absolute;left:44%;top:32%;font-size:1.35cqw">AMX-2409-117</span>
+            <span style="position:absolute;left:60%;top:32%;width:8%;text-align:right;font-size:1.35cqw">800</span>
+            <span style="position:absolute;left:69%;top:32%;width:10%;text-align:right;font-size:1.35cqw">182.50</span>
+            <span style="position:absolute;left:80%;top:32%;width:13%;text-align:right;font-size:1.35cqw">1,46,000.00</span>
+            <span style="position:absolute;left:6%;top:34.8%;width:88%;height:0.1%;background:#ccc"></span>
+            <span style="position:absolute;left:7%;top:36.4%;font-size:1.35cqw">2</span>
+            <span style="position:absolute;left:10%;top:36.4%;font-size:1.35cqw;white-space:nowrap">Paracetamol 650 mg Tabs 15s</span>
+            <span style="position:absolute;left:44%;top:36.4%;font-size:1.35cqw">PCM-2408-052</span>
+            <span style="position:absolute;left:60%;top:36.6%;width:8%;text-align:right;font-size:1.25cqw;color:#777;text-decoration:line-through">1,000</span>
+            <span style="position:absolute;left:59%;top:34.9%;width:8%;text-align:right;font-size:1.7cqw;color:#1d3f8f;font-family:'Segoe Print','Bradley Hand','Comic Sans MS',cursive;transform:rotate(-5deg)">1,200</span>
+            <span style="position:absolute;left:69%;top:36.4%;width:10%;text-align:right;font-size:1.35cqw">96.40</span>
+            <span style="position:absolute;left:80%;top:36.4%;width:13%;text-align:right;font-size:1.35cqw">1,15,680.00</span>
+            <span style="position:absolute;left:6%;top:39.2%;width:88%;height:0.1%;background:#ccc"></span>
+            <span style="position:absolute;left:7%;top:40.6%;font-size:1.35cqw">3</span>
+            <span style="position:absolute;left:10%;top:40.6%;font-size:1.35cqw;white-space:nowrap">Azithromycin 250 mg Tabs 6s</span>
+            <span style="position:absolute;left:44%;top:40.6%;font-size:1.35cqw">AZM-2409-031</span>
+            <span style="position:absolute;left:60%;top:40.6%;width:8%;text-align:right;font-size:1.35cqw">600</span>
+            <span style="position:absolute;left:69%;top:40.6%;width:10%;text-align:right;font-size:1.35cqw">178.00</span>
+            <span style="position:absolute;left:80%;top:40.6%;width:13%;text-align:right;font-size:1.35cqw">1,06,800.00</span>
+            <span style="position:absolute;left:6%;top:43.4%;width:88%;height:0.15%;background:#333"></span>
+            <span style="position:absolute;left:60%;top:47%;font-size:1.4cqw;color:#555">Taxable value</span>
+            <span style="position:absolute;left:80%;top:47%;width:13%;text-align:right;font-size:1.4cqw">3,68,480.00</span>
+            <span style="position:absolute;left:60%;top:50.4%;font-size:1.4cqw;color:#555">IGST @ 12%</span>
+            <span style="position:absolute;left:80%;top:50.4%;width:13%;text-align:right;font-size:1.4cqw">44,217.60</span>
+            <span style="position:absolute;left:60%;top:53.6%;width:34%;height:0.15%;background:#333"></span>
+            <span style="position:absolute;left:60%;top:55%;font-size:1.65cqw;font-weight:700">Total (₹)</span>
+            <span style="position:absolute;left:76%;top:55%;width:17%;text-align:right;font-size:1.65cqw;font-weight:700">4,12,877.60</span>
+            <span style="position:absolute;left:6%;top:47%;font-size:1.1cqw;font-weight:700;letter-spacing:.06em;color:#666">AMOUNT IN WORDS</span>
+            <span style="position:absolute;left:6%;top:49.2%;width:46%;font-size:1.3cqw;line-height:1.4;color:#333">Rupees Four Lakh Twelve Thousand Eight Hundred Seventy-Seven and Sixty Paise Only</span>
+            <span style="position:absolute;left:6%;top:60%;font-size:1.1cqw;font-weight:700;letter-spacing:.06em;color:#666">TERMS</span>
+            <span style="position:absolute;left:6%;top:62.4%;font-size:1.3cqw;white-space:nowrap">Payment: 45 days from date of invoice.</span>
+            <span style="position:absolute;left:6%;top:64.6%;font-size:1.2cqw;white-space:nowrap;color:#555">Goods once sold will not be taken back. Subject to Ahmedabad jurisdiction.</span>
+            <span style="position:absolute;left:64%;top:76%;width:30%;text-align:right;font-size:1.3cqw">For Medisynth Pharma Pvt. Ltd.</span>
+            <span style="position:absolute;left:64%;top:79%;width:28%;text-align:right;font-size:2.6cqw;color:#1d3f8f;font-family:'Segoe Script','Bradley Hand','Brush Script MT',cursive">R. Mehta</span>
+            <span style="position:absolute;left:64%;top:84%;width:30%;text-align:right;font-size:1.2cqw;color:#555">Authorised signatory</span>
+            <span style="position:absolute;left:6%;top:93%;font-size:1.1cqw;color:#777">Page 1 of 1</span>
+            <span style="position:absolute;left:64%;top:93%;width:30%;text-align:right;font-size:1.1cqw;color:#777">E. &amp; O.E.</span>
+
+            <sc-for list="{{ boxes }}" as="b">
+              <button aria-label="{{ b.aria }}" onClick="{{ b.onClick }}" onMouseEnter="{{ b.onEnter }}" onMouseLeave="{{ b.onLeave }}" tabindex="-1" style="position:absolute;left:{{ b.l }}%;top:{{ b.t }}%;width:{{ b.w }}%;height:{{ b.h }}%;padding:0;border:{{ b.border }};background:{{ b.bg }};cursor:pointer;transition:background .12s"></button>
+              <sc-if value="{{ b.showLabel }}">
+                <span style="position:absolute;left:{{ b.l }}%;top:calc({{ b.t }}% - 22px);padding:2px 6px;font:500 11px/1.3 Barlow,sans-serif;background:{{ b.labelBg }};color:#fff;white-space:nowrap;pointer-events:none">{{ b.label }}</span>
+              </sc-if>
+            </sc-for>
+            <sc-if value="{{ cite }}">
+              <span style="position:absolute;left:{{ cite.l }}%;top:{{ cite.t }}%;width:{{ cite.w }}%;height:{{ cite.h }}%;border:2px solid #416180;background:rgba(89,128,166,.16);pointer-events:none"></span>
+              <span style="position:absolute;left:{{ cite.l }}%;top:calc({{ cite.t }}% - 22px);padding:2px 6px;font:500 11px/1.3 Barlow,sans-serif;background:#416180;color:#fff;pointer-events:none">{{ cite.tag }}</span>
+            </sc-if>
+          </div>
+          </div>
+        </div>
+      </section>
+
+      <section aria-label="Extracted values and review" style="display:flex;flex-direction:column;min-height:0">
+        <div role="tablist" aria-label="Document details" style="display:flex;gap:0;overflow-x:auto;border-bottom:1px solid var(--color-divider);padding:0 8px">
+          <sc-for list="{{ tabs }}" as="t" hint-placeholder-count="6">
+            <button role="tab" aria-selected="{{ t.sel }}" onClick="{{ t.go }}" style="flex:none;display:flex;gap:6px;align-items:center;padding:11px 10px 9px;border:0;border-bottom:2px solid {{ t.line }};background:transparent;color:{{ t.fg }};font:inherit;font-size:13.5px;font-weight:{{ t.weight }};cursor:pointer" style-hover="color:var(--color-accent-700)">{{ t.label }}<sc-if value="{{ t.count }}"><span style="font-size:11px;padding:0 5px;background:var(--st-{{ t.kind }}-bg);color:var(--st-{{ t.kind }}-fg);border:1px solid var(--st-{{ t.kind }}-line);border-radius:4px">{{ t.count }}</span></sc-if></button>
+          </sc-for>
+        </div>
+
+        <div ref="{{ panelRef }}" role="tabpanel" style="flex:1;min-height:0;overflow:auto;position:relative">
+
+          <sc-if value="{{ tabFields }}" hint-placeholder-val="{{ true }}">
+            <div style="display:flex;flex-direction:column">
+              <sc-if value="{{ hasBlockers }}">
+                <div style="margin:14px 16px 4px;padding:12px 14px;border:1px solid var(--st-warn-line);background:var(--st-warn-bg);display:flex;flex-direction:column;gap:8px;border-radius:6px">
+                  <div style="display:flex;gap:8px;align-items:center;color:var(--st-warn-fg)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z M12 9v4 M12 17h.01"></path></svg><strong style="font-weight:600;font-size:14px">{{ blockerTitle }}</strong></div>
+                  <ul style="margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:4px">
+                    <sc-for list="{{ blockersV }}" as="k">
+                      <li><button onClick="{{ k.go }}" style="display:flex;gap:6px;align-items:flex-start;padding:2px 0;border:0;background:none;color:var(--color-text);font:inherit;font-size:13px;line-height:1.4;text-align:left;cursor:pointer" style-hover="text-decoration:underline"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--st-{{ k.kind }}-fg)" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex:none;margin-top:2px"><path d="{{ k.icon }}"></path></svg><span><strong style="font-weight:500;color:var(--st-{{ k.kind }}-fg)">{{ k.label }}:</strong> {{ k.text }}</span></button></li>
+                    </sc-for>
+                  </ul>
+                </div>
+              </sc-if>
+              <div style="display:flex;align-items:center;gap:10px;padding:10px 16px">
+                <div class="seg" role="radiogroup" aria-label="Which values to show">
+                  <label class="seg-opt"><input type="radio" name="ff" checked="{{ fAll }}" onChange="{{ showAll }}">All {{ fieldCount }}</label>
+                  <label class="seg-opt"><input type="radio" name="ff" checked="{{ fFlag }}" onChange="{{ showFlagged }}">Needs a person {{ flaggedCount }}</label>
+                </div>
+                <span style="margin-left:auto;font-size:12px;color:var(--color-neutral-700)"><kbd style="font-family:var(--mono);font-size:10.5px;padding:0 4px;border:1px solid var(--color-divider);border-radius:4px">J</kbd> <kbd style="font-family:var(--mono);font-size:10.5px;padding:0 4px;border:1px solid var(--color-divider);border-radius:4px">K</kbd> value · <kbd style="font-family:var(--mono);font-size:10.5px;padding:0 4px;border:1px solid var(--color-divider);border-radius:4px">C</kbd> correct</span>
+              </div>
+              <sc-if value="{{ showEp }}"><code style="margin:0 16px 6px;align-self:flex-start;font-family:var(--mono);font-size:10.5px;padding:2px 6px;background:var(--color-accent-900);color:var(--color-bg)">GET …/review → record, assessment, editable_paths · POST …/corrections</code></sc-if>
+              <sc-if value="{{ noFlagged }}"><p style="margin:12px 16px;color:var(--color-neutral-700)">Nothing left that needs a person. Every value passed its checks or was corrected.</p></sc-if>
+
+              <sc-for list="{{ fieldsV }}" as="f" hint-placeholder-count="6">
+                <sc-if value="{{ f.groupStart }}"><h3 style="margin:0;padding:14px 16px 6px;font-size:13px;font-family:var(--font-body);font-weight:500;letter-spacing:0.08em;text-transform:uppercase;color:var(--color-neutral-700);border-bottom:1px solid var(--color-divider)">{{ f.groupStart }}</h3></sc-if>
+                <sc-if value="{{ f.isLinesStart }}">
+                  <div style="padding:8px 16px 4px;overflow-x:auto">
+                    <table class="table" style="font-size:12.5px;font-variant-numeric:tabular-nums">
+                      <thead><tr><th scope="col">Item</th><th scope="col">Batch</th><th scope="col" style="text-align:right">Qty</th><th scope="col" style="text-align:right">Rate</th><th scope="col" style="text-align:right">Amount</th></tr></thead>
+                      <tbody>
+                        <sc-for list="{{ lines }}" as="ln">
+                          <tr><td>{{ ln.desc }}</td><td style="white-space:nowrap">{{ ln.batch }}</td><td style="text-align:right;color:var(--st-{{ ln.qtyKind }}-fg);font-weight:{{ ln.qtyWeight }}">{{ ln.qty }}</td><td style="text-align:right">{{ ln.rate }}</td><td style="text-align:right;white-space:nowrap">{{ ln.amt }}</td></tr>
+                        </sc-for>
+                      </tbody>
+                    </table>
+                  </div>
+                </sc-if>
+                <div id="{{ f.domId }}" onMouseEnter="{{ f.onEnter }}" onMouseLeave="{{ f.onLeave }}" style="padding:10px 16px 12px;border-bottom:1px solid color-mix(in srgb,var(--color-text) 8%,transparent);background:{{ f.bg }};box-shadow:{{ f.ring }};display:flex;flex-direction:column;gap:5px">
+                  <div style="display:flex;align-items:center;gap:10px">
+                    <span style="flex:1;font-size:12.5px;color:var(--color-neutral-700)">{{ f.label }}</span>
+                    <span style="display:flex;align-items:center;gap:6px;font-size:12px;font-variant-numeric:tabular-nums;color:var(--st-{{ f.confKind }}-fg)" title="How sure DocForge is of this reading">
+                      <span aria-hidden="true" style="width:34px;height:4px;background:var(--color-divider);display:block"><span style="display:block;height:100%;width:{{ f.confW }}%;background:var(--st-{{ f.confKind }}-fg)"></span></span>{{ f.confText }}</span>
+                  </div>
+                  <div style="display:flex;align-items:center;gap:10px">
+                    <button onClick="{{ f.onClick }}" onFocus="{{ f.onFocus }}" aria-describedby="{{ f.descId }}" style="flex:1;min-width:0;text-align:left;padding:2px 0;border:0;background:none;color:var(--color-text);font:inherit;font-size:16px;font-weight:500;font-variant-numeric:tabular-nums;cursor:pointer;overflow-wrap:anywhere">{{ f.value }}</button>
+                    <sc-if value="{{ f.canEdit }}"><button class="btn btn-secondary" onClick="{{ f.onEdit }}" style="font-size:12.5px;padding:3px 9px">Correct</button></sc-if>
+                  </div>
+                  <div id="{{ f.descId }}" style="display:flex;flex-direction:column;gap:3px">
+                    <sc-for list="{{ f.checksV }}" as="k">
+                      <div style="display:flex;gap:6px;align-items:flex-start;font-size:12.5px;line-height:1.4"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--st-{{ k.kind }}-fg)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex:none;margin-top:2px"><path d="{{ k.icon }}"></path></svg><span><strong style="font-weight:500;color:var(--st-{{ k.kind }}-fg)">{{ k.word }}:</strong> <span style="color:var(--color-neutral-800)">{{ k.text }}</span></span></div>
+                    </sc-for>
+                  </div>
+                  <sc-if value="{{ f.isEditing }}">
+                    <form onSubmit="{{ saveCorrection }}" aria-label="Correct {{ f.label }}" style="margin-top:6px;padding:12px;border:1px solid var(--color-divider);background:var(--color-bg);display:grid;grid-template-columns:1fr 1fr;gap:10px;border-radius:6px">
+                      <div class="field" style="grid-column:1/-1"><label for="cv">New value <span style="color:var(--color-neutral-700)">(read as {{ f.value }})</span></label><input id="cv" class="input" value="{{ draft.value }}" onChange="{{ onDraftValue }}" autoFocus="{{ true }}" style="font-variant-numeric:tabular-nums"></div>
+                      <div class="field" style="grid-column:1/-1"><label for="cr">Reason</label><input id="cr" class="input" value="{{ draft.reason }}" onChange="{{ onDraftReason }}" placeholder="Why the page reading is wrong"></div>
+                      <div class="field"><label for="cp">Your PIN</label><input id="cp" class="input" type="password" inputMode="numeric" maxLength="6" autoComplete="off" value="{{ draft.pin }}" onChange="{{ onDraftPin }}" style="letter-spacing:.3em"></div>
+                      <div style="display:flex;gap:6px;align-items:flex-end;justify-content:flex-end"><button type="button" class="btn btn-secondary" onClick="{{ cancelEdit }}">Cancel</button><button type="submit" class="btn btn-primary">Save correction</button></div>
+                      <sc-if value="{{ draftErr }}"><p role="alert" style="grid-column:1/-1;margin:0;font-size:12.5px;color:var(--st-fail-fg)">{{ draftErr }}</p></sc-if>
+                      <p style="grid-column:1/-1;margin:0;font-size:12px;color:var(--color-neutral-700)">Recorded in the audit trail as your correction. The record’s hash changes, so sign after correcting.</p>
+                    </form>
+                  </sc-if>
+                </div>
+              </sc-for>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ tabMatch }}">
+            <div style="padding:18px 16px;display:flex;flex-direction:column;gap:14px">
+              <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+                <span style="display:inline-flex;align-items:center;gap:5px;padding:2px 8px;font-size:12px;background:var(--st-fail-bg);color:var(--st-fail-fg);border:1px solid var(--st-fail-line);border-radius:6px">Does not match its order</span>
+                <span style="font-size:13px">Matched with <a href="#" style="font-weight:500">PO-88213.pdf</a> by order number</span>
+              </div>
+              <sc-if value="{{ showEp }}"><code style="align-self:flex-start;font-family:var(--mono);font-size:10.5px;padding:2px 6px;background:var(--color-accent-900);color:var(--color-bg)">/review → match_status, discrepancies, counterpart_document_id</code></sc-if>
+              <div style="overflow-x:auto">
+                <table class="table" style="font-size:12.5px;font-variant-numeric:tabular-nums">
+                  <thead><tr><th scope="col">Line</th><th scope="col" style="text-align:right">Ordered</th><th scope="col" style="text-align:right">Billed</th><th scope="col" style="text-align:right">Rate ord. / billed</th><th scope="col">Result</th></tr></thead>
+                  <tbody>
+                    <sc-for list="{{ matchRows }}" as="m">
+                      <tr><td>{{ m.desc }}</td><td style="text-align:right">{{ m.ord }}</td><td style="text-align:right;color:var(--st-{{ m.kind }}-fg);font-weight:{{ m.weight }}">{{ m.bill }}</td><td style="text-align:right;white-space:nowrap">{{ m.rate }}</td><td><span style="display:inline-flex;gap:4px;align-items:center;font-size:12px;color:var(--st-{{ m.kind }}-fg)"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{ m.icon }}"></path></svg>{{ m.result }}</span></td></tr>
+                    </sc-for>
+                  </tbody>
+                </table>
+              </div>
+              <div style="padding:12px 14px;border:1px solid var(--st-fail-line);background:var(--st-fail-bg);font-size:13px;line-height:1.45;border-radius:6px"><strong style="font-weight:500;color:var(--st-fail-fg)">1 discrepancy.</strong> Line 2 bills 1,200 packs; the order is for 1,000. At ₹96.40 a pack that is ₹19,280.00 before tax. Correct the quantity if the page was misread, or reject the invoice.</div>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ tabCoa }}">
+            <div style="padding:18px 16px;display:flex;flex-direction:column;gap:12px">
+              <p style="margin:0;font-size:13px;color:var(--color-neutral-700)">Certificates of analysis linked to this invoice by batch number.</p>
+              <sc-if value="{{ showEp }}"><code style="align-self:flex-start;font-family:var(--mono);font-size:10.5px;padding:2px 6px;background:var(--color-accent-900);color:var(--color-bg)">/review → certificates</code></sc-if>
+              <div class="card blueprint" style="gap:6px"><i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+                <span class="card-kicker">Batch AMX-2409-117 · line 1</span>
+                <span class="card-title">CoA_AMX-2409-117.pdf</span>
+                <span style="display:flex;gap:6px;align-items:flex-start;font-size:13px;line-height:1.4"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--st-fail-fg)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex:none;margin-top:2px"><path d="M18 6 6 18 M6 6l12 12"></path></svg><span><strong style="font-weight:500;color:var(--st-fail-fg)">Check failed:</strong> assay 97.8% is outside the 98.0–102.0% specification. Waiting in the queue.</span></span>
+                <button class="btn btn-secondary" style="align-self:flex-start;font-size:13px;margin-top:4px">Open certificate</button>
+              </div>
+              <div style="padding:12px 14px;border:1px dashed var(--color-divider);font-size:13px;line-height:1.45;border-radius:6px"><strong style="font-weight:500">No certificate yet</strong> for batches PCM-2408-052 (line 2) and AZM-2409-031 (line 3). They link here when uploaded.</div>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ tabTimeline }}">
+            <div style="padding:18px 16px;display:flex;flex-direction:column;gap:10px">
+              <sc-if value="{{ showEp }}"><code style="align-self:flex-start;font-family:var(--mono);font-size:10.5px;padding:2px 6px;background:var(--color-accent-900);color:var(--color-bg)">GET …/timeline · live: GET …/events (SSE)</code></sc-if>
+              <ol style="list-style:none;margin:0;padding:0;display:flex;flex-direction:column">
+                <sc-for list="{{ timeline }}" as="t">
+                  <li style="display:grid;grid-template-columns:18px 92px 1fr;gap:10px;padding:8px 0;border-bottom:1px solid color-mix(in srgb,var(--color-text) 8%,transparent);font-size:13px">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--st-ok-fg)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="margin-top:1px"><path d="M20 6 9 17l-5-5"></path></svg>
+                    <span style="font-weight:500">{{ t.stage }}</span>
+                    <span style="display:flex;flex-direction:column"><time dateTime="{{ t.iso }}" style="font-variant-numeric:tabular-nums">{{ t.at }}</time><span style="color:var(--color-neutral-700)">{{ t.detail }}</span></span>
+                  </li>
+                </sc-for>
+              </ol>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ tabAudit }}">
+            <div style="padding:18px 16px;display:flex;flex-direction:column;gap:10px">
+              <sc-if value="{{ showEp }}"><code style="align-self:flex-start;font-family:var(--mono);font-size:10.5px;padding:2px 6px;background:var(--color-accent-900);color:var(--color-bg)">GET …/audit</code></sc-if>
+              <ol style="list-style:none;margin:0;padding:0;display:flex;flex-direction:column">
+                <sc-for list="{{ audit }}" as="a">
+                  <li style="display:flex;flex-direction:column;gap:2px;padding:9px 0;border-bottom:1px solid color-mix(in srgb,var(--color-text) 8%,transparent);font-size:13px">
+                    <div style="display:flex;gap:8px;align-items:baseline"><span style="font-weight:500;flex:1">{{ a.label }}</span><time dateTime="{{ a.iso }}" style="font-size:12px;color:var(--color-neutral-700);font-variant-numeric:tabular-nums">{{ a.at }}</time></div>
+                    <span style="color:var(--color-neutral-700)">{{ a.actor }} · entry #{{ a.id }}</span>
+                  </li>
+                </sc-for>
+              </ol>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ tabAsk }}">
+            <div style="padding:18px 16px;display:flex;flex-direction:column;gap:14px">
+              <p style="margin:0;font-size:13px;color:var(--color-neutral-700)">Questions here are answered from this document only.</p>
+              <div style="display:flex;flex-direction:column;gap:4px"><span style="font-size:12px;color:var(--color-neutral-700)">You · 11:31</span><span style="font-size:15px;font-weight:500">What payment terms does this invoice state?</span></div>
+              <div style="display:flex;flex-direction:column;gap:8px">
+                <div style="display:flex;gap:8px;align-items:center"><span style="font-size:12px;color:var(--color-neutral-700)">DocForge</span><span style="display:inline-flex;align-items:center;gap:4px;padding:1px 7px;font-size:11.5px;background:var(--st-ok-bg);color:var(--st-ok-fg);border:1px solid var(--st-ok-line);border-radius:6px"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg>Every statement checked</span></div>
+                <p style="margin:0;font-size:14.5px;line-height:1.5">Payment is due 45 days from the invoice date, so by 17 November 2026 <button onClick="{{ citePay }}" aria-label="Quote 1, show on page" style="padding:0 5px;border:1px solid var(--color-accent);background:transparent;color:var(--color-accent-700);font:600 11px/1.4 var(--font-body);cursor:pointer;vertical-align:1px;border-radius:4px">1</button>.</p>
+                <button onClick="{{ citePay }}" class="blueprint" style="text-align:left;padding:10px 12px;background:transparent;color:var(--color-text);font:inherit;cursor:pointer;display:flex;flex-direction:column;gap:4px" style-hover="background:color-mix(in srgb,var(--color-accent) 7%,transparent)"><i class="corner tl"></i><i class="corner br"></i><span style="font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--color-accent-700)">1 · Page 1 · show on page</span><span style="font-size:13.5px">“Payment: 45 days from date of invoice.”</span></button>
+              </div>
+              <form onSubmit="{{ askDoc }}" style="display:flex;gap:8px;margin-top:6px"><label for="dq" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)">Ask about this document</label><input id="dq" class="input" placeholder="Ask about this document" value="{{ docQ }}" onChange="{{ onDocQ }}"><button type="submit" class="btn btn-primary">Ask</button></form>
+            </div>
+          </sc-if>
+        </div>
+
+        <div style="border-top:1px solid var(--color-divider);padding:12px 16px;display:flex;flex-direction:column;gap:10px;background:var(--color-bg)">
+          <sc-if value="{{ notSigned }}" hint-placeholder-val="{{ true }}">
+            <div style="display:flex;flex-direction:column;gap:10px">
+              <div style="display:flex;gap:10px;align-items:baseline;flex-wrap:wrap;font-size:12.5px">
+                <span style="font-weight:500">{{ decisionText }}</span>
+                <span style="margin-left:auto;font-family:var(--mono);font-size:11px;color:var(--color-neutral-700)" title="{{ hash }}">sha256 {{ hashShort }}</span>
+              </div>
+              <div style="display:flex;gap:8px;justify-content:flex-end;align-items:center">
+                <span style="font-size:12px;color:var(--color-neutral-700);margin-right:auto"><kbd style="font-family:var(--mono);font-size:10.5px;padding:0 4px;border:1px solid var(--color-divider);border-radius:4px">S</kbd> sign</span>
+                <button class="btn btn-secondary" onClick="{{ openReject }}">Reject…</button>
+                <button class="btn btn-primary blueprint" onClick="{{ openApprove }}" style="padding:8px 16px"><i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>Approve…</button>
+              </div>
+            </div>
+          </sc-if>
+          <sc-if value="{{ signed }}">
+            <div style="display:flex;flex-direction:column;gap:6px;font-size:13px">
+              <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap"><span style="display:inline-flex;align-items:center;gap:5px;padding:2px 8px;font-size:12px;background:var(--st-{{ signed.kind }}-bg);color:var(--st-{{ signed.kind }}-fg);border:1px solid var(--st-{{ signed.kind }}-line);border-radius:6px">{{ signed.word }}</span><span>Signed by Priya Nair · <time dateTime="2026-10-08T06:16:00Z">8 Oct 2026, 11:46</time></span><span style="margin-left:auto;display:inline-flex;gap:4px;align-items:center;color:var(--st-ok-fg)"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z M9 12l2 2 4-4"></path></svg>Signature valid</span></div>
+              <span>Meaning: “{{ signed.meaning }}”</span>
+              <sc-if value="{{ signed.note }}"><span style="color:var(--color-neutral-700)">{{ signed.note }}</span></sc-if>
+              <span style="font-family:var(--mono);font-size:11px;color:var(--color-neutral-700);overflow-wrap:anywhere">sha256 {{ hashGrouped }}</span>
+            </div>
+          </sc-if>
+          <sc-if value="{{ showEp }}"><code style="align-self:flex-start;font-family:var(--mono);font-size:10.5px;padding:2px 6px;background:var(--color-accent-900);color:var(--color-bg)">POST …/review {outcome, meaning, override_reason, expected_record_sha256, email, pin}</code></sc-if>
+        </div>
+      </section>
+    </div>
+  </div>
+</sc-if>
+
+<sc-if value="{{ isChat }}" hint-placeholder-val="{{ false }}">
+  <div style="flex:1;min-height:0;display:grid;grid-template-columns:{{ chatCols }}">
+    <aside aria-label="Conversations" style="border-right:1px solid var(--color-divider);display:{{ convDisplay }};flex-direction:column;min-height:0">
+      <div style="padding:18px 16px 12px;display:flex;flex-direction:column;gap:10px">
+        <h1 style="font-size:28px;margin:0">Chat</h1>
+        <button class="btn btn-secondary" onClick="{{ newConv }}" style="justify-content:flex-start">+ New question</button>
+        <sc-if value="{{ showEp }}"><code style="align-self:flex-start;font-family:var(--mono);font-size:10.5px;padding:2px 6px;background:var(--color-accent-900);color:var(--color-bg)">GET /v1/conversations</code></sc-if>
+      </div>
+      <ul style="list-style:none;margin:0;padding:0 8px;overflow:auto;display:flex;flex-direction:column;gap:2px">
+        <sc-for list="{{ convs }}" as="c">
+          <li><button onClick="{{ c.go }}" aria-current="{{ c.current }}" style="width:100%;text-align:left;display:flex;flex-direction:column;gap:2px;padding:9px 10px;border:0;background:{{ c.bg }};color:var(--color-text);font:inherit;cursor:pointer" style-hover="background:color-mix(in srgb,var(--color-text) 6%,transparent)"><span style="font-weight:500;font-size:13.5px">{{ c.title }}</span><span style="font-size:12px;color:var(--color-neutral-700)">{{ c.scope }} · {{ c.when }}</span></button></li>
+        </sc-for>
+      </ul>
+    </aside>
+    <section aria-label="Conversation" style="display:flex;flex-direction:column;min-height:0">
+      <div style="padding:12px 28px;border-bottom:1px solid var(--color-divider);display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+        <h2 style="font-size:20px;margin:0;flex:1">{{ convTitle }}</h2>
+        <span class="tag tag-neutral">Scope: {{ convScope }}</span>
+      </div>
+      <div ref="{{ threadRef }}" style="flex:1;min-height:0;overflow:auto;padding:24px 28px">
+        <div style="max-width:760px;margin:0 auto;display:flex;flex-direction:column;gap:26px">
+          <sc-for list="{{ msgsV }}" as="m" hint-placeholder-count="2">
+            <sc-if value="{{ m.isUser }}">
+              <div style="display:flex;flex-direction:column;gap:3px"><span style="font-size:12px;color:var(--color-neutral-700)">You · {{ m.time }}</span><p style="margin:0;font-family:var(--font-heading);font-weight:600;font-size:21px;line-height:1.25">{{ m.text }}</p></div>
+            </sc-if>
+            <sc-if value="{{ m.isAnswer }}">
+              <article style="display:flex;flex-direction:column;gap:10px">
+                <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap"><span style="font-size:12px;color:var(--color-neutral-700)">DocForge · {{ m.time }}</span><span style="display:inline-flex;align-items:center;gap:4px;padding:1px 7px;font-size:11.5px;background:var(--st-{{ m.kind }}-bg);color:var(--st-{{ m.kind }}-fg);border:1px solid var(--st-{{ m.kind }}-line);border-radius:6px"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{ m.icon }}"></path></svg>{{ m.badge }}</span></div>
+                <p style="margin:0;font-size:16px;line-height:1.55;text-wrap:pretty"><sc-for list="{{ m.segs }}" as="g"><sc-if value="{{ g.isText }}">{{ g.t }}</sc-if><sc-if value="{{ g.isCite }}"><button onClick="{{ g.go }}" aria-label="Quote {{ g.n }}, show on page" style="margin:0 1px;padding:0 5px;border:1px solid var(--color-accent);background:transparent;color:var(--color-accent-700);font:600 11px/1.4 var(--font-body);cursor:pointer;vertical-align:2px;border-radius:4px" style-hover="background:var(--color-accent-100)">{{ g.n }}</button></sc-if></sc-for></p>
+                <sc-if value="{{ m.note }}"><div style="display:flex;gap:8px;padding:9px 12px;font-size:13px;line-height:1.45;background:var(--st-{{ m.kind }}-bg);border:1px solid var(--st-{{ m.kind }}-line);border-radius:6px"><span><strong style="font-weight:500;color:var(--st-{{ m.kind }}-fg)">{{ m.noteTitle }}</strong> {{ m.note }}</span></div></sc-if>
+                <sc-if value="{{ m.hasCites }}">
+                  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px;margin-top:4px">
+                    <sc-for list="{{ m.cites }}" as="c">
+                      <button onClick="{{ c.go }}" class="blueprint" style="text-align:left;padding:11px 13px;background:transparent;color:var(--color-text);font:inherit;cursor:pointer;display:flex;flex-direction:column;gap:5px" style-hover="background:color-mix(in srgb,var(--color-accent) 7%,transparent)"><i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+                        <span style="font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--color-accent-700)">{{ c.n }} · {{ c.file }} · page {{ c.page }}</span>
+                        <span style="font-size:13.5px;line-height:1.45;font-variant-numeric:tabular-nums">“{{ c.quote }}”</span>
+                        <span style="font-size:12px;color:var(--color-accent-700)">Show on page →</span>
+                      </button>
+                    </sc-for>
+                  </div>
+                </sc-if>
+              </article>
+            </sc-if>
+          </sc-for>
+          <sc-if value="{{ streaming }}">
+            <div style="display:flex;flex-direction:column;gap:8px">
+              <span style="font-size:12px;color:var(--color-neutral-700)">DocForge</span>
+              <ol aria-hidden="true" style="list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px">
+                <sc-for list="{{ stages }}" as="st">
+                  <li style="display:flex;gap:8px;align-items:center;font-size:14px;color:{{ st.fg }}"><span style="width:14px;height:14px;display:grid;place-items:center;border:1px solid {{ st.fg }};font-size:9px;border-radius:6px">{{ st.mark }}</span>{{ st.label }}</li>
+                </sc-for>
+              </ol>
+              <div style="display:flex"><button class="btn btn-ghost" onClick="{{ stopStream }}" style="font-size:13px">Stop</button><span style="font-size:12px;color:var(--color-neutral-700);align-self:center">Stopping keeps the answer in this conversation.</span></div>
+            </div>
+          </sc-if>
+          <div role="status" aria-live="polite" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)">{{ liveText }}</div>
+        </div>
+      </div>
+      <form onSubmit="{{ send }}" style="border-top:1px solid var(--color-divider);padding:14px 28px 16px">
+        <div style="max-width:760px;margin:0 auto;display:flex;flex-direction:column;gap:8px">
+          <label for="cq" style="font-size:12px;color:var(--color-neutral-700)">Ask a question. Every statement in the answer rests on a quote you can open.</label>
+          <div style="display:flex;gap:8px;align-items:flex-end">
+            <textarea id="cq" class="input" rows="2" value="{{ q }}" onChange="{{ onQ }}" onKeyDown="{{ onQKey }}" placeholder="e.g. Which orders from Medisynth are still waiting for an invoice?" style="min-height:52px;resize:none"></textarea>
+            <button type="submit" class="btn btn-primary blueprint" disabled="{{ streaming }}" style="padding:10px 18px"><i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>Ask</button>
+          </div>
+          <div style="display:flex;gap:12px;font-size:12px;color:var(--color-neutral-700)"><span>Enter to ask · Shift+Enter for a new line</span><sc-if value="{{ showEp }}"><code style="font-family:var(--mono);font-size:10.5px;padding:2px 6px;background:var(--color-accent-900);color:var(--color-bg)">POST /v1/chat/stream (SSE) {question, conversation_id}</code></sc-if></div>
+        </div>
+      </form>
+    </section>
+  </div>
+</sc-if>
+
+<sc-if value="{{ isDocuments }}" hint-placeholder-val="{{ false }}">
+  <div style="flex:1;min-height:0;overflow:auto">
+    <header style="display:flex;align-items:flex-end;gap:16px;flex-wrap:wrap;padding:22px 28px 16px;border-bottom:1px solid var(--color-divider)">
+      <div style="flex:1;min-width:240px"><h1 style="font-size:30px;margin:0">Documents</h1><p style="margin:2px 0 0;color:var(--color-neutral-700)">Every document in the organisation, newest first. Where each one is updates live.</p></div>
+      <sc-if value="{{ showEp }}"><code style="font-family:var(--mono);font-size:10.5px;padding:2px 6px;border-radius:4px;background:var(--color-accent-900);color:var(--color-bg)">GET /v1/documents?limit=&amp;before=&amp;doc_type=&amp;stage= · rows in progress: GET …/events</code></sc-if>
+      <button class="btn btn-primary blueprint" onClick="{{ goUpload }}" style="padding:8px 16px"><i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>Upload documents</button>
+    </header>
+    <div style="display:flex;gap:14px;flex-wrap:wrap;align-items:center;padding:14px 28px">
+      <div class="seg" role="radiogroup" aria-label="Document type">
+        <sc-for list="{{ docTypes }}" as="o" hint-placeholder-count="5"><label class="seg-opt"><input type="radio" name="dt" checked="{{ o.sel }}" onChange="{{ o.pick }}">{{ o.label }}</label></sc-for>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px"><label for="stf" style="font-size:13px;color:var(--color-neutral-700)">Where it is</label>
+        <select id="stf" class="input" value="{{ docStage }}" onChange="{{ onDocStage }}" style="width:auto;min-height:34px;padding:4px 10px"><option value="any">Any stage</option><option value="progress">In progress or retrying</option><option value="ready">Finished</option><option value="failed">Failed</option></select></div>
+      <span style="margin-left:auto;font-size:13px;color:var(--color-neutral-700)">{{ docsCountText }}</span>
+    </div>
+    <div style="padding:0 28px 28px;overflow-x:auto">
+      <table class="table" style="font-variant-numeric:tabular-nums;min-width:860px">
+        <thead><tr><th scope="col">Document</th><th scope="col">Type</th><th scope="col">Where it is</th><th scope="col" style="text-align:right">Pages</th><th scope="col">Chat</th><th scope="col">Received</th></tr></thead>
+        <tbody>
+          <sc-for list="{{ docsV }}" as="d" hint-placeholder-count="8">
+            <tr>
+              <td><button onClick="{{ d.open }}" style="display:flex;flex-direction:column;align-items:flex-start;padding:0;border:0;background:none;color:var(--color-text);font:inherit;text-align:left;cursor:pointer"><span style="font-weight:500">{{ d.file }}</span><sc-if value="{{ d.vText }}"><span style="font-size:12px;color:var(--color-neutral-700)">{{ d.vText }}</span></sc-if></button></td>
+              <td><span class="tag tag-accent">{{ d.typeLabel }}</span></td>
+              <td style="max-width:360px"><div style="display:flex;flex-direction:column;gap:4px">
+                <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap"><span style="display:inline-flex;align-items:center;padding:1px 8px;font-size:12px;border-radius:5px;background:var(--st-{{ d.kind }}-bg);color:var(--st-{{ d.kind }}-fg);border:1px solid var(--st-{{ d.kind }}-line)">{{ d.word }}</span>
+                  <sc-if value="{{ d.progress }}"><span aria-hidden="true" style="display:flex;gap:3px"><sc-for list="{{ d.segs }}" as="g"><span style="width:14px;height:4px;border-radius:2px;background:{{ g.bg }}"></span></sc-for></span></sc-if></div>
+                <sc-if value="{{ d.detailT }}"><span style="font-size:12.5px;line-height:1.4;color:var(--color-neutral-800)">{{ d.detailT }}</span></sc-if>
+              </div></td>
+              <td style="text-align:right">{{ d.pagesT }}</td>
+              <td style="font-size:13px">{{ d.chat }}</td>
+              <td style="font-size:13px;white-space:nowrap">{{ d.at }}</td>
+            </tr>
+          </sc-for>
+        </tbody>
+      </table>
+      <sc-if value="{{ docsNone }}"><p style="margin:24px 0;text-align:center;color:var(--color-neutral-700)">No documents match these filters.</p></sc-if>
+      <div style="display:flex;justify-content:center;padding:18px 0 0">
+        <sc-if value="{{ docsHasMore }}" hint-placeholder-val="{{ true }}"><button class="btn btn-secondary" onClick="{{ loadMoreDocs }}">Load more</button></sc-if>
+        <sc-if value="{{ docsEnd }}"><span style="font-size:13px;color:var(--color-neutral-700)">That is every document.</span></sc-if>
+      </div>
+    </div>
+  </div>
+</sc-if>
+
+<sc-if value="{{ isUpload }}" hint-placeholder-val="{{ false }}">
+  <div style="flex:1;min-height:0;overflow:auto">
+    <header style="display:flex;align-items:flex-end;gap:16px;flex-wrap:wrap;padding:22px 28px 16px;border-bottom:1px solid var(--color-divider)">
+      <div style="flex:1;min-width:240px"><h1 style="font-size:30px;margin:0">Upload</h1><p style="margin:2px 0 0;color:var(--color-neutral-700)">PDF, Word, Excel, PowerPoint or images (PNG, JPEG, TIFF). Up to 10 MB and 20 pages each.</p></div>
+      <sc-if value="{{ showEp }}"><code style="font-family:var(--mono);font-size:10.5px;padding:2px 6px;border-radius:4px;background:var(--color-accent-900);color:var(--color-bg)">POST /v1/documents (file, doc_type) → {created, document} · then GET …/events</code></sc-if>
+    </header>
+    <div style="padding:20px 28px 32px;display:flex;flex-direction:column;gap:18px;max-width:980px">
+      <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap"><span id="ut" style="font-size:13.5px">These files are</span>
+        <div class="seg" role="radiogroup" aria-labelledby="ut"><sc-for list="{{ upTypes }}" as="o" hint-placeholder-count="4"><label class="seg-opt"><input type="radio" name="ut" checked="{{ o.sel }}" onChange="{{ o.pick }}">{{ o.label }}</label></sc-for></div>
+        <span style="font-size:12.5px;color:var(--color-neutral-700)">Choose General for anything that is only to be searched and asked about.</span></div>
+      <label for="fi" onDragOver="{{ onDragOver }}" onDragLeave="{{ onDragLeave }}" onDrop="{{ onDrop }}" style="display:flex;flex-direction:column;align-items:center;gap:8px;padding:44px 20px;border:1.5px dashed {{ dropBorder }};border-radius:12px;background:{{ dropBg }};cursor:pointer;text-align:center">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--color-accent-700)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4 M17 8l-5-5-5 5 M12 3v12"></path></svg>
+        <strong style="font-weight:600;font-size:17px">Drop files here</strong>
+        <span style="color:var(--color-neutral-700)">or <span style="color:var(--color-accent-700);text-decoration:underline;text-underline-offset:3px">choose files</span>. Many at once is fine; each is checked on its own.</span>
+      </label>
+      <input id="fi" type="file" multiple="{{ true }}" onChange="{{ onFiles }}" style="position:absolute;width:1px;height:1px;opacity:0;pointer-events:none">
+      <div style="display:flex;align-items:baseline;gap:12px;flex-wrap:wrap"><h2 style="font-size:18px;margin:0">This session</h2><span style="font-size:13px;color:var(--color-neutral-700);font-variant-numeric:tabular-nums">{{ upSummary }}</span></div>
+      <ul aria-live="polite" style="list-style:none;margin:0;padding:0;border-top:1px solid var(--color-divider)">
+        <sc-for list="{{ upV }}" as="u" hint-placeholder-count="6">
+          <li style="display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px 16px;align-items:center;padding:12px 0;border-bottom:1px solid color-mix(in srgb,var(--color-text) 8%,transparent)">
+            <div style="min-width:0;display:flex;flex-direction:column;gap:5px">
+              <div style="display:flex;gap:10px;align-items:baseline;flex-wrap:wrap"><span style="font-weight:500;overflow-wrap:anywhere">{{ u.name }}</span><span style="font-size:12.5px;color:var(--color-neutral-700)">{{ u.meta }}</span></div>
+              <sc-if value="{{ u.isUploading }}"><div role="progressbar" aria-label="Uploading {{ u.name }}" aria-valuenow="{{ u.pct }}" aria-valuemin="0" aria-valuemax="100" style="height:6px;max-width:420px;border-radius:3px;background:var(--color-neutral-200);overflow:hidden"><div style="height:100%;width:{{ u.pct }}%;background:var(--color-accent);border-radius:3px;transition:width .4s"></div></div></sc-if>
+              <sc-if value="{{ u.hasSegs }}"><div style="display:flex;gap:10px;align-items:center;font-size:12.5px;color:var(--color-neutral-800)"><span aria-hidden="true" style="display:flex;gap:3px"><sc-for list="{{ u.segs }}" as="g"><span style="width:18px;height:4px;border-radius:2px;background:{{ g.bg }}"></span></sc-for></span>{{ u.stageT }}</div></sc-if>
+              <sc-if value="{{ u.msg }}"><span style="font-size:13px;line-height:1.4;color:var(--st-{{ u.msgKind }}-fg)">{{ u.msg }}</span></sc-if>
+            </div>
+            <div style="display:flex;gap:10px;align-items:center;justify-content:flex-end">
+              <span style="display:inline-flex;align-items:center;padding:1px 8px;font-size:12px;border-radius:5px;background:var(--st-{{ u.kind }}-bg);color:var(--st-{{ u.kind }}-fg);border:1px solid var(--st-{{ u.kind }}-line)">{{ u.word }}</span>
+              <sc-if value="{{ u.action }}"><button class="btn btn-secondary" onClick="{{ u.act }}" style="font-size:12.5px;padding:3px 10px">{{ u.action }}</button></sc-if>
+            </div>
+          </li>
+        </sc-for>
+      </ul>
+    </div>
+  </div>
+</sc-if>
+
+<sc-if value="{{ isSearch }}" hint-placeholder-val="{{ false }}">
+  <div style="flex:1;min-height:0;overflow:auto">
+    <header style="display:flex;flex-direction:column;gap:14px;padding:22px 28px 16px;border-bottom:1px solid var(--color-divider)">
+      <div style="display:flex;align-items:flex-end;gap:16px;flex-wrap:wrap"><div style="flex:1;min-width:240px"><h1 style="font-size:30px;margin:0">Search</h1><p style="margin:2px 0 0;color:var(--color-neutral-700)">Find passages across every document. Each result opens on its page with the passage outlined.</p></div>
+        <sc-if value="{{ showEp }}"><code style="font-family:var(--mono);font-size:10.5px;padding:2px 6px;border-radius:4px;background:var(--color-accent-900);color:var(--color-bg)">GET /v1/search?q=&amp;mode=hybrid|keyword&amp;doc_type= → results[].boxes, words_only</code></sc-if></div>
+      <form role="search" onSubmit="{{ searchSubmit }}" style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;max-width:980px">
+        <label for="sq" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)">Search the documents</label>
+        <input id="sq" class="input" type="search" value="{{ sq }}" onChange="{{ onSq }}" placeholder="Words, numbers, a batch, a GSTIN…" style="flex:1;min-width:240px;min-height:40px;font-size:15px">
+        <div class="seg" role="radiogroup" aria-label="How to match"><sc-for list="{{ smodes }}" as="o" hint-placeholder-count="2"><label class="seg-opt"><input type="radio" name="sm" checked="{{ o.sel }}" onChange="{{ o.pick }}">{{ o.label }}</label></sc-for></div>
+        <label for="sty" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)">Type</label>
+        <select id="sty" class="input" value="{{ stype }}" onChange="{{ onStype }}" style="width:auto;min-height:38px"><option value="all">All types</option><option value="invoice">Invoices</option><option value="purchase_order">Orders</option><option value="coa">Certificates</option><option value="general">General</option></select>
+      </form>
+    </header>
+    <div style="padding:16px 28px 32px;display:flex;flex-direction:column;gap:12px;max-width:980px">
+      <sc-if value="{{ degraded }}"><div role="status" style="padding:10px 14px;border-radius:8px;font-size:13.5px;background:var(--st-warn-bg);color:var(--st-warn-fg);border:1px solid var(--st-warn-line)"><strong style="font-weight:500">Only exact words were matched.</strong> <span style="color:var(--color-text)">Meaning-based search is unavailable right now, so passages that say the same thing in other words may be missing.</span></div></sc-if>
+      <sc-if value="{{ hasRes }}" hint-placeholder-val="{{ true }}"><p role="status" style="margin:0;font-size:13px;color:var(--color-neutral-700)">{{ resCount }} for “{{ sqShown }}”, best first</p></sc-if>
+      <sc-if value="{{ noRes }}"><div style="padding:36px 0;text-align:center;display:flex;flex-direction:column;gap:6px"><strong style="font-weight:500;font-size:16px">No passages contain “{{ sqShown }}”</strong><span style="color:var(--color-neutral-700)">Try fewer words, another spelling, or all types.</span></div></sc-if>
+      <sc-if value="{{ noQuery }}"><p style="margin:24px 0;color:var(--color-neutral-700)">Type to search. Try Paracetamol, Amoxicillin, AMX-2409-117 or GSTIN.</p></sc-if>
+      <ol style="list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:10px">
+        <sc-for list="{{ resultsV }}" as="r" hint-placeholder-count="4">
+          <li><button onClick="{{ r.go }}" style="width:100%;text-align:left;display:flex;flex-direction:column;gap:6px;padding:12px 14px;border:1px solid var(--color-divider);border-radius:8px;background:transparent;color:var(--color-text);font:inherit;cursor:pointer" style-hover="background:color-mix(in srgb,var(--color-accent) 6%,transparent);border-color:var(--color-accent-400)">
+            <span style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;font-size:13px"><span style="font-weight:500">{{ r.file }}</span><span class="tag tag-accent">{{ r.typeLabel }}</span><span style="color:var(--color-neutral-700)">Page {{ r.page }}</span><span style="margin-left:auto;font-size:12px;color:var(--color-neutral-700);font-variant-numeric:tabular-nums">Match {{ r.score }}</span></span>
+            <span style="font-size:14.5px;line-height:1.5;font-variant-numeric:tabular-nums"><sc-for list="{{ r.segs }}" as="g"><sc-if value="{{ g.hit }}"><mark style="background:var(--color-accent-200);color:inherit;border-radius:3px;padding:0 2px">{{ g.t }}</mark></sc-if><sc-if value="{{ g.plain }}">{{ g.t }}</sc-if></sc-for></span>
+            <span style="font-size:12.5px;color:var(--color-accent-700)">Show on page →</span>
+          </button></li>
+        </sc-for>
+      </ol>
+    </div>
+  </div>
+</sc-if>
+
+<sc-if value="{{ isKb }}" hint-placeholder-val="{{ false }}">
+  <div style="flex:1;min-height:0;overflow:auto">
+    <header style="display:flex;align-items:flex-end;gap:16px;flex-wrap:wrap;padding:22px 28px 16px;border-bottom:1px solid var(--color-divider)">
+      <div style="flex:1;min-width:240px"><h1 style="font-size:30px;margin:0">Knowledge bases</h1><p style="margin:2px 0 0;color:var(--color-neutral-700)">Group documents so questions are answered from that group only.</p></div>
+      <sc-if value="{{ showEp }}"><code style="font-family:var(--mono);font-size:10.5px;padding:2px 6px;border-radius:4px;background:var(--color-accent-900);color:var(--color-bg)">GET/POST /v1/collections · …/{id}/documents</code></sc-if>
+      <button class="btn btn-secondary" onClick="{{ openKbForm }}">+ New knowledge base</button>
+    </header>
+    <sc-if value="{{ kbForm }}">
+      <form onSubmit="{{ saveKb }}" style="margin:16px 28px 0;padding:16px;border:1px solid var(--color-divider);border-radius:10px;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,2fr) auto;gap:12px;align-items:end;max-width:980px">
+        <div class="field"><label for="kn">Name</label><input id="kn" class="input" value="{{ kbForm.name }}" onChange="{{ onKbName }}" autoFocus="{{ true }}"></div>
+        <div class="field"><label for="kd">What it holds</label><input id="kd" class="input" value="{{ kbForm.desc }}" onChange="{{ onKbDesc }}"></div>
+        <div style="display:flex;gap:8px"><button type="button" class="btn btn-secondary" onClick="{{ closeKbForm }}">Cancel</button><button type="submit" class="btn btn-primary">Make it</button></div>
+        <sc-if value="{{ kbForm.err }}"><p role="alert" style="grid-column:1/-1;margin:0;font-size:13px;color:var(--st-fail-fg)">{{ kbForm.err }}</p></sc-if>
+      </form>
+    </sc-if>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:24px;padding:20px 28px 32px;align-items:start">
+      <ul style="list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:10px">
+        <sc-for list="{{ kbsV }}" as="k" hint-placeholder-count="3">
+          <li><button onClick="{{ k.go }}" aria-current="{{ k.sel }}" style="width:100%;text-align:left;display:flex;flex-direction:column;gap:4px;padding:12px 14px;border:1px solid {{ k.line }};border-radius:10px;background:{{ k.bg }};color:var(--color-text);font:inherit;cursor:pointer" style-hover="border-color:var(--color-accent-400)"><span style="font-weight:600;font-size:15px">{{ k.name }}</span><span style="font-size:13px;line-height:1.4;color:var(--color-neutral-800)">{{ k.desc }}</span><span style="font-size:12px;color:var(--color-neutral-700)">{{ k.count }} · updated {{ k.updated }}</span></button></li>
+        </sc-for>
+      </ul>
+      <sc-if value="{{ kb }}" hint-placeholder-val="{{ true }}">
+        <section aria-label="{{ kb.name }}" style="grid-column:span 2;min-width:0;display:flex;flex-direction:column;gap:14px">
+          <div style="display:flex;gap:12px;align-items:flex-start;flex-wrap:wrap"><div style="flex:1;min-width:200px"><h2 style="font-size:22px;margin:0">{{ kb.name }}</h2><p style="margin:2px 0 0;color:var(--color-neutral-700)">{{ kb.desc }}</p></div>
+            <button class="btn btn-secondary" onClick="{{ addKbDocs }}">Add documents</button><button class="btn btn-ghost" onClick="{{ deleteKb }}" style="color:var(--st-fail-fg)">Delete</button></div>
+          <form onSubmit="{{ askKb }}" style="display:flex;gap:8px"><label for="kq" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)">Ask within {{ kb.name }}</label><input id="kq" class="input" value="{{ kbQ }}" onChange="{{ onKbQ }}" placeholder="Ask within this knowledge base"><button type="submit" class="btn btn-primary">Ask</button></form>
+          <div style="overflow-x:auto"><table class="table"><thead><tr><th scope="col">Document</th><th scope="col" style="text-align:right"><span style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)">Actions</span></th></tr></thead><tbody>
+            <sc-for list="{{ kbDocs }}" as="d"><tr><td>{{ d.file }}</td><td style="text-align:right"><button class="btn btn-ghost" onClick="{{ d.remove }}" aria-label="{{ d.aria }}" style="font-size:12.5px">Remove</button></td></tr></sc-for>
+          </tbody></table></div>
+          <sc-if value="{{ kbEmptyDocs }}"><p style="margin:0;color:var(--color-neutral-700)">No documents yet. Add some to ask within this knowledge base.</p></sc-if>
+          <p style="margin:0;font-size:12.5px;color:var(--color-neutral-700)">Removing a document here keeps it in DocForge.</p>
+        </section>
+      </sc-if>
+    </div>
+  </div>
+</sc-if>
+
+<sc-if value="{{ isEvals }}" hint-placeholder-val="{{ false }}">
+  <div style="flex:1;min-height:0;overflow:auto">
+    <header style="display:flex;align-items:flex-end;gap:16px;flex-wrap:wrap;padding:22px 28px 16px;border-bottom:1px solid var(--color-divider)">
+      <div style="flex:1;min-width:240px"><h1 style="font-size:30px;margin:0">Evals and cost</h1><p style="margin:2px 0 0;color:var(--color-neutral-700)">Measured, not claimed. Each figure comes from the latest run of the eval suites against labelled documents.</p></div>
+      <span style="font-size:13px;color:var(--color-neutral-700)">Last run <time dateTime="2026-10-07T16:40:00Z">7 Oct 2026, 22:10</time> · 6 suites</span>
+      <sc-if value="{{ showEp }}"><code style="font-family:var(--mono);font-size:10.5px;padding:2px 6px;border-radius:4px;background:var(--color-accent-900);color:var(--color-bg)">GET /v1/evals</code></sc-if>
+    </header>
+    <div style="padding:22px 28px 32px;display:flex;flex-direction:column;gap:28px;max-width:1180px">
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:20px">
+        <sc-for list="{{ metrics }}" as="m" hint-placeholder-count="4">
+          <div class="card blueprint" style="gap:6px;padding:16px"><i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+            <span style="font-size:12.5px;color:var(--color-neutral-700)">{{ m.label }}</span>
+            <span style="font-size:36px;font-weight:600;line-height:1.1;font-variant-numeric:tabular-nums">{{ m.value }}</span>
+            <span style="font-size:13px;line-height:1.4">{{ m.sub }}</span>
+            <span style="display:flex;gap:6px;align-items:center;font-size:12.5px;margin-top:4px"><span style="color:var(--color-neutral-700)">{{ m.target }}</span><span style="padding:0 7px;border-radius:5px;background:var(--st-{{ m.kind }}-bg);color:var(--st-{{ m.kind }}-fg);border:1px solid var(--st-{{ m.kind }}-line)">{{ m.word }}</span></span>
+          </div>
+        </sc-for>
+      </div>
+      <section style="display:flex;flex-direction:column;gap:10px"><h2 style="font-size:20px;margin:0">Suites</h2>
+        <div style="overflow-x:auto"><table class="table" style="font-variant-numeric:tabular-nums;min-width:720px"><thead><tr><th scope="col">Suite</th><th scope="col">Cases</th><th scope="col">Result</th><th scope="col">Target</th><th scope="col">Outcome</th></tr></thead><tbody>
+          <sc-for list="{{ suites }}" as="r"><tr><td style="font-weight:500">{{ r.name }}</td><td>{{ r.cases }}</td><td>{{ r.result }}</td><td style="color:var(--color-neutral-700)">{{ r.target }}</td><td><span style="padding:1px 8px;font-size:12px;border-radius:5px;background:var(--st-{{ r.kind }}-bg);color:var(--st-{{ r.kind }}-fg);border:1px solid var(--st-{{ r.kind }}-line)">{{ r.word }}</span></td></tr></sc-for>
+        </tbody></table></div>
+        <p style="margin:0;font-size:13px;color:var(--color-neutral-700)">A suite that misses its target is shown as missed. Hidden-instruction passages that got through are listed in the run report.</p>
+      </section>
+      <section style="display:flex;flex-direction:column;gap:10px;max-width:640px"><h2 style="font-size:20px;margin:0">Cost per item</h2>
+        <table class="table" style="font-variant-numeric:tabular-nums"><thead><tr><th scope="col">Item</th><th scope="col" style="text-align:right">Tokens, average</th><th scope="col" style="text-align:right">Cost</th></tr></thead><tbody>
+          <sc-for list="{{ costs }}" as="c"><tr><td>{{ c.item }}</td><td style="text-align:right">{{ c.tokens }}</td><td style="text-align:right;font-weight:500">{{ c.cost }}</td></tr></sc-for>
+        </tbody></table>
+      </section>
+    </div>
+  </div>
+</sc-if>
+
+<sc-if value="{{ isDenied }}" hint-placeholder-val="{{ false }}">
+  <div style="flex:1;display:grid;place-items:center;padding:28px">
+    <div role="alert" class="blueprint" style="max-width:440px;padding:28px;text-align:center;display:flex;flex-direction:column;gap:8px;align-items:center"><i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--color-neutral-700)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 11h14v10H5z M8 11V7a4 4 0 0 1 8 0v4"></path></svg>
+      <h1 style="font-size:22px;margin:0">Only administrators can see this page.</h1>
+      <p style="margin:0;color:var(--color-neutral-700)">Ask an administrator in your organisation if you need it.</p>
+      <button class="btn btn-secondary" onClick="{{ goQueue }}" style="margin-top:6px">Back to the review queue</button>
+    </div>
+  </div>
+</sc-if>
+
+<sc-if value="{{ isQuestions }}" hint-placeholder-val="{{ false }}">
+  <div style="flex:1;min-height:0;overflow:auto">
+    <header style="display:flex;align-items:flex-end;gap:16px;flex-wrap:wrap;padding:22px 28px 16px;border-bottom:1px solid var(--color-divider)">
+      <div style="flex:1;min-width:240px"><h1 style="font-size:30px;margin:0">Unanswered questions</h1><p style="margin:2px 0 0;color:var(--color-neutral-700)">What people asked that the documents could not answer, and why. Often a sign of a document worth adding.</p></div>
+      <sc-if value="{{ showEp }}"><code style="font-family:var(--mono);font-size:10.5px;padding:2px 6px;border-radius:4px;background:var(--color-accent-900);color:var(--color-bg)">GET /v1/questions/unanswered → questions, by_reason</code></sc-if>
+    </header>
+    <div style="padding:18px 28px 32px;display:flex;flex-direction:column;gap:16px">
+      <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center"><span style="font-size:13px;color:var(--color-neutral-700);margin-right:4px">{{ uqTotal }} in the last 30 days:</span>
+        <sc-for list="{{ byReason }}" as="r" hint-placeholder-count="5"><button onClick="{{ r.go }}" aria-pressed="{{ r.pressed }}" style="display:flex;gap:8px;align-items:center;padding:5px 11px;border:1px solid {{ r.line }};border-radius:999px;background:{{ r.bg }};color:var(--color-text);font:inherit;font-size:13px;cursor:pointer" style-hover="border-color:var(--color-accent)"><span style="font-weight:600;font-variant-numeric:tabular-nums">{{ r.n }}</span>{{ r.label }}</button></sc-for>
+      </div>
+      <div style="overflow-x:auto"><table class="table" style="min-width:900px"><thead><tr><th scope="col">Question</th><th scope="col">Why it was not answered</th><th scope="col">What was missing</th><th scope="col" style="text-align:right">Read</th><th scope="col">Asked by</th><th scope="col">When</th><th scope="col"><span style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)">Open</span></th></tr></thead><tbody>
+        <sc-for list="{{ uqV }}" as="u" hint-placeholder-count="5"><tr><td style="font-weight:500;max-width:300px">{{ u.q }}</td><td style="font-size:13px;max-width:240px">{{ u.why }}</td><td style="font-size:13px;color:var(--color-neutral-800)">{{ u.missingT }}</td><td style="text-align:right;font-variant-numeric:tabular-nums">{{ u.docsT }}</td><td style="font-size:13px">{{ u.owner }}</td><td style="font-size:13px;white-space:nowrap">{{ u.at }}</td><td><button class="btn btn-ghost" onClick="{{ u.open }}" style="font-size:12.5px">Conversation</button></td></tr></sc-for>
+      </tbody></table></div>
+    </div>
+  </div>
+</sc-if>
+
+<sc-if value="{{ isAgents }}" hint-placeholder-val="{{ false }}">
+  <div style="flex:1;min-height:0;overflow:auto">
+    <header style="display:flex;align-items:flex-end;gap:16px;flex-wrap:wrap;padding:22px 28px 16px;border-bottom:1px solid var(--color-divider)">
+      <div style="flex:1;min-width:240px"><h1 style="font-size:30px;margin:0">AI agents</h1><p style="margin:2px 0 0;color:var(--color-neutral-700)">Agents such as Claude Code read DocForge through MCP with a read-only key. They can search, ask and read values; they cannot upload, correct or sign.</p></div>
+      <sc-if value="{{ showEp }}"><code style="font-family:var(--mono);font-size:10.5px;padding:2px 6px;border-radius:4px;background:var(--color-accent-900);color:var(--color-bg)">GET/POST /v1/api-keys · DELETE …/{prefix} · GET /v1/agent-calls</code></sc-if>
+    </header>
+    <div style="padding:22px 28px 32px;display:flex;flex-direction:column;gap:28px;max-width:1100px">
+      <section class="card blueprint" style="padding:16px;gap:12px"><i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+        <h2 style="font-size:18px;margin:0">Connect an agent</h2>
+        <div style="display:flex;flex-direction:column;gap:4px"><span style="font-size:12.5px;color:var(--color-neutral-700)">Endpoint</span><div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap"><code style="font-family:var(--mono);font-size:13px;padding:6px 10px;border-radius:6px;background:var(--color-surface);overflow-wrap:anywhere">{{ mcpUrl }}</code><button class="btn btn-secondary" onClick="{{ copyUrl }}" style="font-size:12.5px">Copy</button></div></div>
+        <div style="display:flex;flex-direction:column;gap:4px"><span style="font-size:12.5px;color:var(--color-neutral-700)">Claude Code</span><div style="display:flex;gap:8px;align-items:flex-start;flex-wrap:wrap"><code style="flex:1;min-width:260px;font-family:var(--mono);font-size:12.5px;line-height:1.5;padding:8px 10px;border-radius:6px;background:var(--color-surface);overflow-wrap:anywhere">{{ mcpCmd }}</code><button class="btn btn-secondary" onClick="{{ copyCmd }}" style="font-size:12.5px">Copy</button></div></div>
+        <span style="font-size:12.5px;color:var(--color-neutral-700)">Six tools: list_knowledge_bases, list_documents, search_documents, ask, get_document, get_page_text. 60 calls a minute and 4 at once per key.</span>
+      </section>
+      <section style="display:flex;flex-direction:column;gap:12px">
+        <div style="display:flex;gap:12px;align-items:baseline"><h2 style="font-size:20px;margin:0">Keys</h2><span style="font-size:13px;color:var(--color-neutral-700)">{{ keyCount }}</span></div>
+        <form onSubmit="{{ makeKey }}" style="display:flex;gap:8px;align-items:flex-end;flex-wrap:wrap;max-width:620px"><div class="field" style="flex:1;min-width:220px"><label for="kname">Name of the agent or person using it</label><input id="kname" class="input" value="{{ keyName }}" onChange="{{ onKeyName }}" placeholder="e.g. Claude Code · QA team"></div><button type="submit" class="btn btn-primary blueprint" style="padding:8px 14px"><i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>Make a key</button></form>
+        <sc-if value="{{ keyErr }}"><p role="alert" style="margin:0;font-size:13px;color:var(--st-fail-fg)">{{ keyErr }}</p></sc-if>
+        <div style="overflow-x:auto"><table class="table" style="min-width:720px"><thead><tr><th scope="col">Name</th><th scope="col">Key starts</th><th scope="col">Access</th><th scope="col">Made</th><th scope="col">Last used</th><th scope="col"><span style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)">Revoke</span></th></tr></thead><tbody>
+          <sc-for list="{{ keysV }}" as="k" hint-placeholder-count="3"><tr><td style="font-weight:500">{{ k.name }}</td><td><code style="font-family:var(--mono);font-size:12.5px">dfk_{{ k.prefix }}…</code></td><td style="font-size:13px">Read only</td><td style="font-size:13px">{{ k.made }}</td><td style="font-size:13px">{{ k.last }}</td><td style="text-align:right"><button class="btn btn-ghost" onClick="{{ k.revoke }}" aria-label="{{ k.aria }}" style="font-size:12.5px;color:var(--st-fail-fg)">Revoke</button></td></tr></sc-for>
+        </tbody></table></div>
+      </section>
+      <section style="display:flex;flex-direction:column;gap:12px"><h2 style="font-size:20px;margin:0">Latest calls</h2>
+        <div style="overflow-x:auto"><table class="table" style="min-width:640px"><thead><tr><th scope="col">When</th><th scope="col">Key</th><th scope="col">Tool</th><th scope="col">Outcome</th></tr></thead><tbody>
+          <sc-for list="{{ callsV }}" as="c" hint-placeholder-count="4"><tr><td style="font-size:13px;white-space:nowrap;font-variant-numeric:tabular-nums">{{ c.at }}</td><td style="font-size:13px">{{ c.key }}</td><td><code style="font-family:var(--mono);font-size:12.5px">{{ c.tool }}</code></td><td><span style="padding:1px 8px;font-size:12px;border-radius:5px;background:var(--st-{{ c.kind }}-bg);color:var(--st-{{ c.kind }}-fg);border:1px solid var(--st-{{ c.kind }}-line)">{{ c.word }}</span></td></tr></sc-for>
+        </tbody></table></div>
+      </section>
+    </div>
+  </div>
+</sc-if>
+
+<sc-if value="{{ isAudit }}" hint-placeholder-val="{{ false }}">
+  <div style="flex:1;min-height:0;overflow:auto">
+    <header style="display:flex;align-items:flex-end;gap:12px;flex-wrap:wrap;padding:22px 28px 16px;border-bottom:1px solid var(--color-divider)">
+      <div style="flex:1;min-width:240px"><h1 style="font-size:30px;margin:0">Audit log</h1><p style="margin:2px 0 0;color:var(--color-neutral-700)">Every action in the organisation, append-only and hash-chained.</p></div>
+      <sc-if value="{{ showEp }}"><code style="font-family:var(--mono);font-size:10.5px;padding:2px 6px;border-radius:4px;background:var(--color-accent-900);color:var(--color-bg)">GET /v1/audit · /filters · /export.csv · /verification</code></sc-if>
+      <button class="btn btn-secondary" onClick="{{ exportCsv }}">Export CSV</button>
+      <button class="btn btn-primary blueprint" onClick="{{ runVerify }}" disabled="{{ verifyRunning }}" style="padding:8px 14px"><i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>Verify the chain</button>
+    </header>
+    <div style="padding:16px 28px 32px;display:flex;flex-direction:column;gap:14px">
+      <div aria-live="polite">
+        <sc-if value="{{ verifyRunning }}"><p style="margin:0;font-size:13.5px;color:var(--color-neutral-700)">Checking every entry’s hash against the one before it…</p></sc-if>
+        <sc-if value="{{ verifyOk }}"><div style="display:flex;flex-direction:column;gap:4px;padding:12px 14px;border-radius:8px;background:var(--st-ok-bg);border:1px solid var(--st-ok-line)"><span style="display:flex;gap:8px;align-items:center;color:var(--st-ok-fg);font-weight:500"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z M9 12l2 2 4-4"></path></svg>Verified: 48,233 entries, chain intact.</span><span style="font-size:13px">No outside anchor was checked, so a complete rewrite of the log would not be detected by this check alone.</span></div></sc-if>
+      </div>
+      <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end">
+        <div class="field"><label for="aa">Action</label><select id="aa" class="input" value="{{ af.action }}" onChange="{{ onAfAction }}" style="min-height:34px;width:auto"><option value="">Any action</option><sc-for list="{{ actionOpts }}" as="o"><option value="{{ o.v }}">{{ o.label }}</option></sc-for></select></div>
+        <div class="field"><label for="aw">Who</label><select id="aw" class="input" value="{{ af.who }}" onChange="{{ onAfWho }}" style="min-height:34px;width:auto"><option value="">Anyone</option><sc-for list="{{ whoOpts }}" as="o"><option value="{{ o }}">{{ o }}</option></sc-for></select></div>
+        <div class="field"><label for="af">From</label><input id="af" type="date" class="input" value="{{ af.from }}" onChange="{{ onAfFrom }}" style="min-height:34px;width:auto"></div>
+        <div class="field"><label for="at">To, including</label><input id="at" type="date" class="input" value="{{ af.to }}" onChange="{{ onAfTo }}" style="min-height:34px;width:auto"></div>
+        <button class="btn btn-ghost" onClick="{{ clearAf }}">Clear filters</button>
+        <code style="margin-left:auto;font-family:var(--mono);font-size:11.5px;color:var(--color-neutral-700);overflow-wrap:anywhere" title="Filters are kept in the address, so a view can be shared">{{ auditUrl }}</code>
+      </div>
+      <div style="overflow-x:auto"><table class="table" style="font-variant-numeric:tabular-nums;min-width:900px"><thead><tr><th scope="col" style="text-align:right">Entry</th><th scope="col">When</th><th scope="col">Who</th><th scope="col">Action</th><th scope="col">On</th><th scope="col">Details</th></tr></thead><tbody>
+        <sc-for list="{{ auditV }}" as="a" hint-placeholder-count="8"><tr><td style="text-align:right;font-family:var(--mono);font-size:12.5px">{{ a.id }}</td><td style="font-size:13px;white-space:nowrap"><time dateTime="{{ a.iso }}">{{ a.at }}</time></td><td style="font-size:13px">{{ a.who }}</td><td style="font-weight:500">{{ a.label }}</td><td style="font-size:13px;overflow-wrap:anywhere">{{ a.target }}</td><td style="font-size:13px;color:var(--color-neutral-800)">{{ a.details }}</td></tr></sc-for>
+      </tbody></table></div>
+      <sc-if value="{{ auditNone }}"><p style="margin:12px 0;text-align:center;color:var(--color-neutral-700)">No entries match these filters.</p></sc-if>
+      <div style="display:flex;justify-content:center">
+        <sc-if value="{{ auditHasMore }}" hint-placeholder-val="{{ true }}"><button class="btn btn-secondary" onClick="{{ loadMoreAudit }}">Load more</button></sc-if>
+        <sc-if value="{{ auditEnd }}"><span style="font-size:13px;color:var(--color-neutral-700)">Older entries load the same way.</span></sc-if>
+      </div>
+    </div>
+  </div>
+</sc-if>
+
+<sc-if value="{{ isHooks }}" hint-placeholder-val="{{ false }}">
+  <div style="flex:1;min-height:0;overflow:auto">
+    <header style="display:flex;align-items:flex-end;gap:12px;flex-wrap:wrap;padding:22px 28px 16px;border-bottom:1px solid var(--color-divider)">
+      <div style="flex:1;min-width:240px"><h1 style="font-size:30px;margin:0">Webhooks</h1><p style="margin:2px 0 0;color:var(--color-neutral-700)">Tell other systems when something happens. Every delivery is signed with the webhook’s secret in the DocForge-Signature header.</p></div>
+      <sc-if value="{{ showEp }}"><code style="font-family:var(--mono);font-size:10.5px;padding:2px 6px;border-radius:4px;background:var(--color-accent-900);color:var(--color-bg)">GET/POST /v1/webhooks · PATCH · /secret · /test · /deliveries · …/resend</code></sc-if>
+      <span style="font-size:13px;color:var(--color-neutral-700)">{{ hookCount }}</span>
+      <button class="btn btn-secondary" onClick="{{ openHookForm }}">+ New webhook</button>
+    </header>
+    <div style="padding:18px 28px 32px;display:flex;flex-direction:column;gap:22px;max-width:1180px">
+      <sc-if value="{{ hookForm }}">
+        <form onSubmit="{{ saveHook }}" style="padding:16px;border:1px solid var(--color-divider);border-radius:10px;display:flex;flex-direction:column;gap:12px">
+          <div class="field"><label for="hu">Receiver address (https)</label><input id="hu" class="input" value="{{ hookForm.url }}" onChange="{{ onHookUrl }}" placeholder="https://erp.example.in/docforge/events" autoFocus="{{ true }}"></div>
+          <fieldset style="border:0;margin:0;padding:0;display:flex;flex-direction:column;gap:6px"><legend style="font-size:12px;color:var(--color-neutral-700);padding:0;margin-bottom:4px">Send these events</legend>
+            <sc-for list="{{ hookEvents }}" as="ev"><label style="display:flex;gap:8px;align-items:baseline;font-size:14px;cursor:pointer"><input type="checkbox" checked="{{ ev.on }}" onChange="{{ ev.toggle }}" style="accent-color:var(--color-accent)"><code style="font-family:var(--mono);font-size:12.5px">{{ ev.v }}</code><span style="color:var(--color-neutral-700);font-size:13px">{{ ev.d }}</span></label></sc-for>
+          </fieldset>
+          <sc-if value="{{ hookForm.err }}"><p role="alert" style="margin:0;font-size:13px;color:var(--st-fail-fg)">{{ hookForm.err }}</p></sc-if>
+          <div style="display:flex;gap:8px;justify-content:flex-end"><button type="button" class="btn btn-secondary" onClick="{{ closeHookForm }}">Cancel</button><button type="submit" class="btn btn-primary">Make webhook</button></div>
+        </form>
+      </sc-if>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(360px,1fr));gap:16px">
+        <sc-for list="{{ hooksV }}" as="h" hint-placeholder-count="2">
+          <div onClick="{{ h.go }}" style="display:flex;flex-direction:column;gap:10px;padding:14px 16px;border:1px solid {{ h.lineC }};border-radius:10px;cursor:pointer">
+            <div style="display:flex;gap:10px;align-items:center"><code style="flex:1;min-width:0;font-family:var(--mono);font-size:13px;overflow-wrap:anywhere" title="Path and query hidden: they can hold the receiver’s token">{{ h.url }}</code>
+              <button role="switch" aria-checked="{{ h.ariaChecked }}" aria-label="Webhook to {{ h.url }} is on" onClick="{{ h.toggle }}" style="flex:none;position:relative;width:38px;height:22px;border-radius:11px;border:0;background:{{ h.swBg }};cursor:pointer"><span style="position:absolute;top:3px;left:{{ h.knob }};width:16px;height:16px;border-radius:50%;background:#fff;transition:left .15s"></span></button><span style="font-size:13px;min-width:22px">{{ h.activeT }}</span></div>
+            <div style="display:flex;gap:6px;flex-wrap:wrap"><sc-for list="{{ h.eventsV }}" as="e"><span class="tag tag-neutral" style="font-family:var(--mono)">{{ e }}</span></sc-for></div>
+            <div style="display:flex;gap:10px;flex-wrap:wrap;font-size:12.5px;align-items:center"><span style="padding:1px 8px;border-radius:5px;background:var(--st-{{ h.lastKind }}-bg);color:var(--st-{{ h.lastKind }}-fg);border:1px solid var(--st-{{ h.lastKind }}-line)">{{ h.lastWord }}</span><span style="color:var(--color-neutral-700)">Secret: {{ h.rotated }}</span></div>
+            <div style="display:flex;gap:6px;flex-wrap:wrap"><button class="btn btn-secondary" onClick="{{ h.test }}" aria-label="{{ h.testAria }}" style="font-size:12.5px;padding:4px 10px">Send test</button><button class="btn btn-secondary" onClick="{{ h.rotate }}" aria-label="{{ h.rotAria }}" style="font-size:12.5px;padding:4px 10px">New secret…</button><button class="btn btn-ghost" onClick="{{ h.del }}" aria-label="{{ h.delAria }}" style="font-size:12.5px;color:var(--st-fail-fg);margin-left:auto">Delete</button></div>
+          </div>
+        </sc-for>
+      </div>
+      <sc-if value="{{ hk }}" hint-placeholder-val="{{ true }}">
+        <section style="display:flex;flex-direction:column;gap:12px">
+          <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap"><h2 style="font-size:20px;margin:0">Deliveries to <code style="font-family:var(--mono);font-size:15px;font-weight:500">{{ hk.url }}</code></h2>
+            <div class="seg" role="radiogroup" aria-label="Show deliveries" style="margin-left:auto"><sc-for list="{{ delFilters }}" as="o" hint-placeholder-count="4"><label class="seg-opt"><input type="radio" name="dfl" checked="{{ o.sel }}" onChange="{{ o.pick }}">{{ o.label }}</label></sc-for></div></div>
+          <div style="overflow-x:auto"><table class="table" style="font-variant-numeric:tabular-nums;min-width:820px"><thead><tr><th scope="col">Event</th><th scope="col">Status</th><th scope="col" style="text-align:right">Tries</th><th scope="col">Last answer</th><th scope="col">What happened</th><th scope="col">When</th><th scope="col"><span style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)">Re-send</span></th></tr></thead><tbody>
+            <sc-for list="{{ delsV }}" as="d" hint-placeholder-count="4"><tr><td><code style="font-family:var(--mono);font-size:12.5px">{{ d.ev }}</code></td><td><span style="padding:1px 8px;font-size:12px;border-radius:5px;background:var(--st-{{ d.kind }}-bg);color:var(--st-{{ d.kind }}-fg);border:1px solid var(--st-{{ d.kind }}-line)">{{ d.word }}</span></td><td style="text-align:right">{{ d.attempts }}</td><td>{{ d.code }}</td><td style="font-size:13px;max-width:280px">{{ d.errT }}</td><td style="font-size:13px;white-space:nowrap">{{ d.at }}</td><td style="text-align:right"><sc-if value="{{ d.canResend }}"><button class="btn btn-secondary" onClick="{{ d.resend }}" style="font-size:12.5px;padding:3px 10px">Send again</button></sc-if></td></tr></sc-for>
+          </tbody></table></div>
+          <sc-if value="{{ delsNone }}"><p style="margin:0;color:var(--color-neutral-700)">No deliveries with this status.</p></sc-if>
+          <p style="margin:0;font-size:12.5px;color:var(--color-neutral-700)">A 2xx answer counts as delivered. Anything else is retried for about half an hour with the same DocForge-Event-Id.</p>
+        </section>
+      </sc-if>
+    </div>
+  </div>
+</sc-if>
+</main>
+
+<sc-if value="{{ sign }}">
+  <div class="dialog-backdrop" onClick="{{ backdropClose }}" style="z-index:20">
+    <div class="dialog" role="dialog" aria-modal="true" aria-labelledby="sgt" onClick="{{ stop }}" style="width:min(520px,100%);background:var(--color-bg);max-height:calc(100vh - 40px);overflow:auto">
+      <sc-if value="{{ signForm }}" hint-placeholder-val="{{ true }}">
+        <form onSubmit="{{ submitSign }}" style="display:flex;flex-direction:column;gap:16px">
+          <div style="display:flex;flex-direction:column;gap:2px"><span style="font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--color-neutral-700)">Electronic signature</span><h2 id="sgt" class="dialog-title" style="margin:0;font-size:24px">{{ signTitle }}</h2></div>
+          <div class="seg" role="radiogroup" aria-label="Outcome" style="align-self:flex-start">
+            <label class="seg-opt"><input type="radio" name="oc" checked="{{ sign.isApprove }}" onChange="{{ setApprove }}">Approve</label>
+            <label class="seg-opt"><input type="radio" name="oc" checked="{{ sign.isReject }}" onChange="{{ setReject }}">Reject</label>
+          </div>
+          <fieldset style="border:0;margin:0;padding:0;display:flex;flex-direction:column;gap:8px">
+            <legend style="font-size:12.5px;color:var(--color-neutral-700);margin-bottom:6px;padding:0">What your signature means</legend>
+            <sc-for list="{{ meaningsV }}" as="mn">
+              <label class="radio" style="font-size:14.5px"><input type="radio" name="mn" checked="{{ mn.sel }}" onChange="{{ mn.pick }}"><span class="dot"></span>{{ mn.text }}</label>
+            </sc-for>
+          </fieldset>
+          <sc-if value="{{ needOverride }}">
+            <div style="display:flex;flex-direction:column;gap:8px;padding:12px;border:1px solid var(--st-warn-line);background:var(--st-warn-bg);border-radius:6px">
+              <strong style="font-weight:500;color:var(--st-warn-fg);font-size:13.5px">{{ blockerTitle }}</strong>
+              <ul style="margin:0;padding-left:18px;font-size:13px;line-height:1.45"><sc-for list="{{ blockersV }}" as="k"><li>{{ k.text }}</li></sc-for></ul>
+              <div class="field"><label for="ov" style="color:var(--color-text)">Why approve anyway? (required)</label><textarea id="ov" class="input" value="{{ sign.override }}" onChange="{{ onOverride }}" style="min-height:64px;background:var(--color-bg)"></textarea></div>
+            </div>
+          </sc-if>
+          <sc-if value="{{ sign.isReject }}">
+            <div class="field"><label for="rr">Reason for rejecting (required)</label><textarea id="rr" class="input" value="{{ sign.reason }}" onChange="{{ onReason }}" style="min-height:64px"></textarea></div>
+          </sc-if>
+          <div style="display:flex;flex-direction:column;gap:6px">
+            <label for="pin" style="font-size:12.5px;color:var(--color-neutral-700)">Signing as Priya Nair (priya.nair@arogya.in). Enter your 6-digit PIN.</label>
+            <div style="position:relative;display:flex;gap:8px;align-self:flex-start">
+              <sc-for list="{{ pinCells }}" as="pc" hint-placeholder-count="6"><span aria-hidden="true" style="width:42px;height:48px;display:grid;place-items:center;border:1px solid {{ pc.border }};box-shadow:{{ pc.ring }};font-size:22px;background:var(--color-surface);border-radius:8px">{{ pc.ch }}</span></sc-for>
+              <input id="pin" type="password" inputMode="numeric" autoComplete="off" maxLength="6" value="{{ sign.pin }}" onChange="{{ onPin }}" onFocus="{{ pinOn }}" onBlur="{{ pinOff }}" autoFocus="{{ true }}" style="position:absolute;inset:0;opacity:0;width:100%;height:100%;cursor:text">
+            </div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:4px;padding:10px 12px;background:var(--color-surface)">
+            <span style="font-size:12px;color:var(--color-neutral-700)">You are signing the record with this fingerprint. If it changes before you sign, the signature is refused.</span>
+            <span style="font-family:var(--mono);font-size:12px;overflow-wrap:anywhere">sha256 {{ hashGrouped }}</span>
+          </div>
+          <sc-if value="{{ sign.err }}"><p role="alert" style="margin:0;padding:9px 12px;font-size:13px;background:var(--st-fail-bg);color:var(--st-fail-fg);border:1px solid var(--st-fail-line);border-radius:6px">{{ sign.err }}</p></sc-if>
+          <div class="dialog-actions" style="margin:0">
+            <button type="button" class="btn btn-secondary" onClick="{{ closeSign }}">Cancel</button>
+            <button type="submit" class="btn btn-primary blueprint" style="padding:8px 16px"><i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>{{ signCta }}</button>
+          </div>
+          <sc-if value="{{ showEp }}"><code style="align-self:flex-start;font-family:var(--mono);font-size:10.5px;padding:2px 6px;background:var(--color-accent-900);color:var(--color-bg)">meanings from /review · 409 → stale · 401 → wrong PIN · 429 → locked</code></sc-if>
+        </form>
+      </sc-if>
+      <sc-if value="{{ signStale }}">
+        <div style="display:flex;flex-direction:column;gap:14px">
+          <div style="display:flex;gap:10px;align-items:center;color:var(--st-fail-fg)"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a9 9 0 1 1-3-6.7L21 8 M21 3v5h-5"></path></svg><h2 id="sgt" class="dialog-title" style="margin:0;font-size:22px;color:var(--color-text)">This record changed since you opened it</h2></div>
+          <p role="alert" style="margin:0;line-height:1.5">Aisha Khan corrected <strong style="font-weight:500">Invoice total</strong> at 11:42. Nothing was signed. Reload to see the current record, then sign again.</p>
+          <dl style="margin:0;display:grid;grid-template-columns:auto 1fr;gap:4px 12px;font-family:var(--mono);font-size:11.5px;overflow-wrap:anywhere"><dt style="font-family:var(--font-body);color:var(--color-neutral-700)">You saw</dt><dd style="margin:0;text-decoration:line-through;color:var(--color-neutral-700)">{{ hashShort }}</dd><dt style="font-family:var(--font-body);color:var(--color-neutral-700)">Now</dt><dd style="margin:0">4b7d20e9 … f7a94e16</dd></dl>
+          <div class="dialog-actions" style="margin:0"><button class="btn btn-secondary" onClick="{{ closeSign }}">Close</button><button class="btn btn-primary blueprint" onClick="{{ reloadRecord }}"><i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>Reload record</button></div>
+        </div>
+      </sc-if>
+    </div>
+  </div>
+</sc-if>
+
+<sc-if value="{{ confirm }}">
+  <div class="dialog-backdrop" style="z-index:21">
+    <div class="dialog" role="alertdialog" aria-modal="true" aria-labelledby="cft" aria-describedby="cfb" style="background:var(--color-bg)">
+      <h2 id="cft" class="dialog-title" style="margin:0">{{ confirm.title }}</h2>
+      <p id="cfb" class="dialog-body" style="margin:0;line-height:1.5">{{ confirm.body }}</p>
+      <div class="dialog-actions"><button class="btn btn-secondary" onClick="{{ confirmClose }}" autoFocus="{{ true }}">Cancel</button><button class="btn btn-primary" onClick="{{ confirmGo }}" style="background:var(--st-fail-fg);border-color:var(--st-fail-fg)">{{ confirm.cta }}</button></div>
+    </div>
+  </div>
+</sc-if>
+
+<sc-if value="{{ secret }}">
+  <div class="dialog-backdrop" style="z-index:22">
+    <div class="dialog" role="dialog" aria-modal="true" aria-labelledby="sct" style="width:min(520px,100%);background:var(--color-bg)">
+      <h2 id="sct" class="dialog-title" style="margin:0">{{ secret.title }}</h2>
+      <p class="dialog-body" style="margin:0;line-height:1.5">{{ secret.body }}</p>
+      <div style="display:flex;gap:8px;align-items:stretch"><code tabindex="0" aria-label="The secret" style="flex:1;min-width:0;font-family:var(--mono);font-size:13px;line-height:1.5;padding:10px 12px;border-radius:8px;background:var(--color-surface);border:1px solid var(--color-divider);overflow-wrap:anywhere;user-select:all">{{ secret.value }}</code><button class="btn btn-secondary" onClick="{{ copySecret }}" autoFocus="{{ true }}" style="flex:none">{{ copyLabel }}</button></div>
+      <p role="status" style="margin:0;font-size:12.5px;color:var(--st-warn-fg)">It is not stored in DocForge in readable form and cannot be shown again.</p>
+      <div class="dialog-actions"><button class="btn btn-primary blueprint" onClick="{{ secretDone }}" style="padding:8px 16px"><i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>Done, I have copied it</button></div>
+    </div>
+  </div>
+</sc-if>
+
+<sc-if value="{{ isLogin }}">
+  <div style="position:fixed;inset:0;z-index:40;display:grid;place-items:center;padding:20px;background-color:var(--color-bg);background-image:linear-gradient(color-mix(in srgb,var(--color-text) 5%,transparent) 1px,transparent 1px),linear-gradient(90deg,color-mix(in srgb,var(--color-text) 5%,transparent) 1px,transparent 1px);background-size:28px 28px">
+    <form onSubmit="{{ doLogin }}" class="blueprint" aria-labelledby="lgt" style="width:min(400px,100%);padding:28px;display:flex;flex-direction:column;gap:14px;background:var(--color-bg);box-shadow:var(--shadow-md)"><i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+      <div style="display:flex;flex-direction:column;gap:2px"><span style="font-weight:600;font-size:15px;color:var(--color-accent-700)">DocForge</span><h1 id="lgt" style="font-size:26px;margin:0">Sign in</h1></div>
+      <div class="field"><label for="lo">Organisation</label><input id="lo" class="input" value="{{ login.org }}" onChange="{{ onLgOrg }}" autoComplete="organization"></div>
+      <div class="field"><label for="le">Email</label><input id="le" class="input" type="email" value="{{ login.email }}" onChange="{{ onLgEmail }}" autoComplete="username"></div>
+      <div class="field"><label for="lp">PIN</label><input id="lp" class="input" type="password" inputMode="numeric" maxLength="6" value="{{ login.pin }}" onChange="{{ onLgPin }}" autoComplete="current-password" autoFocus="{{ true }}" style="letter-spacing:.4em;font-size:18px"></div>
+      <sc-if value="{{ login.err }}"><p role="alert" style="margin:0;padding:9px 12px;border-radius:8px;font-size:13px;line-height:1.45;background:var(--st-{{ login.err.kind }}-bg);color:var(--st-{{ login.err.kind }}-fg);border:1px solid var(--st-{{ login.err.kind }}-line)">{{ login.err.text }}</p></sc-if>
+      <button type="submit" class="btn btn-primary blueprint" style="padding:10px;font-size:15px"><i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>Sign in</button>
+      <p style="margin:0;font-size:12px;color:var(--color-neutral-700)">You stay signed in for 8 hours. Mockup: any 6 digits signs in; 111111 shows wrong details, 999999 the 15-minute lock.</p>
+    </form>
+  </div>
+</sc-if>
+
+<sc-if value="{{ toast }}">
+  <div role="status" aria-live="polite" class="blueprint" style="position:fixed;left:50%;bottom:24px;transform:translateX(-50%);z-index:30;display:flex;gap:14px;align-items:center;padding:11px 16px;background:var(--color-accent-900);color:var(--color-bg);border-color:var(--color-accent-900);box-shadow:var(--shadow-lg);max-width:min(620px,calc(100vw - 32px));font-size:14px"><i class="corner tl"></i><i class="corner br"></i>
+    <span>{{ toast.text }}</span>
+    <sc-if value="{{ toast.action }}"><button onClick="{{ toastAction }}" style="flex:none;border:1px solid color-mix(in srgb,var(--color-bg) 50%,transparent);background:transparent;color:var(--color-bg);font:600 13px var(--font-heading);padding:4px 10px;cursor:pointer;border-radius:6px">{{ toast.action }}</button></sc-if>
+  </div>
+</sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;theme&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;light&quot;,&quot;dark&quot;],&quot;default&quot;:&quot;light&quot;,&quot;tsType&quot;:&quot;'light'|'dark'&quot;},&quot;role&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;reviewer&quot;,&quot;admin&quot;],&quot;default&quot;:&quot;reviewer&quot;,&quot;tsType&quot;:&quot;'reviewer'|'admin'&quot;},&quot;queueState&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;normal&quot;,&quot;loading&quot;,&quot;empty&quot;,&quot;error&quot;,&quot;rateLimited&quot;,&quot;offline&quot;],&quot;default&quot;:&quot;normal&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;States&quot;},&quot;signOutcome&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;success&quot;,&quot;wrongPin&quot;,&quot;stale&quot;],&quot;default&quot;:&quot;success&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;States&quot;},&quot;degraded&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;States&quot;},&quot;showEndpoints&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Engineer notes&quot;}}">
+const IC = {
+  inbox: 'M22 12h-6l-2 3h-4l-2-3H2 M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z',
+  file: 'M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z M14 2v6h6 M16 13H8 M16 17H8 M10 9H8',
+  upload: 'M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4 M17 8l-5-5-5 5 M12 3v12',
+  search: 'M11 3a8 8 0 1 0 0 16 8 8 0 0 0 0-16z M21 21l-4.3-4.3',
+  chat: 'M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z',
+  book: 'M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20',
+  help: 'M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20z M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3 M12 17h.01',
+  bot: 'M12 8V4H8 M6 8h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2z M2 14h2 M20 14h2 M15 13v2 M9 13v2',
+  shield: 'M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z M9 12l2 2 4-4',
+  hook: 'M18 16.98h-5.99c-1.1 0-1.95.94-2.48 1.9A4 4 0 0 1 2 17c.01-.7.2-1.4.57-2 M6 17l3.13-5.78c.53-.97.1-2.18-.5-3.1a4 4 0 1 1 6.89-4.06 M12 6l3.13 5.73C15.66 12.7 16.9 13 18 13a4 4 0 0 1 0 8',
+  chart: 'M3 3v18h18 M18 17V9 M13 17V5 M8 17v-3',
+  check: 'M20 6 9 17l-5-5',
+  x: 'M18 6 6 18 M6 6l12 12',
+  warn: 'M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z M12 9v4 M12 17h.01',
+  compare: 'M18 21a3 3 0 1 0 0-6 3 3 0 0 0 0 6z M6 9a3 3 0 1 0 0-6 3 3 0 0 0 0 6z M13 6h3a2 2 0 0 1 2 2v7 M11 18H8a2 2 0 0 1-2-2V9',
+  minus: 'M5 12h14',
+  pen: 'M12 20h9 M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4z'
+};
+const RICON = { 'Check failed': IC.x, 'Uncertain value': IC.help, 'Does not match its order': IC.compare, 'Not linked yet': IC.help };
+const HASH0 = '9f3ce1b07a4d52c8e6f1a2b9d04c7e35b81f6a90c2d3e47f5a6b8c9d0e1f2a71';
+const HASH1 = '4b7d20e9c3a15f86d2e04b9a7c61f3e58a0d9b27e4c6f1a3b5d8e0c2f7a94e16';
+const grp = h => h.match(/.{8}/g).join(' ');
+
+const QUEUE = [
+  { short: 'Invoice', type: 'Invoice', file: 'MS-INV-04417.pdf', who: 'Medisynth Pharma · ₹4,12,877.60', at: '6 Oct, 09:12', iso: '2026-10-06T03:42:04Z', waited: '2 days', v: 1, reasons: [
+    { kind: 'fail', label: 'Check failed', text: 'Total is ₹180.00 more than the lines plus IGST' },
+    { kind: 'warn', label: 'Uncertain value', text: 'Line 2 quantity read at 61%' },
+    { kind: 'fail', label: 'Does not match its order', text: 'Line 2: 1,200 billed, 1,000 ordered on PO-88213' }] },
+  { short: 'CoA', type: 'Certificate of analysis', file: 'CoA_AMX-2409-117.pdf', who: 'Medisynth Pharma · batch AMX-2409-117', at: '6 Oct, 09:14', iso: '2026-10-06T03:44:10Z', waited: '2 days', v: 1, reasons: [
+    { kind: 'fail', label: 'Check failed', text: 'Assay 97.8% is outside the 98.0–102.0% specification' }] },
+  { short: 'Invoice', type: 'Invoice', file: 'SunCare_INV_7781.xlsx', who: 'SunCare Lifesciences · ₹86,214.00', at: '7 Oct, 16:05', iso: '2026-10-07T10:35:00Z', waited: '19 hours', v: 1, reasons: [
+    { kind: 'fail', label: 'Does not match its order', text: 'No order PO-88340 found in DocForge' }] },
+  { short: 'Order', type: 'Purchase order', file: 'PO-88355.docx', who: 'Arogya Distributors · ₹2,04,500.00', at: '7 Oct, 17:40', iso: '2026-10-07T12:10:00Z', waited: '17 hours', v: 1, reasons: [
+    { kind: 'warn', label: 'Uncertain value', text: 'Delivery date read at 68%' }] },
+  { short: 'Invoice', type: 'Invoice', file: 'Lupex_2026_1189.pdf', who: 'Lupex Remedies · ₹1,31,040.00', at: '8 Oct, 08:21', iso: '2026-10-08T02:51:00Z', waited: '3 hours', v: 1, reasons: [
+    { kind: 'fail', label: 'Check failed', text: 'Supplier GSTIN fails its checksum' }] },
+  { short: 'Invoice', type: 'Invoice', file: 'KarmaBio-INV-551.png', who: 'Karma Biotech · ₹58,320.00', at: '8 Oct, 09:02', iso: '2026-10-08T03:32:00Z', waited: '2 hours', v: 1, reasons: [
+    { kind: 'warn', label: 'Uncertain value', text: '3 values read below 80%: invoice date, line 1 rate, total' }] },
+  { short: 'CoA', type: 'Certificate of analysis', file: 'CoA_PCM-2407-019.pdf', who: 'Medisynth Pharma · batch PCM-2407-019', at: '8 Oct, 09:30', iso: '2026-10-08T04:00:00Z', waited: '2 hours', v: 1, reasons: [
+    { kind: 'warn', label: 'Not linked yet', text: 'Batch PCM-2407-019 is not on any invoice' }] },
+  { short: 'Invoice', type: 'Invoice', file: 'Hetro_Oct_0092.pdf', who: 'Hetro Labs · ₹3,02,560.00', at: '8 Oct, 10:11', iso: '2026-10-08T04:41:00Z', waited: '1 hour', v: 2, reasons: [
+    { kind: 'fail', label: 'Does not match its order', text: 'Line 1 rate ₹184.00 billed, ₹180.00 ordered on PO-88290' }] },
+  { short: 'Invoice', type: 'Invoice', file: 'MS-INV-04431.pdf', who: 'Medisynth Pharma · ₹74,400.00', at: '8 Oct, 11:32', iso: '2026-10-08T06:02:00Z', waited: '12 minutes', v: 1, reasons: [
+    { kind: 'warn', label: 'Uncertain value', text: 'Invoice number read at 74%' }] }
+];
+
+const ok = t => ({ kind: 'ok', text: t });
+const FIELDS = [
+  { group: 'Parties', path: 'supplier_name', label: 'Supplier', value: 'Medisynth Pharma Pvt. Ltd.', conf: .99, box: [5.4, 4.3, 45, 3.4], checks: [ok('Found on page 1')], editable: true },
+  { group: 'Parties', path: 'supplier_gstin', label: 'Supplier GSTIN', value: '24AABCM4521K1Z6', conf: .98, box: [12.4, 10.2, 17.4, 2.2], checks: [ok('Checksum valid; state 24 Gujarat')], editable: true },
+  { group: 'Parties', path: 'buyer_name', label: 'Bill to', value: 'Arogya Distributors LLP', conf: .99, box: [5.4, 19.0, 28, 2.4], checks: [ok('Matches your organisation')], editable: true },
+  { group: 'Invoice', path: 'invoice_no', label: 'Invoice number', value: 'MS/24-25/04417', conf: .99, box: [81.6, 9.4, 12.9, 2.2], checks: [ok('Found on page 1; not seen before')], editable: true },
+  { group: 'Invoice', path: 'invoice_date', label: 'Invoice date', value: '03-10-2026', conf: .97, box: [85.0, 12.4, 9.5, 2.2], checks: [ok('After the order date, 26-09-2026')], editable: true },
+  { group: 'Invoice', path: 'po_number', label: 'Order reference', value: 'PO-88213', conf: .96, box: [86.4, 16.6, 8.1, 2.2], checks: [ok('Order PO-88213 found and matched')], editable: true },
+  { group: 'Lines', path: 'lines[1].qty', label: 'Line 2 · Paracetamol 650 mg · quantity', value: '1,200', conf: .61, box: [59.4, 34.4, 9.2, 4.6], editable: true, checks: [
+    { kind: 'warn', text: 'Read at 61%. The printed 1,000 is struck through and 1,200 written by hand.' },
+    { kind: 'fail', text: 'PO-88213 ordered 1,000.' }] },
+  { group: 'Totals', path: 'taxable_value', label: 'Taxable value', value: '₹3,68,480.00', conf: .95, box: [83.4, 46.6, 10.2, 2.2], checks: [ok('Equals the sum of the lines')], editable: true },
+  { group: 'Totals', path: 'igst', label: 'IGST @ 12%', value: '₹44,217.60', conf: .94, box: [85.0, 50.0, 8.6, 2.2], checks: [ok('12% of the taxable value')], editable: true },
+  { group: 'Totals', path: 'total', label: 'Invoice total', value: '₹4,12,877.60', conf: .93, box: [82.6, 54.6, 11.4, 2.6], editable: true, checks: [
+    { kind: 'fail', text: 'Taxable value plus IGST is ₹4,12,697.60; the printed total is ₹180.00 more.' }] }
+];
+const BLOCKERS = [
+  { path: 'total', kind: 'fail', label: 'Check failed', text: 'Invoice total is ₹180.00 more than the lines plus IGST' },
+  { path: 'lines[1].qty', kind: 'warn', label: 'Uncertain value', text: 'Line 2 quantity read at 61%: printed 1,000 struck through, 1,200 handwritten' },
+  { path: 'lines[1].qty', kind: 'fail', label: 'Does not match its order', text: 'Line 2: 1,200 billed, 1,000 ordered on PO-88213' }
+];
+const WORD = { ok: 'Passed', warn: 'Uncertain', fail: 'Failed', info: 'Corrected' };
+const KICON = { ok: IC.check, warn: IC.help, fail: IC.x, info: IC.pen };
+
+const TIMELINE = [
+  { stage: 'Queued', at: '6 Oct, 09:12:04', iso: '2026-10-06T03:42:04Z', detail: 'Received from ERP integration (key 7f3a9c21b04e)' },
+  { stage: 'Reading', at: '6 Oct, 09:12:06', iso: '2026-10-06T03:42:06Z', detail: '1 page, 1 table' },
+  { stage: 'Extracting', at: '6 Oct, 09:12:09', iso: '2026-10-06T03:42:09Z', detail: '10 values and 3 lines read' },
+  { stage: 'Checking', at: '6 Oct, 09:12:21', iso: '2026-10-06T03:42:21Z', detail: '2 checks failed · matched with PO-88213' },
+  { stage: 'Indexing', at: '6 Oct, 09:12:23', iso: '2026-10-06T03:42:23Z', detail: '14 passages' },
+  { stage: 'Ready', at: '6 Oct, 09:12:25', iso: '2026-10-06T03:42:25Z', detail: 'Searchable; can be asked about' }
+];
+const AUDIT = [
+  { id: 48233, label: 'Opened for review', actor: 'Priya Nair', at: '8 Oct, 11:44', iso: '2026-10-08T06:14:00Z' },
+  { id: 48216, label: 'Sent to review: 3 reasons', actor: 'DocForge', at: '6 Oct, 09:12', iso: '2026-10-06T03:42:21Z' },
+  { id: 48215, label: 'Matched with order PO-88213', actor: 'DocForge', at: '6 Oct, 09:12', iso: '2026-10-06T03:42:20Z' },
+  { id: 48212, label: 'Fields extracted (version 1)', actor: 'DocForge', at: '6 Oct, 09:12', iso: '2026-10-06T03:42:09Z' },
+  { id: 48211, label: 'Document uploaded', actor: 'ERP integration · key 7f3a9c21b04e', at: '6 Oct, 09:12', iso: '2026-10-06T03:42:04Z' }
+];
+const BOX_LINE1 = { l: 6, t: 31.4, w: 88, h: 2.8 };
+const BOX_LINE2 = { l: 6, t: 35.6, w: 88, h: 3.2 };
+const BOX_PAY = { l: 5.5, t: 62, w: 34, h: 2.2 };
+
+const INIT_MSGS = [
+  { role: 'user', time: '11:32', text: 'Which September invoices billed Amoxicillin 500 mg above ₹180 a pack?' },
+  { role: 'answer', time: '11:32', status: 'supported', segs: [
+    { t: 'Two did. Medisynth billed ₹182.50 a pack on MS/24-25/04417' }, { n: 1 },
+    { t: ', and Hetro Labs billed ₹184.00 on HT/0092' }, { n: 2 }, { t: '.' }],
+    cites: [
+      { n: 1, file: 'MS-INV-04417.pdf', page: 1, quote: 'Amoxicillin 500 mg Caps 10×10 · AMX-2409-117 · 800 · 182.50 · 1,46,000.00', box: BOX_LINE1 },
+      { n: 2, file: 'Hetro_Oct_0092.pdf', page: 1, quote: 'AMOXYCILLIN 500MG CAP 10X10 · AX24117 · 1,000 · 184.00' }] },
+  { role: 'user', time: '11:35', text: 'What payment term did we agree with Lupex?' },
+  { role: 'answer', time: '11:35', status: 'not_found', segs: [{ t: 'The documents do not say.' }],
+    note: 'The 4 Lupex documents read do not mention an agreed payment term. Missing: a payment term agreed with Lupex. Administrators see this question in Unanswered questions; a contract or rate sheet would answer it.', noteTitle: 'Not in the documents.', cites: [] }
+];
+const PARTLY = { role: 'answer', status: 'partly_supported', segs: [
+  { t: 'PO-88213 ordered 1,000 packs of Paracetamol 650 mg Tabs 15s at ₹96.40' }, { n: 1 },
+  { t: '. Medisynth’s invoice MS/24-25/04417 bills 1,200 packs at the same rate' }, { n: 2 }, { t: '.' }],
+  note: '1 statement was left out because its quote could not be found in the documents.', noteTitle: 'Partly supported.',
+  cites: [
+    { n: 1, file: 'PO-88213.pdf', page: 1, quote: '2 · Paracetamol 650 mg Tabs 15s · 1,000 · 96.40 · 96,400.00' },
+    { n: 2, file: 'MS-INV-04417.pdf', page: 1, quote: 'Paracetamol 650 mg Tabs 15s · PCM-2408-052 · 1,200 · 96.40 · 1,15,680.00', box: BOX_LINE2 }] };
+const ASTAT = {
+  supported: { kind: 'ok', badge: 'Every statement checked', icon: IC.check },
+  partly_supported: { kind: 'warn', badge: 'Partly supported: 1 statement left out', icon: IC.help },
+  not_found: { kind: 'neutral', badge: 'Not in the documents', icon: IC.minus },
+  unsupported: { kind: 'fail', badge: 'Withheld', icon: IC.x }
+};
+const CONVS = [
+  { title: 'Amoxicillin rates, September', scope: 'All documents', when: 'Today, 11:32' },
+  { title: 'Paracetamol on PO-88213', scope: 'MS-INV-04417.pdf', when: 'Yesterday' },
+  { title: 'Assay specifications', scope: 'Knowledge base · QA specs', when: '5 Oct' }
+];
+const OTHER = {
+  documents: { title: 'Documents', path: '/documents', eps: ['GET /v1/documents?limit=&before=&doc_type=&stage=', 'GET /v1/documents/{id}/events (SSE) for rows in progress'] },
+  upload: { title: 'Upload', path: '/upload', eps: ['POST /v1/documents (multipart: file, doc_type)', '409 · 413 · 415 · 422 · 503 refusals per file', 'GET /v1/documents/{id}/events (SSE)'] },
+  search: { title: 'Search', path: '/search', eps: ['GET /v1/search?q=&mode=hybrid|keyword&k=&doc_type=&document_id=&collection_id='] },
+  collections: { title: 'Knowledge bases', path: '/collections', eps: ['GET/POST /v1/collections', 'PATCH/DELETE /v1/collections/{id}', 'GET/POST /v1/collections/{id}/documents'] },
+  questions: { title: 'Unanswered questions', path: '/questions', eps: ['GET /v1/questions/unanswered'] },
+  agents: { title: 'AI agents', path: '/agents', eps: ['GET/POST /v1/api-keys', 'DELETE /v1/api-keys/{prefix}', 'GET /v1/agent-calls'] },
+  audit: { title: 'Audit log', path: '/audit', eps: ['GET /v1/audit?action=&actor=&target_type=&target_id=&from=&to=&before=&limit=', 'GET /v1/audit/filters', 'GET /v1/audit/export.csv', 'GET /v1/audit/verification'] },
+  webhooks: { title: 'Webhooks', path: '/webhooks', eps: ['GET/POST /v1/webhooks', 'GET /v1/webhooks/events', 'PATCH/DELETE /v1/webhooks/{id}', 'POST /v1/webhooks/{id}/secret · /test', 'GET /v1/webhooks/{id}/deliveries · POST …/resend'] },
+  evals: { title: 'Evals and cost', path: '/evals', eps: ['GET /v1/evals'] }
+};
+
+const STAGES6 = ['Queued', 'Reading', 'Extracting', 'Checking', 'Indexing', 'Ready'];
+const LIVE = ['stored', 'parsing', 'extracting', 'checking', 'indexing', 'ready'];
+const STAGE = { stored: ['Queued', 'neutral'], converting: ['Converting', 'info'], parsing: ['Reading', 'info'], extracting: ['Extracting', 'info'], checking: ['Checking', 'info'], indexing: ['Indexing', 'info'], processed: ['Done', 'ok'], ready: ['Ready', 'ok'], retrying: ['Retrying', 'warn'], failed: ['Failed', 'fail'] };
+const TYPE = { invoice: 'Invoice', purchase_order: 'Order', coa: 'CoA', general: 'General' };
+const DOCS = [
+  { file: 'MS-INV-04432.pdf', type: 'invoice', live: true, pages: 1, at: 'Today, 11:44' },
+  { file: 'GRN_scan_0412.tiff', type: 'general', stage: 'converting', pages: 3, at: 'Today, 11:43', detail: 'Making a PDF from the image' },
+  { file: 'Lupex_rate_card.pptx', type: 'general', stage: 'retrying', pages: 6, at: 'Today, 11:38', detail: 'Storage did not answer. Trying again at 11:50; nothing to do.' },
+  { file: 'MS-INV-04431.pdf', type: 'invoice', stage: 'ready', pages: 1, at: 'Today, 11:32' },
+  { file: 'Rate_contract_2026.pdf', type: 'general', stage: 'failed', pages: null, at: 'Today, 10:58', detail: 'Protected by a password. Upload a copy without the password.' },
+  { file: 'Hetro_Oct_0092.pdf', type: 'invoice', stage: 'ready', v: 2, pages: 2, at: 'Today, 10:11' },
+  { file: 'CoA_PCM-2407-019.pdf', type: 'coa', stage: 'ready', pages: 2, at: 'Today, 09:30' },
+  { file: 'KarmaBio-INV-551.png', type: 'invoice', stage: 'ready', pages: 1, at: 'Today, 09:02' },
+  { file: 'Lupex_2026_1189.pdf', type: 'invoice', stage: 'ready', pages: 1, at: 'Today, 08:21' },
+  { file: 'Supplier_SOP_v3.docx', type: 'general', stage: 'processed', pages: 9, at: 'Yesterday, 18:02', detail: 'Finished. Not indexed, so chat cannot use it.' },
+  { file: 'PO-88355.docx', type: 'purchase_order', stage: 'ready', pages: 2, at: 'Yesterday, 17:40' },
+  { file: 'SunCare_INV_7781.xlsx', type: 'invoice', stage: 'ready', pages: 1, at: 'Yesterday, 16:05' }
+];
+const DOCS_MORE = [
+  { file: 'MS-INV-04417.pdf', type: 'invoice', stage: 'ready', pages: 1, at: '6 Oct, 09:12' },
+  { file: 'CoA_AMX-2409-117.pdf', type: 'coa', stage: 'ready', pages: 2, at: '6 Oct, 09:14' },
+  { file: 'PO-88213.pdf', type: 'purchase_order', stage: 'ready', pages: 1, at: '26 Sep, 15:20' },
+  { file: 'Old_scan_batch.pdf', type: 'general', stage: 'failed', pages: null, at: '25 Sep, 12:02', detail: 'The PDF is damaged and cannot be read. Export it again from the scanner and upload it.' }
+];
+const UPLOADS = [
+  { name: 'MS-INV-04433.pdf', size: '412 KB', type: 'invoice', mode: 'live', off: 0 },
+  { name: 'PO-88371.pdf', size: '188 KB', type: 'purchase_order', mode: 'live', off: -5 },
+  { name: 'CoA_AZM-2409-031.pdf', size: '1.2 MB', type: 'coa', mode: 'live', off: -20 },
+  { name: 'MS-INV-04417.pdf', size: '396 KB', type: 'invoice', mode: 'dup' },
+  { name: 'Rate_contract_2026.pdf', size: '2.4 MB', type: 'general', mode: 'refused', msg: 'Protected by a password. Remove the password and upload it again.' },
+  { name: 'Old_ledger.xls', size: '880 KB', type: 'general', mode: 'refused', msg: 'Older Office file (.xls). Save it as .xlsx and upload it again.' },
+  { name: 'Scan_bundle_Sept.pdf', size: '9.1 MB', type: 'invoice', mode: 'refused', msg: 'Has 34 pages; the limit is 20. Split it and upload the parts.' },
+  { name: 'Warehouse_photo.heic', size: '3.0 MB', type: 'general', mode: 'refused', msg: 'This file type is not accepted. Use PDF, DOCX, XLSX, PPTX, PNG, JPEG or TIFF.' },
+  { name: 'GRN_0413.pdf', size: '640 KB', type: 'general', mode: 'busy', msg: 'The reading queue is full right now. Nothing was stored; try again in a minute.' }
+];
+const PASSAGES = [
+  { file: 'MS-INV-04417.pdf', type: 'invoice', page: 1, text: '2 · Paracetamol 650 mg Tabs 15s · PCM-2408-052 · 1,200 · 96.40 · 1,15,680.00', box: { l: 6, t: 35.6, w: 88, h: 3.2 } },
+  { file: 'PO-88213.pdf', type: 'purchase_order', page: 1, text: '2 · Paracetamol 650 mg Tabs 15s · 1,000 · 96.40 · 96,400.00' },
+  { file: 'CoA_PCM-2407-019.pdf', type: 'coa', page: 1, text: 'Product: Paracetamol Tablets IP 650 mg · Batch PCM-2407-019 · Assay 99.4% (limit 95.0–105.0%)' },
+  { file: 'Hetro_Oct_0092.pdf', type: 'invoice', page: 2, text: 'PARACETAMOL 500MG TAB 10X10 · PX2409 · 300 · 41.20 · 12,360.00' },
+  { file: 'Supplier_SOP_v3.docx', type: 'general', page: 4, text: 'Paracetamol and other scheduled stock is received only against a released certificate of analysis.' },
+  { file: 'MS-INV-04417.pdf', type: 'invoice', page: 1, text: '1 · Amoxicillin 500 mg Caps 10×10 · AMX-2409-117 · 800 · 182.50 · 1,46,000.00', box: { l: 6, t: 31.4, w: 88, h: 2.8 } },
+  { file: 'CoA_AMX-2409-117.pdf', type: 'coa', page: 1, text: 'Amoxicillin Capsules IP 500 mg · Batch AMX-2409-117 · Assay 97.8% (limit 98.0–102.0%)' },
+  { file: 'MS-INV-04417.pdf', type: 'invoice', page: 1, text: 'Payment: 45 days from date of invoice.', box: { l: 5.5, t: 62, w: 34, h: 2.2 } },
+  { file: 'Lupex_2026_1189.pdf', type: 'invoice', page: 1, text: 'GSTIN 27AACCL8821M1Z0 · Lupex Remedies Pvt. Ltd., Bhiwandi' }
+];
+const KBS = [
+  { name: 'QA specs', desc: 'Pharmacopoeia limits and supplier specifications used to check certificates.', updated: '5 Oct', docs: ['IP_2022_Paracetamol_monograph.pdf', 'IP_2022_Amoxicillin_monograph.pdf', 'Medisynth_spec_sheet_2026.pdf', 'CoA_AMX-2409-117.pdf', 'CoA_PCM-2407-019.pdf'] },
+  { name: 'Medisynth 2026', desc: 'Every invoice, order and certificate from Medisynth Pharma this year.', updated: 'Today', docs: ['MS-INV-04417.pdf', 'MS-INV-04431.pdf', 'PO-88213.pdf', 'CoA_AMX-2409-117.pdf'] },
+  { name: 'Supplier contracts', desc: 'Rate contracts and agreed payment terms.', updated: '28 Sep', docs: ['Hetro_rate_contract_2026.pdf', 'SunCare_terms_2026.docx'] }
+];
+const REASON = { not_in_passages: 'The documents do not say', no_passages: 'Nothing matched in this scope', quotes_not_found: 'Its quotes were not found', figures_not_in_quotes: 'Its figures were not in its quotes', held_back: 'Passages held back: they read like instructions to an AI' };
+const BY_REASON = { not_in_passages: 14, no_passages: 6, quotes_not_found: 3, figures_not_in_quotes: 2, held_back: 1 };
+const UNANSWERED = [
+  { q: 'What payment term did we agree with Lupex?', reason: 'not_in_passages', missing: 'A payment term agreed with Lupex', docs: 4, owner: 'Priya Nair', at: 'Today, 11:35' },
+  { q: 'Has Medisynth sent the CoA for batch PCM-2408-052?', reason: 'no_passages', missing: '', docs: 0, owner: 'Rahul Desai', at: 'Today, 10:02' },
+  { q: 'What is the shelf life of Azithromycin 250 mg from Medisynth?', reason: 'not_in_passages', missing: 'Shelf life of Azithromycin 250 mg', docs: 3, owner: 'Aisha Khan', at: 'Yesterday, 16:20' },
+  { q: 'Total GST paid to Hetro Labs in September?', reason: 'figures_not_in_quotes', missing: '', docs: 5, owner: 'Priya Nair', at: 'Yesterday, 12:48' },
+  { q: 'Which supplier has the cheapest Paracetamol 650 mg?', reason: 'quotes_not_found', missing: '', docs: 6, owner: 'Rahul Desai', at: '6 Oct, 15:10' },
+  { q: 'Summarise the notes in GRN_0398', reason: 'held_back', missing: '', docs: 1, owner: 'Aisha Khan', at: '5 Oct, 11:02' }
+];
+const KEYS = [
+  { name: 'Claude Code · finance team', prefix: 'a41f09c2be77', made: '12 Sep 2026', last: 'Today, 11:20' },
+  { name: 'Month-end reconciler', prefix: '6c02d9e1f3a8', made: '2 Oct 2026', last: 'Yesterday, 23:00' },
+  { name: 'QA assistant (trial)', prefix: 'e93b7a4c0d15', made: '7 Oct 2026', last: 'Never' }
+];
+const CALLS = [
+  { at: '11:20:41', key: 'Claude Code · finance team', tool: 'search_documents', kind: 'ok', word: 'Answered' },
+  { at: '11:20:38', key: 'Claude Code · finance team', tool: 'ask', kind: 'ok', word: 'Answered' },
+  { at: '11:19:02', key: 'Claude Code · finance team', tool: 'ask', kind: 'warn', word: 'Refused: 4 calls already running (429)' },
+  { at: '11:18:55', key: 'Claude Code · finance team', tool: 'get_document', kind: 'ok', word: 'Answered' },
+  { at: 'Yesterday, 23:00', key: 'Month-end reconciler', tool: 'list_documents', kind: 'ok', word: 'Answered' },
+  { at: 'Yesterday, 23:00', key: 'Month-end reconciler', tool: 'get_page_text', kind: 'ok', word: 'Answered' }
+];
+const AUDIT_LOG = [
+  { id: 48233, at: '8 Oct, 11:44:02', iso: '2026-10-08T06:14:02Z', who: 'Priya Nair', action: 'review.opened', label: 'Opened for review', target: 'MS-INV-04417.pdf', details: 'version 1' },
+  { id: 48232, at: '8 Oct, 11:40:18', iso: '2026-10-08T06:10:18Z', who: 'Aisha Khan', action: 'review.signed', label: 'Signed: approved', target: 'Lupex_2026_1189.pdf', details: 'meaning “I approve this invoice for payment”' },
+  { id: 48231, at: '8 Oct, 11:38:51', iso: '2026-10-08T06:08:51Z', who: 'Aisha Khan', action: 'correction.made', label: 'Correction saved', target: 'Lupex_2026_1189.pdf', details: 'supplier_gstin corrected' },
+  { id: 48230, at: '8 Oct, 11:20:41', iso: '2026-10-08T05:50:41Z', who: 'Key a41f09c2be77', action: 'agent.call', label: 'AI agent call', target: 'search_documents', details: '12 results' },
+  { id: 48229, at: '8 Oct, 11:02:10', iso: '2026-10-08T05:32:10Z', who: 'ERP integration', action: 'document.uploaded', label: 'Document uploaded', target: 'MS-INV-04431.pdf', details: 'invoice · 1 page' },
+  { id: 48228, at: '8 Oct, 10:58:33', iso: '2026-10-08T05:28:33Z', who: 'Rahul Desai', action: 'document.uploaded', label: 'Document uploaded', target: 'Rate_contract_2026.pdf', details: 'failed: protected by a password' },
+  { id: 48227, at: '8 Oct, 09:15:00', iso: '2026-10-08T03:45:00Z', who: 'Priya Nair', action: 'session.created', label: 'Signed in', target: '—', details: '' },
+  { id: 48226, at: '7 Oct, 18:30:12', iso: '2026-10-07T13:00:12Z', who: 'Vikram Shah', action: 'webhook.secret_rotated', label: 'Webhook secret rotated', target: 'https://erp.arogya.in/…', details: '' },
+  { id: 48225, at: '7 Oct, 17:02:44', iso: '2026-10-07T11:32:44Z', who: 'Vikram Shah', action: 'api_key.created', label: 'API key made', target: 'QA assistant (trial)', details: 'role reader' },
+  { id: 48224, at: '7 Oct, 16:40:09', iso: '2026-10-07T11:10:09Z', who: 'Vikram Shah', action: 'audit.exported', label: 'Audit log exported', target: '—', details: '1,284 rows' }
+];
+const AUDIT_MORE = [
+  { id: 48223, at: '7 Oct, 16:05:31', iso: '2026-10-07T10:35:31Z', who: 'ERP integration', action: 'document.uploaded', label: 'Document uploaded', target: 'SunCare_INV_7781.xlsx', details: 'invoice · converted from XLSX' },
+  { id: 48222, at: '7 Oct, 15:12:08', iso: '2026-10-07T09:42:08Z', who: 'Aisha Khan', action: 'review.signed', label: 'Signed: rejected', target: 'KarmaBio-INV-548.pdf', details: 'reason: duplicate of KarmaBio-INV-547' },
+  { id: 48221, at: '7 Oct, 14:50:44', iso: '2026-10-07T09:20:44Z', who: 'Vikram Shah', action: 'collection.created', label: 'Knowledge base made', target: 'QA specs', details: '' }
+];
+const HOOKS = [
+  { url: 'https://erp.arogya.in/…', events: ['review.signed', 'document.processed'], active: true, last: ['ok', 'Delivered · 200 · 11:46'], rotated: '7 Oct 2026, 18:30' },
+  { url: 'https://hooks.zapier.com/…', events: ['document.ready_for_chat'], active: false, last: ['fail', 'Failed · 410 · 6 Oct, 14:02'], rotated: 'Never rotated' }
+];
+const DELIVERIES = [
+  [{ ev: 'review.signed', status: 'retrying', attempts: 2, code: '503', at: '8 Oct, 11:41', err: 'Next try at 11:47' },
+   { ev: 'review.signed', status: 'delivered', attempts: 1, code: '200', at: '8 Oct, 11:40', err: '' },
+   { ev: 'document.processed', status: 'delivered', attempts: 1, code: '200', at: '8 Oct, 11:02', err: '' },
+   { ev: 'document.processed', status: 'failed', attempts: 7, code: '502', at: '7 Oct, 22:14', err: 'The receiver answered “bad gateway” for 30 minutes' },
+   { ev: 'webhook.test', status: 'delivered', attempts: 1, code: '204', at: '7 Oct, 18:31', err: '' }],
+  [{ ev: 'document.ready_for_chat', status: 'failed', attempts: 7, code: '410', at: '6 Oct, 14:02', err: 'The receiver says this address is gone' }]
+];
+const EVENTS = [['document.processed', 'A document finished reading'], ['document.ready_for_chat', 'A document can be searched and asked about'], ['review.signed', 'A record was signed, approved or rejected'], ['webhook.test', 'A test sent from this page']];
+const DSTAT = { delivered: ['ok', 'Delivered'], failed: ['fail', 'Failed'], retrying: ['warn', 'Retrying'] };
+const METRICS = [
+  { label: 'Fields correct', value: '98.6%', sub: '1,412 of 1,432 labelled fields', target: 'Target 97% or more', kind: 'ok', word: 'Met' },
+  { label: 'Wrong answers', value: '0.4%', sub: '2 of 480 questions answered wrongly', target: 'Target under 1%', kind: 'ok', word: 'Met' },
+  { label: 'Cross-organisation leaks', value: '0', sub: '0 of 1,200 attempts saw another organisation’s data', target: 'Target 0', kind: 'ok', word: 'Met' },
+  { label: 'Cost per invoice', value: '₹1.84', sub: '6,210 tokens on average', target: 'Budget ₹3.00', kind: 'ok', word: 'Within budget' }
+];
+const SUITES = [
+  { name: 'Extraction · invoices', cases: '612 fields', result: '98.9% correct', target: '97% or more', kind: 'ok', word: 'Met' },
+  { name: 'Extraction · certificates', cases: '420 fields', result: '97.4% correct', target: '97% or more', kind: 'ok', word: 'Met' },
+  { name: 'Extraction · orders', cases: '400 fields', result: '99.3% correct', target: '97% or more', kind: 'ok', word: 'Met' },
+  { name: 'Answers · grounded', cases: '480 questions', result: '0.4% wrong · 3.1% withheld', target: 'under 1% wrong', kind: 'ok', word: 'Met' },
+  { name: 'Isolation · organisations', cases: '1,200 attempts', result: '0 leaks', target: '0', kind: 'ok', word: 'Met' },
+  { name: 'Instructions hidden in documents', cases: '150 passages', result: '148 held back · 2 missed', target: 'all held back', kind: 'fail', word: 'Not met' }
+];
+const COSTS = [['Invoice', '6,210', '₹1.84'], ['Purchase order', '4,180', '₹1.22'], ['Certificate of analysis', '7,040', '₹2.05'], ['Question answered', '2,050', '₹0.61']];
+const ADMIN_SCREENS = ['questions', 'agents', 'audit', 'webhooks'];
+const hex = n => Array.from({ length: n }, () => '0123456789abcdef'[Math.floor(Math.random() * 16)]).join('');
+const esc = t => t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+const hl = (text, q) => q ? text.split(new RegExp('(' + esc(q) + ')', 'ig')).filter(Boolean).map(t => ({ t, hit: t.toLowerCase() === q.toLowerCase(), plain: t.toLowerCase() !== q.toLowerCase() })) : [{ t: text, plain: true }];
+
+class Component extends DCLogic {
+  state = { tick: 0, docType: 'all', docStage: 'any', docsMore: false, uploads: UPLOADS.map(u => ({ ...u, start: u.off || 0 })), upType: 'invoice', drag: false,
+    sq: 'Paracetamol', smode: 'hybrid', stype: 'all', kbs: KBS.map(k => ({ ...k, docs: [...k.docs] })), kbSel: 0, kbForm: null, kbQ: '',
+    uqReason: null, keys: KEYS, keyName: '', keyErr: null, secret: null, confirm: null,
+    af: { action: '', who: '', from: '2026-10-01', to: '2026-10-08' }, auditMore: false, verify: null,
+    hooks: HOOKS.map(h => ({ ...h })), hookSel: 0, delFilter: 'all', hookForm: null, extraDel: [],
+    login: { org: 'Arogya Distributors LLP', email: 'priya.nair@arogya.in', pin: '', err: null }, screen: 'queue', sel: 0, hover: null, active: null, tab: 'fields', filter: 'all', allBoxes: true, zoom: 100,
+    corr: {}, editing: null, draft: { value: '', reason: '', pin: '' }, draftErr: null, sign: null, signed: null, hash: HASH0,
+    toast: null, cite: null, msgs: INIT_MSGS, stream: null, q: '', docQ: '', conv: 0, rl: 42, themeOverride: null, pinFocus: false };
+  panelRef = React.createRef();
+  threadRef = React.createRef();
+  timers = [];
+
+  componentDidMount() {
+    this.onKey = e => this.key(e);
+    window.addEventListener('keydown', this.onKey);
+    this.onResize = () => this.setState({ w: window.innerWidth });
+    window.addEventListener('resize', this.onResize);
+    this.onResize();
+    this.tickT = setInterval(() => this.setState(s => ({ tick: s.tick + 1 })), 1200);
+    this.rlT = setInterval(() => { if (this.props.queueState === 'rateLimited') this.setState(s => ({ rl: s.rl > 1 ? s.rl - 1 : 42 })); }, 1000);
+  }
+  componentDidUpdate(pp) { if (pp.theme !== this.props.theme && this.state.themeOverride) this.setState({ themeOverride: null }); }
+  componentWillUnmount() { window.removeEventListener('keydown', this.onKey); window.removeEventListener('resize', this.onResize); clearInterval(this.tickT); clearInterval(this.rlT); this.timers.forEach(clearTimeout); clearTimeout(this.toastT); }
+
+  toast(text, action, fn) { clearTimeout(this.toastT); this.toastFn = fn; this.setState({ toast: { text, action } }); this.toastT = setTimeout(() => this.setState({ toast: null }), 6000); }
+  go(screen) {
+    const t = this.state.tick;
+    if (screen === 'documents') this.liveStart = t;
+    this.setState(s => ({ screen, sign: null, editing: null, uploads: screen === 'upload' && !this.upSeen ? s.uploads.map(u => ({ ...u, start: t + (u.off || 0) })) : s.uploads }));
+    if (screen === 'upload') this.upSeen = true;
+  }
+  addFiles(list) {
+    const t = this.state.tick;
+    const items = Array.from(list || []).map(f => {
+      const ext = (f.name.split('.').pop() || '').toLowerCase(), mb = f.size / 1048576;
+      const size = mb >= 1 ? mb.toFixed(1) + ' MB' : Math.max(1, Math.round(f.size / 1024)) + ' KB';
+      const base = { name: f.name, size, type: this.state.upType, start: t };
+      if (['xls', 'doc', 'ppt'].includes(ext)) return { ...base, mode: 'refused', msg: 'Older Office file (.' + ext + '). Save it as .' + ext + 'x and upload it again.' };
+      if (!['pdf', 'docx', 'xlsx', 'pptx', 'png', 'jpg', 'jpeg', 'tif', 'tiff'].includes(ext)) return { ...base, mode: 'refused', msg: 'This file type is not accepted. Use PDF, DOCX, XLSX, PPTX, PNG, JPEG or TIFF.' };
+      if (mb > 10) return { ...base, mode: 'refused', msg: 'Larger than 10 MB (' + size + '). Compress it or split it and upload again.' };
+      return { ...base, mode: 'live' };
+    });
+    this.setState(s => ({ uploads: [...items, ...s.uploads], drag: false }));
+  }
+  ask(confirm) { this.setState({ confirm }); }
+  showSecret(secret) { this.setState({ secret: { ...secret, copied: false } }); }
+  open(i) { if (i === 0) this.setState({ screen: 'doc', tab: 'fields' }); else this.toast(QUEUE[i].file + ' is not drawn in this mockup. Open the first document to see the full view.'); }
+  issuesOf(f) { return this.state.corr[f.path] ? [] : f.checks.filter(c => c.kind !== 'ok'); }
+  visible() { return this.state.filter === 'flagged' ? FIELDS.filter(f => this.issuesOf(f).length) : FIELDS; }
+  blockers() { return BLOCKERS.filter(b => !this.state.corr[b.path]); }
+  selectField(path, fromBox) {
+    this.setState({ active: path, tab: 'fields' }, () => {
+      if (!fromBox) return;
+      const p = this.panelRef.current, el = p && p.querySelector('#f-' + path.replace(/[^a-z0-9]/gi, '-'));
+      if (p && el) p.scrollTop = el.offsetTop - 120;
+    });
+  }
+  edit(f) { if (!f.editable || this.state.signed) return; this.setState({ editing: f.path, active: f.path, draft: { value: '', reason: '', pin: '' }, draftErr: null }); }
+  openSign(outcome) { if (this.state.signed) return; this.setState({ sign: { outcome, meaning: 0, override: '', reason: '', pin: '', step: 'form', err: null } }); }
+  patchSign(p) { this.setState(s => ({ sign: { ...s.sign, ...p } })); }
+
+  key(e) {
+    const t = e.target, s = this.state, typing = t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.isContentEditable);
+    if (e.key === 'Escape') { if (s.sign) return this.setState({ sign: null }); if (s.editing) return this.setState({ editing: null }); if (!typing && s.screen === 'doc') return this.go('queue'); }
+    if (e.key === 'Escape' && (s.confirm || s.secret)) return this.setState({ confirm: null });
+    if (typing || e.metaKey || e.ctrlKey || e.altKey || s.sign || s.confirm || s.secret || s.screen === 'login') return;
+    if (s.screen === 'queue') {
+      if (e.key === 'ArrowDown' || e.key === 'j') { e.preventDefault(); this.setState({ sel: Math.min(QUEUE.length - 1, s.sel + 1) }); }
+      else if (e.key === 'ArrowUp' || e.key === 'k') { e.preventDefault(); this.setState({ sel: Math.max(0, s.sel - 1) }); }
+      else if (e.key === 'Enter' || e.key === 'o') { e.preventDefault(); this.open(s.sel); }
+    } else if (s.screen === 'doc') {
+      const vis = this.visible(), i = vis.findIndex(f => f.path === s.active);
+      if (e.key === 'j' || e.key === 'k') { const n = e.key === 'j' ? Math.min(vis.length - 1, i + 1) : Math.max(0, i - 1); if (vis[n]) this.selectField(vis[n].path, true); }
+      else if (e.key === 'c' && i >= 0) { e.preventDefault(); this.edit(vis[i]); }
+      else if (e.key === 's') { e.preventDefault(); this.openSign('approved'); }
+    }
+  }
+
+  saveCorrection = e => {
+    e.preventDefault();
+    const { draft, editing } = this.state;
+    if (!draft.value.trim()) return this.setState({ draftErr: 'Enter the value as it should read.' });
+    if (!draft.reason.trim()) return this.setState({ draftErr: 'Say why the reading is wrong.' });
+    if (!/^\d{6}$/.test(draft.pin)) return this.setState({ draftErr: 'Enter your 6-digit PIN.' });
+    this.setState(s => ({ corr: { ...s.corr, [editing]: { value: draft.value.trim(), reason: draft.reason.trim(), by: 'you' } }, editing: null, hash: HASH1 }));
+    this.toast('Correction saved. The record changed, so it has a new fingerprint.');
+  };
+  submitSign = e => {
+    e.preventDefault();
+    const sg = this.state.sign, approve = sg.outcome === 'approved', bl = this.blockers().length;
+    if (approve && bl && !sg.override.trim()) return this.patchSign({ err: 'Say why you approve while checks are still open.' });
+    if (!approve && !sg.reason.trim()) return this.patchSign({ err: 'Say why you reject this invoice.' });
+    if (!/^\d{6}$/.test(sg.pin)) return this.patchSign({ err: 'Enter your 6-digit PIN.' });
+    const mode = this.props.signOutcome || 'success';
+    if (mode === 'wrongPin') return this.patchSign({ pin: '', err: 'Those details are not right. 4 tries left before your PIN is locked for 15 minutes.' });
+    if (mode === 'stale') return this.patchSign({ step: 'stale' });
+    const meanings = approve ? ['I approve this invoice for payment', 'I confirm the values match the page'] : ['I reject this invoice: it must not be paid'];
+    this.setState({ sign: null, signed: { kind: approve ? 'ok' : 'fail', word: approve ? 'Approved' : 'Rejected', meaning: meanings[sg.meaning] || meanings[0], note: approve ? (bl ? 'Approved despite open checks: ' + sg.override : '') : 'Reason: ' + sg.reason } });
+    this.toast('Signed and recorded. Next in the queue: CoA_AMX-2409-117.pdf', 'Open next', () => { this.setState({ screen: 'queue', sel: 1, toast: null }); });
+  };
+  send = e => {
+    if (e) e.preventDefault();
+    const q = this.state.q.trim();
+    if (!q || this.state.stream) return;
+    this.startStream(q);
+  };
+  startStream(q) {
+    this.timers.forEach(clearTimeout);
+    this.setState(s => ({ msgs: [...s.msgs, { role: 'user', time: '11:46', text: q }], q: '', stream: { stage: 1 } }));
+    const at = (ms, fn) => this.timers.push(setTimeout(fn, ms));
+    at(900, () => this.setState({ stream: { stage: 2 } }));
+    at(2000, () => this.setState({ stream: { stage: 3 } }));
+    at(3100, () => this.setState(s => ({ stream: null, msgs: [...s.msgs, { ...PARTLY, time: '11:46' }] })));
+    at(50, () => { const t = this.threadRef.current; if (t) t.scrollTop = t.scrollHeight; });
+    at(3200, () => { const t = this.threadRef.current; if (t) t.scrollTop = t.scrollHeight; });
+  }
+  openCite(c) {
+    if (!c.box) return this.toast(c.file + ' page ' + c.page + ' opens with this quote outlined. Only MS-INV-04417.pdf is drawn in this mockup.');
+    this.setState({ screen: 'doc', cite: { ...c.box, src: 'quote ' + c.n + ' from chat', tag: 'Quote ' + c.n, quote: c.quote } });
+  }
+
+  extraVals(isAdmin) {
+    const s = this.state, tk = s.tick, scr = s.screen;
+    const segsFor = idx => [0, 1, 2, 3, 4, 5].map(i => ({ bg: i <= idx ? 'var(--color-accent)' : 'var(--color-neutral-300)' }));
+    const grp = st => ['ready', 'processed'].includes(st) ? 'ready' : st === 'failed' ? 'failed' : 'progress';
+    const liveIdx = Math.max(0, Math.min(5, tk - (this.liveStart || 0)));
+    const docsV = (s.docsMore ? DOCS.concat(DOCS_MORE) : DOCS).map(d => {
+      const stage = d.live ? LIVE[liveIdx] : d.stage, [word, kind] = STAGE[stage];
+      const prog = grp(stage) === 'progress' && stage !== 'retrying';
+      return { ...d, stage, word, kind, typeLabel: TYPE[d.type], vText: d.v ? 'Version ' + d.v : '', pagesT: d.pages == null ? '—' : String(d.pages),
+        chat: stage === 'ready' ? 'Can be asked' : stage === 'processed' ? 'Not indexed' : '—', progress: prog, segs: segsFor(d.live ? liveIdx : 0),
+        detailT: d.live && prog ? 'Step ' + (liveIdx + 1) + ' of 6, updating live' : (d.detail || ''),
+        open: () => d.file === 'MS-INV-04417.pdf' ? this.setState({ screen: 'doc', tab: 'fields' }) : this.toast(d.file + ' is not drawn in this mockup; MS-INV-04417.pdf is (Load more).') };
+    }).filter(d => (s.docType === 'all' || d.type === s.docType) && (s.docStage === 'any' || grp(d.stage) === s.docStage));
+    const upV = s.uploads.map((u, i) => {
+      const base = { name: u.name, meta: u.size + ' · ' + TYPE[u.type], isUploading: false, hasSegs: false, msg: u.msg || '', action: null };
+      if (u.mode === 'live') {
+        const e = tk - u.start;
+        if (e < 3) return { ...base, isUploading: true, pct: Math.min(95, 15 + Math.max(0, e) * 30), word: 'Uploading', kind: 'info' };
+        const idx = Math.min(5, e - 3), done = idx === 5;
+        return { ...base, hasSegs: !done, segs: segsFor(idx), stageT: STAGES6[idx] + ' · step ' + (idx + 1) + ' of 6', word: done ? 'Ready' : STAGES6[idx], kind: done ? 'ok' : 'info',
+          msg: done ? (u.type === 'general' ? 'Read and searchable.' : 'Read and checked. Values are ready to review.') : '', msgKind: 'ok', action: done ? 'Open' : null, act: () => this.toast('Opens ' + u.name + '. Only MS-INV-04417.pdf is drawn in this mockup.') };
+      }
+      if (u.mode === 'dup') return { ...base, word: 'Already here', kind: 'neutral', msg: 'This exact file is already in DocForge. Nothing new was stored.', msgKind: 'neutral', action: 'Open existing', act: () => this.setState({ screen: 'doc', tab: 'fields' }) };
+      if (u.mode === 'busy') return { ...base, word: 'Not sent', kind: 'warn', msgKind: 'warn', action: 'Try again', act: () => this.setState(st => ({ uploads: st.uploads.map((x, j) => j === i ? { ...x, mode: 'live', start: st.tick } : x) })) };
+      return { ...base, word: 'Refused', kind: 'fail', msgKind: 'fail' };
+    });
+    const upCounts = { ok: 0, run: 0, bad: 0 };
+    upV.forEach(u => { if (u.kind === 'ok') upCounts.ok++; else if (u.kind === 'info') upCounts.run++; else if (u.kind !== 'neutral') upCounts.bad++; });
+    const q = s.sq.trim();
+    const res = q ? PASSAGES.filter(x => (s.stype === 'all' || x.type === s.stype) && x.text.toLowerCase().includes(q.toLowerCase())) : [];
+    const kb = s.kbs[s.kbSel];
+    const uq = UNANSWERED.filter(u => !s.uqReason || u.reason === s.uqReason);
+    const auditAll = (s.auditMore ? AUDIT_LOG.concat(AUDIT_MORE) : AUDIT_LOG).filter(a => (!s.af.action || a.action === s.af.action) && (!s.af.who || a.who === s.af.who));
+    const actions = [...new Map(AUDIT_LOG.concat(AUDIT_MORE).map(a => [a.action, a.label.replace(/:.*/, '')])).entries()];
+    const whos = [...new Set(AUDIT_LOG.concat(AUDIT_MORE).map(a => a.who))];
+    const hk = s.hooks[s.hookSel];
+    const dels = (s.hookSel === 0 ? s.extraDel : []).concat(DELIVERIES[s.hookSel] || []).filter(d => s.delFilter === 'all' || d.status === s.delFilter);
+    const dayAfter = d => { const x = new Date(d + 'T00:00:00Z'); x.setUTCDate(x.getUTCDate() + 1); return x.toISOString().slice(0, 10); };
+    const lg = s.login;
+    const opt = (cur, val, set) => ({ sel: cur === val, pick: () => this.setState(set) });
+    return {
+      tick: tk, metrics: METRICS, suites: SUITES, costs: COSTS.map(([item, tokens, cost]) => ({ item, tokens, cost })),
+      isDocuments: scr === 'documents', isUpload: scr === 'upload', isSearch: scr === 'search', isKb: scr === 'collections', isEvals: scr === 'evals',
+      isQuestions: scr === 'questions' && isAdmin, isAgents: scr === 'agents' && isAdmin, isAudit: scr === 'audit' && isAdmin, isHooks: scr === 'webhooks' && isAdmin,
+      isDenied: ADMIN_SCREENS.includes(scr) && !isAdmin, isLogin: scr === 'login',
+      docTypes: [['all', 'All'], ['invoice', 'Invoices'], ['purchase_order', 'Orders'], ['coa', 'CoAs'], ['general', 'General']].map(([v, label]) => ({ label, ...opt(s.docType, v, { docType: v }) })),
+      docStage: s.docStage, onDocStage: e => this.setState({ docStage: e.target.value }), docsV, docsNone: docsV.length === 0,
+      docsCountText: 'Showing ' + docsV.length + (s.docsMore ? '' : ' · more below'), docsHasMore: !s.docsMore, docsEnd: s.docsMore, loadMoreDocs: () => this.setState({ docsMore: true }),
+      upTypes: [['invoice', 'Invoices'], ['purchase_order', 'Orders'], ['coa', 'Certificates'], ['general', 'General']].map(([v, label]) => ({ label, ...opt(s.upType, v, { upType: v }) })),
+      upV, upSummary: upCounts.ok + ' ready · ' + upCounts.run + ' in progress · ' + upCounts.bad + ' need you',
+      dropBorder: s.drag ? 'var(--color-accent)' : 'color-mix(in srgb,var(--color-text) 30%,transparent)', dropBg: s.drag ? 'var(--color-accent-100)' : 'transparent',
+      onDragOver: e => { e.preventDefault(); if (!s.drag) this.setState({ drag: true }); }, onDragLeave: () => this.setState({ drag: false }),
+      onDrop: e => { e.preventDefault(); this.addFiles(e.dataTransfer.files); }, onFiles: e => { this.addFiles(e.target.files); e.target.value = ''; },
+      sq: s.sq, onSq: e => this.setState({ sq: e.target.value }), searchSubmit: e => e.preventDefault(),
+      smodes: [['hybrid', 'Words and meaning'], ['keyword', 'Exact words']].map(([v, label]) => ({ label, ...opt(s.smode, v, { smode: v }) })),
+      stype: s.stype, onStype: e => this.setState({ stype: e.target.value }),
+      degraded: !!this.props.degraded && s.smode === 'hybrid',
+      resultsV: res.map((r, i) => ({ ...r, typeLabel: TYPE[r.type], score: (0.91 - i * 0.07).toFixed(2), segs: hl(r.text, q),
+        go: () => r.box ? this.setState({ screen: 'doc', cite: { ...r.box, src: 'search result', tag: 'Match', quote: r.text } }) : this.toast(r.file + ' page ' + r.page + ' opens with the passage outlined. Only MS-INV-04417.pdf is drawn in this mockup.') })),
+      resCount: res.length === 1 ? '1 passage' : res.length + ' passages', hasRes: res.length > 0, noRes: !!q && res.length === 0, noQuery: !q, sqShown: q,
+      kbsV: s.kbs.map((k, i) => ({ ...k, count: k.docs.length + (k.docs.length === 1 ? ' document' : ' documents'), sel: i === s.kbSel, bg: i === s.kbSel ? 'color-mix(in srgb,var(--color-accent) 9%,transparent)' : 'transparent', line: i === s.kbSel ? 'var(--color-accent-400)' : 'var(--color-divider)', go: () => this.setState({ kbSel: i }) })),
+      kb: kb ? { name: kb.name, desc: kb.desc, updated: kb.updated, count: kb.docs.length } : null,
+      kbDocs: kb ? kb.docs.map(d => ({ file: d, aria: 'Remove ' + d + ' from ' + kb.name, remove: () => this.setState(st => ({ kbs: st.kbs.map((k, j) => j === st.kbSel ? { ...k, docs: k.docs.filter(x => x !== d) } : k) })) })) : [],
+      kbEmptyDocs: kb && kb.docs.length === 0,
+      kbForm: s.kbForm, openKbForm: () => this.setState({ kbForm: { name: '', desc: '', err: null } }), closeKbForm: () => this.setState({ kbForm: null }),
+      onKbName: e => this.setState({ kbForm: { ...s.kbForm, name: e.target.value, err: null } }), onKbDesc: e => this.setState({ kbForm: { ...s.kbForm, desc: e.target.value } }),
+      saveKb: e => { e.preventDefault(); const n = s.kbForm.name.trim(); if (!n) return this.setState({ kbForm: { ...s.kbForm, err: 'Give it a name.' } });
+        if (s.kbs.some(k => k.name.toLowerCase() === n.toLowerCase())) return this.setState({ kbForm: { ...s.kbForm, err: 'A knowledge base called “' + n + '” already exists. Names are unique, whatever their case.' } });
+        this.setState(st => ({ kbs: [...st.kbs, { name: n, desc: st.kbForm.desc.trim(), updated: 'Today', docs: [] }], kbSel: st.kbs.length, kbForm: null })); this.toast('Knowledge base “' + n + '” made. Add documents to ask within it.'); },
+      addKbDocs: () => this.toast('Opens a picker of documents to add, up to 500 at once.'),
+      deleteKb: () => this.ask({ title: 'Delete “' + kb.name + '”?', body: 'The knowledge base goes; its ' + kb.docs.length + ' documents stay in DocForge. Conversations asked within it can no longer take follow-ups.', cta: 'Delete knowledge base', fn: () => { this.setState(st => ({ kbs: st.kbs.filter((_, j) => j !== st.kbSel), kbSel: 0, confirm: null })); this.toast('Knowledge base deleted. Its documents were kept.'); } }),
+      kbQ: s.kbQ, onKbQ: e => this.setState({ kbQ: e.target.value }), askKb: e => { e.preventDefault(); const qq = s.kbQ.trim(); if (!qq) return; this.setState({ kbQ: '', screen: 'chat', conv: 2 }); this.startStream(qq); },
+      byReason: Object.keys(BY_REASON).map(r => ({ label: REASON[r], n: BY_REASON[r], pressed: s.uqReason === r ? 'true' : 'false', bg: s.uqReason === r ? 'var(--color-accent-100)' : 'transparent', line: s.uqReason === r ? 'var(--color-accent)' : 'var(--color-divider)', go: () => this.setState({ uqReason: s.uqReason === r ? null : r }) })),
+      uqV: uq.map(u => ({ ...u, why: REASON[u.reason], missingT: u.missing || '—', docsT: u.docs === 0 ? 'None' : String(u.docs), open: () => this.setState({ screen: 'chat', conv: 0 }) })),
+      uqTotal: Object.values(BY_REASON).reduce((a, b) => a + b, 0),
+      keysV: s.keys.map(k => ({ ...k, aria: 'Revoke the key for ' + k.name, revoke: () => this.ask({ title: 'Revoke “' + k.name + '”?', body: 'Agents using this key stop working at once. This cannot be undone; make a new key if you need one.', cta: 'Revoke key', fn: () => { this.setState(st => ({ keys: st.keys.filter(x => x.prefix !== k.prefix), confirm: null })); this.toast('Key ' + k.prefix + ' revoked.'); } }) })),
+      keyCount: s.keys.length + ' of 20 keys', keyName: s.keyName, keyErr: s.keyErr, onKeyName: e => this.setState({ keyName: e.target.value, keyErr: null }),
+      makeKey: e => { e.preventDefault(); const n = s.keyName.trim(); if (!n) return this.setState({ keyErr: 'Name the key after the agent or person who will use it.' }); if (s.keys.length >= 20) return this.setState({ keyErr: 'This organisation has 20 keys, the most allowed. Revoke one first.' });
+        const tok = 'dfk_' + hex(48); this.showSecret({ title: 'Key for “' + n + '”', value: tok, body: 'This is the only time the key is shown. Store it in the agent’s secret settings now.', done: () => this.setState(st => ({ keys: [{ name: n, prefix: tok.slice(4, 16), made: '8 Oct 2026', last: 'Never' }, ...st.keys], keyName: '' })) }); },
+      callsV: CALLS, mcpUrl: 'https://docforge.arogya.in/v1/mcp', mcpCmd: 'claude mcp add --transport http docforge https://docforge.arogya.in/v1/mcp --header "Authorization: Bearer <key>"',
+      copyUrl: () => { try { navigator.clipboard.writeText('https://docforge.arogya.in/v1/mcp'); } catch (x) {} this.toast('Endpoint copied.'); },
+      copyCmd: () => { try { navigator.clipboard.writeText('claude mcp add --transport http docforge https://docforge.arogya.in/v1/mcp --header "Authorization: Bearer <key>"'); } catch (x) {} this.toast('Command copied. Replace <key> with a key made below.'); },
+      auditV: auditAll, auditNone: auditAll.length === 0, auditHasMore: !s.auditMore, auditEnd: s.auditMore, loadMoreAudit: () => this.setState({ auditMore: true }),
+      actionOpts: actions.map(([v, label]) => ({ v, label })), whoOpts: whos, af: s.af,
+      onAfAction: e => this.setState({ af: { ...s.af, action: e.target.value } }), onAfWho: e => this.setState({ af: { ...s.af, who: e.target.value } }),
+      onAfFrom: e => this.setState({ af: { ...s.af, from: e.target.value } }), onAfTo: e => this.setState({ af: { ...s.af, to: e.target.value } }),
+      clearAf: () => this.setState({ af: { action: '', who: '', from: '', to: '' } }),
+      auditUrl: '/audit?' + [s.af.action && 'action=' + s.af.action, s.af.who && 'actor=' + encodeURIComponent(s.af.who), s.af.from && 'from=' + s.af.from, s.af.to && 'to=' + dayAfter(s.af.to)].filter(Boolean).join('&'),
+      verifyRunning: s.verify === 'running', verifyOk: s.verify === 'ok',
+      runVerify: () => { this.setState({ verify: 'running' }); this.timers.push(setTimeout(() => this.setState({ verify: 'ok' }), 1100)); },
+      exportCsv: () => this.toast('Exported ' + auditAll.length + ' entries matching these filters as CSV.'),
+      hooksV: s.hooks.map((h, i) => ({ ...h, sel: i === s.hookSel, lineC: i === s.hookSel ? 'var(--color-accent-400)' : 'var(--color-divider)', lastKind: h.last[0], lastWord: h.last[1],
+        activeT: h.active ? 'On' : 'Off', ariaChecked: h.active ? 'true' : 'false', swBg: h.active ? 'var(--color-accent)' : 'var(--color-neutral-400)', knob: h.active ? '18px' : '2px',
+        eventsV: h.events, go: () => this.setState({ hookSel: i }),
+        toggle: e => { e.stopPropagation(); this.setState(st => ({ hooks: st.hooks.map((x, j) => j === i ? { ...x, active: !x.active } : x) })); },
+        test: e => { e.stopPropagation(); if (!h.active) return this.toast('Turn the webhook on before sending a test (409).'); this.setState(st => ({ hookSel: i, extraDel: i === 0 ? [{ ev: 'webhook.test', status: 'delivered', attempts: 1, code: '204', at: '8 Oct, 11:47', err: '' }, ...st.extraDel] : st.extraDel })); this.toast('Test event sent. It appears in the deliveries below.'); },
+        rotate: e => { e.stopPropagation(); this.ask({ title: 'Make a new secret?', body: 'The old secret stops working now. Until the receiver at ' + h.url + ' has the new one, it will refuse deliveries as unsigned.', cta: 'Make new secret', fn: () => { this.setState(st => ({ confirm: null, hooks: st.hooks.map((x, j) => j === i ? { ...x, rotated: '8 Oct 2026, 11:47' } : x) })); this.showSecret({ title: 'New webhook secret', value: 'whsec_' + hex(40), body: 'Shown once. Put it in the receiver’s settings so it can check the DocForge-Signature header.' }); } }); },
+        del: e => { e.stopPropagation(); this.ask({ title: 'Delete this webhook?', body: 'Nothing more is sent to ' + h.url + '. Its deliveries stay on record.', cta: 'Delete webhook', fn: () => { this.setState(st => ({ confirm: null, hooks: st.hooks.filter((_, j) => j !== i), hookSel: 0 })); this.toast('Webhook deleted.'); } }); },
+        delAria: 'Delete the webhook to ' + h.url, testAria: 'Send a test to ' + h.url, rotAria: 'Make a new secret for ' + h.url })),
+      hookCount: s.hooks.length + ' of 10', hk: hk ? { url: hk.url } : null,
+      delFilters: [['all', 'All'], ['failed', 'Failed'], ['retrying', 'Retrying'], ['delivered', 'Delivered']].map(([v, label]) => ({ label, ...opt(s.delFilter, v, { delFilter: v }) })),
+      delsV: dels.map(d => ({ ...d, kind: DSTAT[d.status][0], word: DSTAT[d.status][1], canResend: d.status === 'failed', errT: d.err || '—', resend: () => this.toast('Sent again as the same event; the receiver sees the same DocForge-Event-Id.') })),
+      delsNone: dels.length === 0,
+      hookForm: s.hookForm, openHookForm: () => this.setState({ hookForm: { url: '', events: ['review.signed'], err: null } }), closeHookForm: () => this.setState({ hookForm: null }),
+      onHookUrl: e => this.setState({ hookForm: { ...s.hookForm, url: e.target.value, err: null } }),
+      hookEvents: EVENTS.map(([v, d]) => ({ v, d, on: !!(s.hookForm && s.hookForm.events.includes(v)), toggle: () => this.setState(st => ({ hookForm: { ...st.hookForm, events: st.hookForm.events.includes(v) ? st.hookForm.events.filter(x => x !== v) : [...st.hookForm.events, v] } })) })),
+      saveHook: e => { e.preventDefault(); const f = s.hookForm, u = f.url.trim();
+        if (!/^https:\/\/[a-z0-9.-]+\.[a-z]{2,}(\/|$)/i.test(u) || /localhost|127\.|192\.168\.|10\./.test(u)) return this.setState({ hookForm: { ...f, err: 'Use an https address reachable from the internet. Private and local addresses are refused (422).' } });
+        if (!f.events.length) return this.setState({ hookForm: { ...f, err: 'Choose at least one event.' } });
+        if (s.hooks.length >= 10) return this.setState({ hookForm: { ...f, err: 'This organisation has 10 webhooks, the most allowed.' } });
+        const shown = u.replace(/^(https:\/\/[^/?#]+).*/, '$1/…');
+        this.setState(st => ({ hookForm: null, hooks: [...st.hooks, { url: shown, events: f.events, active: true, last: ['neutral', 'Nothing sent yet'], rotated: 'Never rotated' }], hookSel: st.hooks.length }));
+        this.showSecret({ title: 'Webhook secret', value: 'whsec_' + hex(40), body: 'Shown once. The receiver uses it to check the DocForge-Signature header on every delivery.' }); },
+      secret: s.secret, copySecret: () => { try { navigator.clipboard.writeText(s.secret.value); } catch (x) {} this.setState({ secret: { ...s.secret, copied: true } }); },
+      secretDone: () => { const d = s.secret && s.secret.done; this.setState({ secret: null }); if (d) d(); },
+      copyLabel: s.secret && s.secret.copied ? 'Copied' : 'Copy',
+      confirm: s.confirm, confirmGo: () => s.confirm && s.confirm.fn(), confirmClose: () => this.setState({ confirm: null }),
+      login: lg, signOut: () => this.setState({ screen: 'login', login: { ...lg, pin: '', err: null } }),
+      onLgOrg: e => this.setState({ login: { ...lg, org: e.target.value } }), onLgEmail: e => this.setState({ login: { ...lg, email: e.target.value } }),
+      onLgPin: e => this.setState({ login: { ...lg, pin: e.target.value.replace(/\D/g, '').slice(0, 6), err: null } }),
+      doLogin: e => { e.preventDefault();
+        if (!lg.org.trim() || !lg.email.trim()) return this.setState({ login: { ...lg, err: { kind: 'fail', text: 'Enter your organisation and email.' } } });
+        if (lg.pin.length !== 6) return this.setState({ login: { ...lg, err: { kind: 'fail', text: 'Enter your 6-digit PIN.' } } });
+        if (lg.pin === '111111') return this.setState({ login: { ...lg, pin: '', err: { kind: 'fail', text: 'Those sign-in details are not right. Check the organisation, email and PIN.' } } });
+        if (lg.pin === '999999') return this.setState({ login: { ...lg, pin: '', err: { kind: 'warn', text: 'Too many wrong PINs. Signing in is locked for 15 minutes; try again at 12:02.' } } });
+        this.setState({ screen: 'queue', login: { ...lg, pin: '', err: null } }); }
+    };
+  }
+
+  renderVals() {
+    const s = this.state, p = this.props;
+    const theme = s.themeOverride || p.theme || 'light';
+    const isAdmin = (p.role || 'reviewer') === 'admin';
+    const qs = p.queueState || 'normal';
+    const navItem = (id, label, icon, count) => {
+      const cur = s.screen === id || (id === 'queue' && s.screen === 'doc');
+      return { label, icon, count, countShown: count && !((s.w || 1440) < 1100), current: cur ? 'page' : undefined, bg: cur ? 'var(--color-accent-100)' : 'transparent', fg: cur ? 'var(--color-accent-800)' : 'var(--color-text)', go: () => this.go(id) };
+    };
+    const kindIcon = r => RICON[r.label] || IC.help;
+    const queue = QUEUE.map((q, i) => ({ ...q, domId: 'q-' + i, v2: q.v > 1, selected: i === s.sel, bg: i === s.sel ? 'color-mix(in srgb,var(--color-accent) 9%,transparent)' : 'transparent', ring: i === s.sel ? 'inset 0 0 0 1px var(--color-accent-400)' : 'none',
+      reasonsV: q.reasons.map(r => ({ ...r, icon: kindIcon(r) })), onSelect: () => this.setState({ sel: i }), onOpen: () => this.open(i) }));
+    const counts = { fail: 0, warn: 0, mm: 0 };
+    QUEUE.forEach(q => q.reasons.forEach(r => { if (r.label === 'Does not match its order') counts.mm++; else if (r.kind === 'fail') counts.fail++; else counts.warn++; }));
+
+    const vis = this.visible();
+    const fieldsV = vis.map((f, i) => {
+      const c = s.corr[f.path], a = s.active === f.path, h = s.hover === f.path;
+      const domId = 'f-' + f.path.replace(/[^a-z0-9]/gi, '-');
+      const checks = c ? [{ kind: 'info', text: 'by ' + c.by + ' from ' + f.value + '. ' + c.reason }] : f.checks;
+      return { ...f, domId, descId: domId + '-d', value: c ? c.value : f.value,
+        confText: c ? 'Corrected' : Math.round(f.conf * 100) + '%', confKind: c ? 'info' : f.conf < .8 ? 'warn' : 'ok', confW: c ? 100 : Math.round(f.conf * 100),
+        checksV: checks.map(k => ({ ...k, word: WORD[k.kind], icon: KICON[k.kind] })),
+        bg: a ? 'var(--color-accent-100)' : h ? 'color-mix(in srgb,var(--color-text) 4%,transparent)' : 'transparent',
+        ring: a ? 'inset 2px 0 0 var(--color-accent), inset 0 0 0 1px var(--color-accent-300)' : 'none',
+        isEditing: s.editing === f.path, canEdit: f.editable && !c && !s.signed && s.editing !== f.path,
+        groupStart: (i === 0 || vis[i - 1].group !== f.group) ? f.group : null,
+        isLinesStart: f.group === 'Lines' && (i === 0 || vis[i - 1].group !== 'Lines'),
+        onEnter: () => this.setState({ hover: f.path }), onLeave: () => this.setState({ hover: null }),
+        onFocus: () => this.setState({ active: f.path }), onClick: () => this.setState({ active: f.path }), onEdit: () => this.edit(f) };
+    });
+    const boxes = FIELDS.filter(f => {
+      const flagged = this.issuesOf(f).length > 0;
+      return s.allBoxes || flagged || s.active === f.path || s.hover === f.path;
+    }).map(f => {
+      const flagged = this.issuesOf(f).length > 0, a = s.active === f.path, h = s.hover === f.path;
+      const col = flagged ? 'oklch(0.6 0.13 65)' : '#416180';
+      const [l, t, w, hh] = f.box;
+      return { l, t, w, h: hh, label: f.label, aria: 'Value read here: ' + f.label,
+        border: (a || h ? '2px ' : '1.5px ') + (flagged && !a ? 'dashed ' : 'solid ') + col,
+        bg: a ? (flagged ? 'oklch(0.75 0.13 75 / .22)' : 'rgba(89,128,166,.2)') : h ? (flagged ? 'oklch(0.75 0.13 75 / .14)' : 'rgba(89,128,166,.12)') : 'transparent',
+        showLabel: a || h, labelBg: flagged ? 'oklch(0.5 0.12 60)' : '#416180',
+        onClick: () => this.selectField(f.path, true), onEnter: () => this.setState({ hover: f.path }), onLeave: () => this.setState({ hover: null }) };
+    });
+    const qtyC = s.corr['lines[1].qty'];
+    const lines = [
+      { desc: 'Amoxicillin 500 mg Caps 10×10', batch: 'AMX-2409-117', qty: '800', rate: '182.50', amt: '1,46,000.00', qtyKind: 'neutral', qtyWeight: 400 },
+      { desc: 'Paracetamol 650 mg Tabs 15s', batch: 'PCM-2408-052', qty: qtyC ? qtyC.value : '1,200', rate: '96.40', amt: '1,15,680.00', qtyKind: qtyC ? 'info' : 'warn', qtyWeight: 600 },
+      { desc: 'Azithromycin 250 mg Tabs 6s', batch: 'AZM-2409-031', qty: '600', rate: '178.00', amt: '1,06,800.00', qtyKind: 'neutral', qtyWeight: 400 }];
+    const bl = this.blockers();
+    const flaggedCount = FIELDS.filter(f => this.issuesOf(f).length).length;
+    const tabs = [['fields', 'Values', flaggedCount ? flaggedCount + ' to check' : null, 'warn'], ['match', 'Order match', qtyC ? null : '1', 'fail'], ['coa', 'Certificates', '1', 'neutral'], ['timeline', 'Timeline'], ['audit', 'Audit trail'], ['ask', 'Ask']]
+      .map(([id, label, count, kind]) => ({ label, count, kind, sel: s.tab === id, line: s.tab === id ? 'var(--color-accent)' : 'transparent', fg: s.tab === id ? 'var(--color-text)' : 'var(--color-neutral-700)', weight: s.tab === id ? 500 : 400, go: () => this.setState({ tab: id }) }));
+    const matchRows = [
+      { desc: 'Amoxicillin 500 mg', ord: '800', bill: '800', rate: '182.50 / 182.50', kind: 'ok', icon: IC.check, result: 'Matches', weight: 400 },
+      { desc: 'Paracetamol 650 mg', ord: '1,000', bill: qtyC ? qtyC.value : '1,200', rate: '96.40 / 96.40', kind: qtyC ? 'info' : 'fail', icon: qtyC ? IC.pen : IC.x, result: qtyC ? 'Corrected' : 'Quantity differs', weight: 600 },
+      { desc: 'Azithromycin 250 mg', ord: '600', bill: '600', rate: '178.00 / 178.00', kind: 'ok', icon: IC.check, result: 'Matches', weight: 400 }];
+
+    const sg = s.sign;
+    const approve = sg && sg.outcome === 'approved';
+    const meanings = approve ? ['I approve this invoice for payment', 'I confirm the values match the page'] : ['I reject this invoice: it must not be paid'];
+    const pin = sg ? sg.pin : '';
+    const pinCells = [0, 1, 2, 3, 4, 5].map(i => ({ ch: i < pin.length ? '•' : '', border: s.pinFocus && i === Math.min(pin.length, 5) ? 'var(--color-accent)' : 'var(--color-divider)', ring: s.pinFocus && i === Math.min(pin.length, 5) ? '0 0 0 1px var(--color-accent)' : 'none' }));
+
+    const stage = s.stream ? s.stream.stage : 0;
+    const stages = ['Searching', 'Reading 8 passages', 'Checking quotes'].map((label, i) => ({ label, mark: i + 1 < stage ? '✓' : '', fg: i + 1 <= stage ? 'var(--color-text)' : 'var(--color-neutral-500)' }));
+    const msgsV = s.msgs.map(m => {
+      if (m.role === 'user') return { isUser: true, text: m.text, time: m.time };
+      const st = ASTAT[m.status];
+      return { isAnswer: true, time: m.time, ...st, note: m.note, noteTitle: m.noteTitle, hasCites: m.cites.length > 0,
+        segs: m.segs.map(g => g.n ? { isCite: true, n: g.n, go: () => this.openCite(m.cites.find(c => c.n === g.n)) } : { isText: true, t: g.t }),
+        cites: m.cites.map(c => ({ ...c, go: () => this.openCite(c) })) };
+    });
+    const conv = CONVS[s.conv];
+    const other = OTHER[s.screen] || { title: '', path: '', eps: [] };
+
+    const W = s.w || 1440, rail = W < 1100, stackDoc = W < 1000;
+    return {
+      ...this.extraVals(isAdmin),
+      theme, isAdmin, showEp: !!p.showEndpoints,
+      notRail: !rail, isRail: rail, shellCols: rail ? '60px minmax(0,1fr)' : '232px minmax(0,1fr)', navJustify: rail ? 'center' : 'flex-start',
+      queueCols: W >= 1280 ? 'minmax(0,1fr) minmax(300px,380px)' : 'minmax(0,1fr)', previewDisplay: W >= 1280 ? 'flex' : 'none',
+      rowCols: W < 760 ? 'minmax(0,1fr)' : '96px minmax(0,1fr) 116px', rowTimeAlign: W < 760 ? 'left' : 'right',
+      docCols: stackDoc ? 'minmax(0,1fr)' : 'minmax(0,1fr) minmax(400px,480px)', docRows: stackDoc ? '68vh auto' : 'minmax(0,1fr)', docOverflow: stackDoc ? 'auto' : 'hidden',
+      chatCols: W < 900 ? 'minmax(0,1fr)' : '260px minmax(0,1fr)', convDisplay: W < 900 ? 'none' : 'flex',
+      roleLabel: isAdmin ? 'Administrator' : 'Reviewer', themeLabel: theme === 'dark' ? 'Light theme' : 'Dark theme',
+      toggleTheme: () => this.setState({ themeOverride: theme === 'dark' ? 'light' : 'dark' }),
+      navMain: [navItem('queue', 'Review queue', IC.inbox, String(QUEUE.length)), navItem('documents', 'Documents', IC.file), navItem('upload', 'Upload', IC.upload), navItem('search', 'Search', IC.search), navItem('chat', 'Chat', IC.chat), navItem('collections', 'Knowledge bases', IC.book), navItem('evals', 'Evals and cost', IC.chart)],
+      navAdmin: [navItem('questions', 'Unanswered questions', IC.help), navItem('agents', 'AI agents', IC.bot), navItem('audit', 'Audit log', IC.shield), navItem('webhooks', 'Webhooks', IC.hook)],
+      isQueue: s.screen === 'queue', isDoc: s.screen === 'doc', isChat: s.screen === 'chat', isOther: !!OTHER[s.screen], other,
+      queueSummary: qs === 'empty' ? 'Nothing is waiting.' : QUEUE.length + ' documents need a person, oldest first · ' + counts.fail + ' failed checks, ' + counts.warn + ' uncertain values, ' + counts.mm + ' order mismatches',
+      qLoading: qs === 'loading', qEmpty: qs === 'empty', qError: qs === 'error', qRL: qs === 'rateLimited', qOffline: qs === 'offline', qList: qs === 'normal' || qs === 'offline',
+      skeleton: [1, 2, 3, 4, 5, 6], rl: s.rl, queue, selId: 'q-' + s.sel, selQ: queue[s.sel], selPos: (s.sel + 1) + ' of ' + QUEUE.length,
+      openSel: () => this.open(s.sel), goUpload: () => this.go('upload'), goQueue: () => this.go('queue'),
+      reprocess: () => this.toast('Reading again. Version 2 appears here when it is ready; you can keep working on version 1.'),
+      zoom: s.zoom, pageW: s.zoom + '%', zoomIn: () => this.setState({ zoom: Math.min(200, s.zoom + 25) }), zoomOut: () => this.setState({ zoom: Math.max(50, s.zoom - 25) }),
+      allBoxes: s.allBoxes, toggleBoxes: () => this.setState({ allBoxes: !s.allBoxes }),
+      cite: s.cite, clearCite: () => this.setState({ cite: null }),
+      boxes, tabs, panelRef: this.panelRef, fieldsV, lines, matchRows, timeline: TIMELINE, audit: AUDIT,
+      tabFields: s.tab === 'fields', tabMatch: s.tab === 'match', tabCoa: s.tab === 'coa', tabTimeline: s.tab === 'timeline', tabAudit: s.tab === 'audit', tabAsk: s.tab === 'ask',
+      hasBlockers: bl.length > 0 && !s.signed, blockerTitle: bl.length === 1 ? '1 thing needs a person before this can be approved' : bl.length + ' things need a person before this can be approved',
+      blockersV: bl.map(b => ({ ...b, icon: b.label === 'Check failed' ? IC.x : b.label === 'Uncertain value' ? IC.help : IC.compare, go: () => this.selectField(b.path, true) })),
+      fAll: s.filter === 'all', fFlag: s.filter === 'flagged', showAll: () => this.setState({ filter: 'all' }), showFlagged: () => this.setState({ filter: 'flagged' }),
+      fieldCount: FIELDS.length, flaggedCount, noFlagged: s.filter === 'flagged' && flaggedCount === 0,
+      draft: s.draft, draftErr: s.draftErr, saveCorrection: this.saveCorrection, cancelEdit: () => this.setState({ editing: null }),
+      onDraftValue: e => this.setState({ draft: { ...s.draft, value: e.target.value } }), onDraftReason: e => this.setState({ draft: { ...s.draft, reason: e.target.value } }), onDraftPin: e => this.setState({ draft: { ...s.draft, pin: e.target.value.replace(/\D/g, '').slice(0, 6) } }),
+      notSigned: !s.signed, signed: s.signed,
+      decisionText: bl.length ? 'DocForge cannot approve this on its own: ' + bl.length + (bl.length === 1 ? ' open check.' : ' open checks.') : 'All checks pass. Ready to sign.',
+      hash: s.hash, hashShort: s.hash.slice(0, 8) + ' … ' + s.hash.slice(-8), hashGrouped: grp(s.hash),
+      openApprove: () => this.openSign('approved'), openReject: () => this.openSign('rejected'),
+      citePay: () => this.setState({ cite: { ...BOX_PAY, src: 'quote 1 from Ask', tag: 'Quote 1', quote: 'Payment: 45 days from date of invoice.' } }),
+      docQ: s.docQ, onDocQ: e => this.setState({ docQ: e.target.value }),
+      askDoc: e => { e.preventDefault(); const q = s.docQ.trim(); if (!q) return; this.setState({ docQ: '', screen: 'chat', conv: 1 }); this.startStream(q); },
+      sign: sg ? { ...sg, isApprove: approve, isReject: !approve } : null, signForm: sg && sg.step === 'form', signStale: sg && sg.step === 'stale',
+      signTitle: (approve ? 'Approve' : 'Reject') + ' invoice MS/24-25/04417', signCta: approve ? 'Sign and approve' : 'Sign and reject',
+      needOverride: approve && bl.length > 0,
+      meaningsV: meanings.map((text, i) => ({ text, sel: sg ? sg.meaning === i : false, pick: () => this.patchSign({ meaning: i }) })),
+      setApprove: () => this.patchSign({ outcome: 'approved', meaning: 0, err: null }), setReject: () => this.patchSign({ outcome: 'rejected', meaning: 0, err: null }),
+      onOverride: e => this.patchSign({ override: e.target.value }), onReason: e => this.patchSign({ reason: e.target.value }),
+      onPin: e => this.patchSign({ pin: e.target.value.replace(/\D/g, '').slice(0, 6), err: null }),
+      pinOn: () => this.setState({ pinFocus: true }), pinOff: () => this.setState({ pinFocus: false }), pinCells,
+      submitSign: this.submitSign, closeSign: () => this.setState({ sign: null }), backdropClose: () => this.setState({ sign: null }), stop: e => e.stopPropagation(),
+      reloadRecord: () => { this.setState(st => ({ sign: null, hash: HASH1, corr: { ...st.corr, total: { value: '₹4,12,697.60', reason: 'Taxable value plus IGST; the printed total adds ₹180.00 by mistake.', by: 'Aisha Khan' } } })); this.toast('Reloaded. Aisha Khan’s correction to Invoice total is now shown.'); },
+      toast: s.toast, toastAction: () => this.toastFn && this.toastFn(),
+      convs: CONVS.map((c, i) => ({ ...c, current: i === s.conv ? 'page' : undefined, bg: i === s.conv ? 'var(--color-accent-100)' : 'transparent', go: () => this.setState({ conv: i }) })),
+      convTitle: conv.title, convScope: conv.scope, newConv: () => { this.setState({ q: '' }); const el = document.getElementById('cq'); if (el) el.focus(); },
+      threadRef: this.threadRef, msgsV, streaming: !!s.stream, stages,
+      liveText: s.stream ? ['', 'Searching', 'Reading 8 passages', 'Checking quotes'][stage] : (s.msgs.length > INIT_MSGS.length ? 'Answer ready: partly supported, 1 statement left out.' : ''),
+      stopStream: () => { this.timers.forEach(clearTimeout); this.setState({ stream: null }); this.toast('Stopped. The answer is still being prepared and will appear in this conversation.'); },
+      q: s.q, onQ: e => this.setState({ q: e.target.value }), onQKey: e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); this.send(); } }, send: this.send
+    };
+  }
+}
+</script>
+</body>
+</html>
