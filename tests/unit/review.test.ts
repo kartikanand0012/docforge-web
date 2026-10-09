@@ -77,7 +77,8 @@ describe("the values of a document", () => {
 
   it("groups other document types sensibly", () => {
     expect(groupOf("tests[2].result", "coa")).toBe("Tests");
-    expect(groupOf("supplier_name", "purchase_order")).toBe("Order");
+    expect(groupOf("supplier_name", "purchase_order")).toBe("Parties");
+    expect(groupOf("po_no", "purchase_order")).toBe("Order");
     expect(groupOf("batch_no", "coa")).toBe("Certificate");
   });
 });
