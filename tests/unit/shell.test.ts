@@ -33,6 +33,8 @@ describe("who is signed in", () => {
     const admin = { kind: "session", name: "Priya Nair", email: "priya@medisynth.in", role: "admin", organisation: "medisynth" };
     expect(callerFrom(200, admin)).toEqual(admin);
     expect(callerFrom(404, null)).toEqual({ kind: "session", name: "", email: null, role: "reviewer", organisation: "" });
+    // Before the endpoint, the path existed for sign-out only: GET answers 405.
+    expect(callerFrom(405, null)?.role).toBe("reviewer");
     expect(callerFrom(401, null)).toBeNull();
   });
 });
