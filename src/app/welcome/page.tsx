@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ArrowRight, Bot, FileCheck2, Fingerprint, GitCompareArrows, MessageSquareQuote, ScanSearch, ShieldCheck, Webhook } from "lucide-react";
+import { AlertTriangle, ArrowRight, Bot, Check, FileCheck2, Fingerprint, GitCompareArrows, MessageSquareQuote, ScanSearch, ShieldCheck, Webhook } from "lucide-react";
 import { Marks } from "@/components/ui";
 
 const DESCRIPTION =
@@ -42,6 +42,41 @@ const FEATURES = [
 
 const STACK = ["Next.js 16", "React 19", "FastAPI", "PostgreSQL row-level security", "pgvector hybrid search", "Docling", "Google Gemini", "Model Context Protocol", "Railway"];
 
+/** A still of the review screen: values, where each came from, and what was checked. The
+ * figures are from a synthetic sample invoice. */
+function HeroPreview() {
+  const rows = [
+    { label: "Invoice number", value: "SRP/26-27/40002", ok: true, note: "Found where it says on page 1" },
+    { label: "Seller GSTIN", value: "27AAKCS4821M1ZW", ok: true, note: "Checksum valid" },
+    { label: "Line 1 · Quantity", value: "20", ok: true, note: "Matches the purchase order" },
+    { label: "Batch UNL2812", value: "Assay 107.2%", ok: false, note: "Outside the certificate's limits" },
+    { label: "Grand total", value: "₹15,263.00", ok: true, note: "Lines plus GST add up" },
+  ];
+  return (
+    <div className="landing-preview marked" aria-hidden="true">
+      <Marks />
+      <div className="landing-preview-head">
+        <span className="tag tag-accent">Invoice</span>
+        <span className="mono">invoice.pdf</span>
+        <span className="badge badge-warn">Needs a person</span>
+      </div>
+      <ul>
+        {rows.map((row) => (
+          <li key={row.label}>
+            <span className="muted landing-preview-label">{row.label}</span>
+            <span className="landing-preview-value num">{row.value}</span>
+            <span className={`reason reason-${row.ok ? "ok" : "fail"}`}>
+              {row.ok ? <Check strokeWidth={1.5} /> : <AlertTriangle strokeWidth={1.5} />}
+              <span>{row.note}</span>
+            </span>
+          </li>
+        ))}
+      </ul>
+      <div className="landing-preview-foot mono">sha256 7d3d23c… 3858ccb · signed with a PIN</div>
+    </div>
+  );
+}
+
 export default function Welcome() {
   return (
     <div className="landing">
@@ -64,6 +99,7 @@ export default function Welcome() {
 
       <main>
         <section className="landing-hero blueprint-grid">
+          <div className="landing-hero-text">
           <p className="landing-kicker">Document intelligence for accounts payable and quality teams</p>
           <h1>Documents read, checked and signed, with every value traced to its page.</h1>
           <p className="landing-lead">{DESCRIPTION}</p>
@@ -77,6 +113,8 @@ export default function Welcome() {
             </Link>
           </div>
           <p className="muted landing-note">Free workspace: up to 30 documents. Your documents are visible only to you.</p>
+          </div>
+          <HeroPreview />
         </section>
 
         <section className="landing-section" aria-labelledby="figures">

@@ -563,7 +563,20 @@ textarea.input { min-height: 72px; resize: vertical; }
 .landing-nav { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 14px clamp(16px, 4vw, 48px); border-bottom: 1px solid var(--color-divider); position: sticky; top: 0; background: var(--color-bg); z-index: 2; }
 .landing-nav .brand { padding: 0; }
 .landing-nav-links { display: flex; gap: 8px; }
-.landing-hero { padding: clamp(48px, 9vw, 112px) clamp(16px, 6vw, 96px) clamp(40px, 6vw, 72px); display: flex; flex-direction: column; gap: 18px; align-items: flex-start; }
+.landing-hero { padding: clamp(48px, 8vw, 104px) clamp(16px, 6vw, 96px) clamp(40px, 6vw, 72px); display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr); gap: 48px; align-items: center; }
+.landing-hero-text { display: flex; flex-direction: column; gap: 18px; align-items: flex-start; }
+.landing-preview { background: var(--color-bg); border: 1px solid var(--color-divider); padding: 18px; display: flex; flex-direction: column; gap: 12px; box-shadow: var(--shadow-lg); }
+.landing-preview-head { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; font-size: 13px; }
+.landing-preview-head .badge { margin-left: auto; }
+.landing-preview ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; }
+.landing-preview li { display: grid; grid-template-columns: 1fr auto; gap: 2px 12px; padding: 10px 0; border-top: 1px solid var(--color-divider); }
+.landing-preview-label { font-size: 12px; }
+.landing-preview-value { font-weight: 600; text-align: right; }
+.landing-preview .reason { grid-column: 1 / -1; font-size: 12.5px; }
+.landing-preview-foot { font-size: 11.5px; color: var(--color-neutral-700); border-top: 1px solid var(--color-divider); padding-top: 10px; }
+@media (max-width: 900px) {
+  .landing-hero { grid-template-columns: 1fr; }
+}
 .landing-hero h1 { font-size: clamp(32px, 5.2vw, 58px); max-width: 17ch; letter-spacing: -0.02em; }
 .landing-kicker { font: 500 12.5px var(--font-mono); text-transform: uppercase; letter-spacing: 0.08em; color: var(--color-accent-700); }
 .landing-lead { font-size: clamp(15px, 1.6vw, 18px); max-width: 62ch; color: color-mix(in srgb, var(--color-text) 80%, transparent); }
