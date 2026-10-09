@@ -1,0 +1,6 @@
+.local-login.txt
+.env*
+node_modules
+.next
+test-results
+playwright-report
