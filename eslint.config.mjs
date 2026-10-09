@@ -12,6 +12,10 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // The Claude Design handoff: a reference, not this app's code.
+    "design/**",
+    "playwright-report/**",
+    "test-results/**",
   ]),
 ]);
 

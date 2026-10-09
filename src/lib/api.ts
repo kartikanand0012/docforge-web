@@ -38,6 +38,8 @@ export function errorFrom(status: number, body: unknown, headers: Headers): ApiE
 function toLogin(): void {
   if (typeof window === "undefined" || window.location.pathname === "/login") return;
   const next = `${window.location.pathname}${window.location.search}`;
+  // A full load on purpose: every piece of state from the ended session is dropped.
+  // eslint-disable-next-line @next/next/no-location-assign-relative-destination
   window.location.assign(`/login?next=${encodeURIComponent(next)}`);
 }
 
