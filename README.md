@@ -1,36 +1,39 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# DocForge web
 
-## Getting Started
+The web app for [DocForge](https://github.com/kartikanand0012/docforge): review queue, document view
+(the page with a box wherever a value was read, corrections, signing), chat with quotes, search,
+documents, upload, knowledge bases, AI agents, webhooks, audit log, unanswered questions and evals.
 
-First, run the development server:
+Built from the Claude Design handoff in `design/` (README, tokens, prototype) on the backend contract
+in `design/reference/` (the handover and OpenAPI). Next.js 16, React 19, plain CSS with the design's
+tokens (`src/app/globals.css`), lucide-react.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+## Run
+
+```sh
+npm install
+DOCFORGE_API_URL=http://127.0.0.1:8000 npm run dev   # the API from the docforge repo (make api)
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Against the demo stack (`docforge/.deploytest`, https://localhost), trust Caddy's local authority:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```sh
+docker compose -f ../docforge/.deploytest/compose.yml exec -T caddy cat /data/caddy/pki/authorities/local/root.crt > /tmp/caddy-root.crt
+DOCFORGE_API_URL=https://localhost NODE_EXTRA_CA_CERTS=/tmp/caddy-root.crt npm run dev -- -p 3100
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## How it talks to the API
 
-## Learn More
+The browser only ever calls this app (`/api/v1/...`). The route handler adds `Authorization:
+Bearer` from the HttpOnly `df_session` cookie, so page scripts never see a token
+(`src/app/api/v1/[...path]/route.ts`, `src/app/api/session/route.ts`). `src/proxy.ts` sends a page
+without a session to `/login`; every API call is still checked by the API.
 
-To learn more about Next.js, take a look at the following resources:
+## Checks
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```sh
+npm run check   # typecheck, lint, unit tests, production build
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Tests are written first (a RED commit, then GREEN). Pure logic lives in `src/lib/` with tests in
+`tests/unit/`.
