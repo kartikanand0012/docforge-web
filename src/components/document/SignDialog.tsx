@@ -90,6 +90,7 @@ export function SignDialog({ review, initial, callerName, callerEmail, onClose, 
     const changed = stale.corrections.at(-1);
     return (
       <Dialog
+        key="stale"
         title="This record changed since you opened it"
         kicker="Electronic signature"
         role="alertdialog"

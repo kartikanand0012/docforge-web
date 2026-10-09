@@ -11,13 +11,22 @@ type DialogProps = {
   role?: "dialog" | "alertdialog";
   width?: number;
   actions?: ReactNode;
+  /** False for content that must not be lost by a stray Escape or click outside. */
+  dismissable?: boolean;
 };
 
 const FOCUSABLE = 'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
 
 /** A modal dialog: focus kept inside, Escape closes it, focus goes back to what opened it. */
-export function Dialog({ title, kicker, onClose, children, role = "dialog", width = 480, actions }: DialogProps) {
+export function Dialog({ title, kicker, onClose, children, role = "dialog", width = 480, actions, dismissable = true }: DialogProps) {
   const panel = useRef<HTMLDivElement>(null);
+  // What had focus before the dialog, read while rendering: a child with autoFocus takes
+  // focus before any effect runs, so an effect would find the child instead.
+  const [opener] = useState(() => (typeof document === "undefined" ? null : (document.activeElement as HTMLElement | null)));
+  const canDismiss = useRef(dismissable);
+  useEffect(() => {
+    canDismiss.current = dismissable;
+  }, [dismissable]);
   const titleId = useId();
   const close = useRef(onClose);
   useEffect(() => {
@@ -25,7 +34,6 @@ export function Dialog({ title, kicker, onClose, children, role = "dialog", widt
   }, [onClose]);
 
   useEffect(() => {
-    const opener = document.activeElement as HTMLElement | null;
     const node = panel.current;
     if (node && !node.contains(document.activeElement)) {
       (node.querySelector<HTMLElement>("[autofocus], [data-autofocus]") ?? node.querySelector<HTMLElement>(FOCUSABLE) ?? node).focus();
@@ -33,7 +41,7 @@ export function Dialog({ title, kicker, onClose, children, role = "dialog", widt
     const onKey = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
         event.stopPropagation();
-        close.current();
+        if (canDismiss.current) close.current();
         return;
       }
       if (event.key !== "Tab" || !node) return;
@@ -41,7 +49,11 @@ export function Dialog({ title, kicker, onClose, children, role = "dialog", widt
       if (!items.length) return;
       const first = items[0];
       const last = items[items.length - 1];
-      if (event.shiftKey && document.activeElement === first) {
+      // Focus on the panel itself, or lost outside it, is brought back in.
+      if (!node.contains(document.activeElement) || document.activeElement === node) {
+        event.preventDefault();
+        (event.shiftKey ? last : first).focus();
+      } else if (event.shiftKey && document.activeElement === first) {
         event.preventDefault();
         last.focus();
       } else if (!event.shiftKey && document.activeElement === last) {
@@ -54,10 +66,10 @@ export function Dialog({ title, kicker, onClose, children, role = "dialog", widt
       document.removeEventListener("keydown", onKey, true);
       opener?.focus?.();
     };
-  }, []);
+  }, [opener]);
 
   return (
-    <div className="dialog-backdrop" onMouseDown={(event) => event.target === event.currentTarget && onClose()}>
+    <div className="dialog-backdrop" onMouseDown={(event) => event.target === event.currentTarget && dismissable && onClose()}>
       <div ref={panel} className="dialog" role={role} aria-modal="true" aria-labelledby={titleId} tabIndex={-1} style={{ width: `min(${width}px, 100%)` }}>
         {kicker && <p className="group-label" style={{ fontSize: 11 }}>{kicker}</p>}
         <h2 id={titleId} className="dialog-title">
@@ -85,6 +97,7 @@ export function SecretDialog({ title, secret, body, onDone }: { title: ReactNode
     <Dialog
       title={title}
       onClose={onDone}
+      dismissable={false}
       actions={
         <button className="btn btn-primary" onClick={onDone}>
           Done, I have copied it
