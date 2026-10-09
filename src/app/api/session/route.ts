@@ -18,10 +18,12 @@ export async function POST(request: Request) {
   } catch {
     return NextResponse.json({ detail: "Signing in is unavailable at the moment. Try again shortly." }, { status: 503 });
   }
-  const payload = (await response.json().catch(() => ({}))) as { token?: string; detail?: string };
+  const payload = (await response.json().catch(() => ({}))) as { token?: string; detail?: unknown };
   if (!response.ok || !payload.token) {
     const headers = response.headers.get("retry-after") ? { "Retry-After": response.headers.get("retry-after")! } : undefined;
-    return NextResponse.json({ detail: payload.detail ?? "Sign-in failed." }, { status: response.status, headers });
+    // A validation error's detail is a list; only a sentence is passed on.
+    const detail = typeof payload.detail === "string" ? payload.detail : "Sign-in failed.";
+    return NextResponse.json({ detail }, { status: response.status, headers });
   }
   const jar = await cookies();
   jar.set(SESSION_COOKIE, payload.token, cookieOptions(request));
@@ -46,5 +48,6 @@ export async function DELETE(request: Request) {
   jar.delete(SESSION_COOKIE);
   jar.delete(WORKSPACE_COOKIE);
   jar.delete(WORKSPACE_NAME_COOKIE);
-  return new NextResponse(null, { status: 204 });
+  // Page images are cached by the browser; on a shared computer they go with the session.
+  return new NextResponse(null, { status: 204, headers: { "Clear-Site-Data": '"cache"' } });
 }

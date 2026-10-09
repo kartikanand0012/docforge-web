@@ -50,6 +50,14 @@ describe("forwardedFor", () => {
     });
   });
 
+  it("keeps only the address the edge appended, never one the browser chose", () => {
+    const trusted = { DOCFORGE_TRUST_PROXY: "1" };
+    expect(forwardedFor(request("10.0.0.99, 203.0.113.5"), trusted)).toEqual({ "X-Forwarded-For": "203.0.113.5" });
+    const real = new Request("https://demo.example.com/api/session", { headers: { "x-forwarded-for": "10.0.0.99", "x-real-ip": "203.0.113.9" } });
+    expect(forwardedFor(real, trusted)).toEqual({ "X-Forwarded-For": "203.0.113.9" });
+    expect(forwardedFor(request("not an address"), trusted)).toEqual({});
+  });
+
   it("drops it otherwise: a browser can send anything", () => {
     expect(forwardedFor(request("198.51.100.7"), {})).toEqual({});
     expect(forwardedFor(request(), { DOCFORGE_TRUST_PROXY: "1" })).toEqual({});

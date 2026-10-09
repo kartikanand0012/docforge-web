@@ -65,7 +65,8 @@ export default function LoginPage() {
           <div className="reason-box reason-info" style={{ display: "flex", flexDirection: "column", gap: 6, fontSize: 13 }}>
             <p>
               <b>Try the demo.</b> Organisation <span className="mono">{demo.organisation}</span>, email{" "}
-              <span className="mono">{demo.email}</span>, PIN <span className="mono">{demo.pin}</span>. It reads recorded sample documents.
+              <span className="mono">{demo.email}</span>, PIN <span className="mono">{demo.pin}</span>. A shared account with sample documents: everyone using it sees
+              the same workspace, and it cannot upload. For your own documents, <Link href="/signup">create a free account</Link>.
             </p>
             <button
               type="button"

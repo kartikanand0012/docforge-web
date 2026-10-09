@@ -1,11 +1,12 @@
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
-import { WORKSPACE_COOKIE, WORKSPACE_NAME_COOKIE, cookieOptions, isWorkspaceId, sameOrigin } from "@/lib/server";
+import { SESSION_COOKIE, WORKSPACE_COOKIE, WORKSPACE_NAME_COOKIE, cookieOptions, isWorkspaceId, sameOrigin } from "@/lib/server";
 
 /** A platform administrator starts looking at a workspace, read only. Whether they may is the
  * API's decision, on every request; an ordinary account that sets this gets a refusal. */
 export async function POST(request: Request) {
   if (!sameOrigin(request)) return NextResponse.json({ detail: "Cross-site request refused." }, { status: 403 });
+  if (!(await cookies()).get(SESSION_COOKIE)) return NextResponse.json({ detail: "Sign in first." }, { status: 401 });
   const body = (await request.json().catch(() => ({}))) as { tenant_id?: unknown; name?: unknown };
   const id = typeof body.tenant_id === "string" ? body.tenant_id : null;
   if (!isWorkspaceId(id)) return NextResponse.json({ detail: "Not a workspace." }, { status: 400 });

@@ -19,8 +19,12 @@ export function apiBase(): string {
 /** Secure whenever the browser reached us over HTTPS (directly or through a proxy that says
  * so); a Secure cookie over plain HTTP would be dropped, which only happens locally. */
 export function cookieOptions(request: Request) {
+  // Always Secure in production: behind a TLS terminator the request itself may look like
+  // plain HTTP, and a missing header must not drop the flag.
   const https =
-    new URL(request.url).protocol === "https:" || request.headers.get("x-forwarded-proto") === "https";
+    process.env.NODE_ENV === "production" ||
+    new URL(request.url).protocol === "https:" ||
+    request.headers.get("x-forwarded-proto") === "https";
   return {
     httpOnly: true, // the token is never readable by page scripts
     sameSite: "strict" as const, // and never sent with a request started by another site
@@ -52,8 +56,15 @@ export function forwardedFor(
   request: Request,
   env: Record<string, string | undefined> = process.env,
 ): Record<string, string> {
-  const value = request.headers.get("x-forwarded-for");
-  return env.DOCFORGE_TRUST_PROXY === "1" && value ? { "X-Forwarded-For": value } : {};
+  if (env.DOCFORGE_TRUST_PROXY !== "1") return {};
+  // Only the address the edge itself saw: X-Real-IP where the edge sets it, else the last entry
+  // of X-Forwarded-For (the one the edge appended). The entries before it are whatever the
+  // browser sent, so passing them on would let anyone choose their address and slip past the
+  // limits on sign-in and new accounts.
+  const real = request.headers.get("x-real-ip")?.trim();
+  const last = request.headers.get("x-forwarded-for")?.split(",").at(-1)?.trim();
+  const address = real || last;
+  return address && /^[0-9a-fA-F:.]{2,45}$/.test(address) ? { "X-Forwarded-For": address } : {};
 }
 
 /** Uploads are refused above the API's own limit before they are read into memory. */
