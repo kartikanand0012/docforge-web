@@ -6,7 +6,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useState, useSyncExternalStore, type ReactNode } from "react";
+import { createContext, useContext, useEffect, useState, useSyncExternalStore, type ReactNode } from "react";
 import { Marks } from "@/components/ui";
 import { api } from "@/lib/api";
 import { isCurrent, navFor } from "@/lib/nav";
@@ -18,6 +18,15 @@ const ICONS: Record<string, LucideIcon> = {
 };
 
 const THEME_KEY = "docforge.theme";
+
+const CallerContext = createContext<Caller | null>(null);
+
+/** Who is signed in, for the screens that need it (signing, corrections, admin pages). */
+export function useCaller(): Caller {
+  const caller = useContext(CallerContext);
+  if (!caller) throw new Error("useCaller outside the app shell");
+  return caller;
+}
 
 const THEME_EVENT = "docforge-theme";
 
@@ -92,6 +101,7 @@ export function Shell({ caller, children }: { caller: Caller; children: ReactNod
   };
 
   return (
+    <CallerContext.Provider value={caller}>
     <div className="app">
       <nav className="sidebar" aria-label="DocForge">
         <div className="brand">
@@ -135,5 +145,6 @@ export function Shell({ caller, children }: { caller: Caller; children: ReactNod
       </nav>
       <main className="main">{children}</main>
     </div>
+    </CallerContext.Provider>
   );
 }
