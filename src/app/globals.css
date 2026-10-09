@@ -501,7 +501,8 @@ textarea.input { min-height: 72px; resize: vertical; }
 .copy-row .secret { flex: 1; }
 .hook-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)); gap: 14px; }
 .hook-card { display: flex; flex-direction: column; gap: 10px; padding: 14px 16px; border: 1px solid var(--color-divider); border-radius: var(--radius-xl); cursor: pointer; }
-.hook-card[aria-current="true"] { border-color: var(--color-accent-400); }
+.hook-card[data-selected="true"] { border-color: var(--color-accent-700); box-shadow: inset 3px 0 0 var(--color-accent-700); }
+.hook-select { background: none; border: 0; padding: 0; font-size: 13px; text-align: left; overflow-wrap: anywhere; cursor: pointer; color: var(--color-text); text-decoration: underline; text-underline-offset: 3px; }
 .metrics { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; }
 .metric { display: flex; flex-direction: column; gap: 6px; padding: 16px; border: 1px solid var(--color-divider); align-items: flex-start; }
 .metric-figure { font-size: 36px; font-weight: 600; line-height: 1.1; }

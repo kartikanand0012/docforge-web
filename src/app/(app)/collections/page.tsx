@@ -52,8 +52,12 @@ export default function CollectionsPage() {
 
   const remove = async (member: Member) => {
     if (!current) return;
-    await api(`/collections/${current.id}/documents/${member.id}`, { method: "DELETE" }).catch(() => undefined);
-    toast(`${member.filename} removed from ${current.name}. It stays in DocForge.`);
+    try {
+      await api(`/collections/${current.id}/documents/${member.id}`, { method: "DELETE" });
+      toast(`${member.filename} removed from ${current.name}. It stays in DocForge.`);
+    } catch (caught) {
+      setError(caught instanceof ApiError ? `Not removed: ${caught.detail}` : "It was not removed. Try again.");
+    }
     void loadMembers(current.id);
     void reload();
   };
@@ -204,11 +208,16 @@ export default function CollectionsPage() {
           action="Delete knowledge base"
           onClose={() => setDeleting(false)}
           onConfirm={async () => {
-            await api(`/collections/${current.id}`, { method: "DELETE" }).catch(() => undefined);
-            setDeleting(false);
-            toast(`${current.name} deleted. Its documents stay in DocForge.`);
-            setSelected(null);
-            void reload();
+            try {
+              await api(`/collections/${current.id}`, { method: "DELETE" });
+              toast(`${current.name} deleted. Its documents stay in DocForge.`);
+              setSelected(null);
+            } catch (caught) {
+              setError(caught instanceof ApiError ? `Not deleted: ${caught.detail}` : "It was not deleted. Try again.");
+            } finally {
+              setDeleting(false);
+              void reload();
+            }
           }}
         />
       )}

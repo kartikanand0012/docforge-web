@@ -37,6 +37,7 @@ export default function AgentsPage() {
   const [secret, setSecret] = useState<Made | null>(null);
   const [revoking, setRevoking] = useState<Key | null>(null);
   const [origin, setOrigin] = useState("");
+  const [busy, setBusy] = useState(false);
 
   const load = useCallback(
     () =>
@@ -231,11 +232,20 @@ export default function AgentsPage() {
           body="Agents using this key stop working at once. This cannot be undone; make a new key if you need one."
           action="Revoke key"
           onClose={() => setRevoking(null)}
+          busy={busy}
           onConfirm={async () => {
-            await api(`/api-keys/${revoking.prefix}`, { method: "DELETE" }).catch(() => undefined);
-            toast(`The key for ${revoking.name} is revoked.`);
-            setRevoking(null);
-            void load();
+            setBusy(true);
+            try {
+              await api(`/api-keys/${revoking.prefix}`, { method: "DELETE" });
+              toast(`The key for ${revoking.name} is revoked.`);
+              setRevoking(null);
+              void load();
+            } catch (caught) {
+              setError(caught instanceof ApiError ? `The key was not revoked: ${caught.detail}` : "The key was not revoked. Try again.");
+              setRevoking(null);
+            } finally {
+              setBusy(false);
+            }
           }}
         />
       )}

@@ -113,11 +113,20 @@ export default function WebhooksPage() {
         {hooks && !hooks.length && !making && <p className="muted">No webhooks yet. Make one to tell your ERP when documents are ready or signed.</p>}
         <div className="hook-grid">
           {hooks?.map((hook) => (
-            <article key={hook.id} className="hook-card" aria-current={hook.id === selected ? "true" : undefined} onClick={() => setSelected(hook.id)}>
+            <article key={hook.id} className="hook-card" data-selected={hook.id === selected ? "true" : undefined} onClick={() => setSelected(hook.id)}>
               <div style={{ display: "flex", justifyContent: "space-between", gap: 10, alignItems: "center" }}>
-                <code className="mono" style={{ fontSize: 13, overflowWrap: "anywhere" }}>
+                <button
+                  type="button"
+                  className="hook-select mono"
+                  aria-pressed={hook.id === selected}
+                  aria-label={`Show deliveries to ${maskedUrl(hook.url)}`}
+                  onClick={(event) => {
+                    event.stopPropagation();
+                    setSelected(hook.id);
+                  }}
+                >
                   {maskedUrl(hook.url)}
-                </code>
+                </button>
                 <button
                   className="switch"
                   role="switch"
@@ -203,9 +212,14 @@ export default function WebhooksPage() {
           action="Delete webhook"
           onClose={() => setConfirm(null)}
           onConfirm={async () => {
-            await api(`/webhooks/${confirm.hook.id}`, { method: "DELETE" }).catch(() => undefined);
-            toast(`Webhook to ${maskedUrl(confirm.hook.url)} deleted.`);
+            const hook = confirm.hook;
             setConfirm(null);
+            try {
+              await api(`/webhooks/${hook.id}`, { method: "DELETE" });
+              toast(`Webhook to ${maskedUrl(hook.url)} deleted.`);
+            } catch (caught) {
+              setError(caught instanceof ApiError ? `Not deleted: ${caught.detail}` : "The webhook was not deleted. Try again.");
+            }
             void load();
           }}
         />

@@ -100,18 +100,29 @@ export default function QueuePage() {
 
   const open = useCallback((item: QueueItem | undefined) => item && router.push(`/documents/${item.document_id}`), [router]);
 
-  useEffect(() => {
-    const onKey = (event: KeyboardEvent) => {
-      if (typing(event.target) || event.metaKey || event.ctrlKey || event.altKey || !items.length) return;
+  // The queue's keys act only where they belong: inside the list, or with nothing focused (J/K/O).
+  // Links, buttons and fields keep their own Enter and arrows; the page keeps its scrolling.
+  const onListKey = useCallback(
+    (event: { key: string; metaKey: boolean; ctrlKey: boolean; altKey: boolean; preventDefault: () => void }) => {
+      if (event.metaKey || event.ctrlKey || event.altKey || !items.length) return;
       if (event.key === "j" || event.key === "ArrowDown") setSelected((i) => Math.min(i + 1, items.length - 1));
       else if (event.key === "k" || event.key === "ArrowUp") setSelected((i) => Math.max(i - 1, 0));
+      else if (event.key === "Home") setSelected(0);
+      else if (event.key === "End") setSelected(items.length - 1);
       else if (event.key === "Enter" || event.key === "o") open(items[selected]);
       else return;
       event.preventDefault();
+    },
+    [items, selected, open],
+  );
+  useEffect(() => {
+    const onKey = (event: KeyboardEvent) => {
+      if (document.activeElement !== document.body || typing(event.target)) return;
+      if (["j", "k", "o"].includes(event.key)) onListKey(event);
     };
     document.addEventListener("keydown", onKey);
     return () => document.removeEventListener("keydown", onKey);
-  }, [items, selected, open]);
+  }, [onListKey]);
 
   useEffect(() => {
     list.current?.querySelector(`[data-index="${selected}"]`)?.scrollIntoView?.({ block: "nearest" });
@@ -202,6 +213,7 @@ export default function QueuePage() {
             aria-label="Documents that need a person"
             tabIndex={0}
             aria-activedescendant={current ? `queue-${current.document_id}` : undefined}
+            onKeyDown={onListKey}
           >
             {items.map((item, index) => (
               <li
@@ -219,7 +231,12 @@ export default function QueuePage() {
                   {item.version_no > 1 && <span className="muted" style={{ fontSize: 12 }}>Version {item.version_no}</span>}
                 </div>
                 <div className="queue-main">
-                  <p className="queue-file">{item.filename}</p>
+                  <p className="queue-file">
+                    {/* A real link: one tap opens it, on touch screens and with switch or voice control. */}
+                    <Link href={`/documents/${item.document_id}`} tabIndex={-1} onClick={(event) => event.stopPropagation()}>
+                      {item.filename}
+                    </Link>
+                  </p>
                   {item.reasons.map((reason) => {
                     const why = classify(reason);
                     return <ReasonLine key={reason} kind={why.kind} label={why.label} text={why.text} />;
