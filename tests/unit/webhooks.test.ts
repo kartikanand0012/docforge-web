@@ -25,6 +25,6 @@ describe("review findings", () => {
     expect(maskedUrl("https://hooks.slack.com/services/T00/B00/XXXX")).toBe("https://hooks.slack.com/…");
     expect(maskedUrl("https://user:pass@erp.example.com/hooks?x=1")).toBe("https://erp.example.com/…");
     expect(maskedUrl("https://erp.example.com/")).toBe("https://erp.example.com/");
-    expect(maskedUrl("not a url")).toBe("not a url");
+    expect(maskedUrl("not a url")).toBe("(an address that could not be read)"); // never shown raw
   });
 });

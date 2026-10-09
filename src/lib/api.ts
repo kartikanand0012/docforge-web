@@ -35,7 +35,7 @@ export function errorFrom(status: number, body: unknown, headers: Headers): ApiE
   return new ApiError(status, sentence, retryAfter);
 }
 
-function toLogin(): void {
+export function toLogin(): void {
   if (typeof window === "undefined" || window.location.pathname === "/login") return;
   const next = `${window.location.pathname}${window.location.search}`;
   // A full load on purpose: every piece of state from the ended session is dropped.

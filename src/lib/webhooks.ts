@@ -7,7 +7,8 @@ export function maskedUrl(url: string): string {
   try {
     parsed = new URL(url);
   } catch {
-    return url;
+    // Never the raw text: its path or query could hold the receiver's token.
+    return "(an address that could not be read)";
   }
   const hidden = parsed.pathname.length > 1 || parsed.search !== "";
   return `${parsed.protocol}//${parsed.host}/${hidden ? "…" : ""}`;

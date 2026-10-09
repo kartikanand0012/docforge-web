@@ -30,13 +30,13 @@ export function signInError(
 
 const UNKNOWN: Caller = { kind: "session", name: "", email: null, role: "reviewer", organisation: "" };
 
-/** The caller from `GET /v1/sessions/current`. An API from before that endpoint still works
- * (404, or 405 where the path served sign-out only): the person is shown as a reviewer, and
- * administration appears once the API has it. */
+/** The caller from `GET /v1/sessions/current`; null only when the session itself is refused
+ * (401, 403). An API from before that endpoint (404, 405), or one briefly unwell (5xx), still
+ * lets the person in, shown as a reviewer: the API checks every request anyway. */
 export function callerFrom(status: number, body: unknown): Caller | null {
   if (status === 200 && body && typeof body === "object") return body as Caller;
-  if (status === 404 || status === 405) return UNKNOWN;
-  return null;
+  if (status === 401 || status === 403) return null;
+  return UNKNOWN;
 }
 
 export function initials(name: string): string {
