@@ -349,3 +349,4 @@ textarea.input { min-height: 72px; resize: vertical; }
   .queue-when { align-items: flex-start; text-align: left; flex-direction: row; gap: 8px; }
   .screen-header { padding: 16px; } .screen-body { padding: 16px; }
 }
+.btn-primary kbd { background: transparent; color: inherit; border-color: color-mix(in srgb, var(--color-bg) 55%, transparent); }
