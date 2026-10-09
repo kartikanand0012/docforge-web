@@ -6,6 +6,8 @@ const plexSans = IBM_Plex_Sans({ variable: "--font-plex-sans", subsets: ["latin"
 const plexMono = IBM_Plex_Mono({ variable: "--font-plex-mono", subsets: ["latin"], weight: ["400", "500"] });
 
 export const metadata: Metadata = {
+  // Shared links (LinkedIn) need the preview image's full address.
+  metadataBase: new URL(process.env.DOCFORGE_PUBLIC_URL ?? "http://localhost:3000"),
   title: { default: "DocForge", template: "%s · DocForge" },
   description: "Documents read, checked and signed, with every value traced to its page.",
 };
