@@ -131,7 +131,13 @@ function FieldRow({
         {field.status === "corrected" && <span className="badge badge-info">Corrected</span>}
       </div>
       <div className="field-value-line">
-        <button className="field-value num" aria-describedby={checksId} onClick={() => onActivate(field.path)} onFocus={() => onActivate(field.path)}>
+        <button
+          className="field-value num"
+          aria-label={`${field.label}: ${field.display}`}
+          aria-describedby={checksId}
+          onClick={() => onActivate(field.path)}
+          onFocus={() => onActivate(field.path)}
+        >
           {field.display}
         </button>
         {field.editable && (

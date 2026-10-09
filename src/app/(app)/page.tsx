@@ -8,6 +8,7 @@ import { Alert, DocTypeTag, docTypeName, EmptyPanel, Marks, ReasonLine, Time } f
 import { ApiError, api } from "@/lib/api";
 import { localTime, waiting } from "@/lib/format";
 import { classify, queueSummary } from "@/lib/reasons";
+import { useTitle } from "@/lib/useTitle";
 
 type QueueItem = {
   document_id: string;
@@ -29,6 +30,7 @@ const typing = (target: EventTarget | null) =>
   target instanceof HTMLElement && (target.isContentEditable || ["INPUT", "TEXTAREA", "SELECT"].includes(target.tagName));
 
 export default function QueuePage() {
+  useTitle("Review queue");
   const router = useRouter();
   const [items, setItems] = useState<QueueItem[]>([]);
   const [load, setLoad] = useState<Load>({ state: "loading" });

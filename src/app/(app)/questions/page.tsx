@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { Alert, Denied, Time } from "@/components/ui";
 import { ApiError, api } from "@/lib/api";
+import { useTitle } from "@/lib/useTitle";
 
 type Question = {
   message_id: string; question: string; reason: string; missing: string; documents: string[]; owner: string;
@@ -27,6 +28,7 @@ function who(owner: string): string {
 }
 
 export default function QuestionsPage() {
+  useTitle("Unanswered questions");
   const [data, setData] = useState<Unanswered | null>(null);
   const [denied, setDenied] = useState(false);
   const [error, setError] = useState<string | null>(null);

@@ -7,6 +7,7 @@ import { Alert, DocTypeTag, Marks, Seg, StageProgress, StatusBadge, Time } from 
 import { ApiError, api } from "@/lib/api";
 import { IN_PROGRESS, isFinished, stageKind, stageWord } from "@/lib/stages";
 import { useLiveStages } from "@/lib/useLiveStages";
+import { useTitle } from "@/lib/useTitle";
 
 type Item = {
   id: string; filename: string; doc_type: string; status: string; stage: string; ready_for_chat: boolean;
@@ -32,6 +33,7 @@ export default function DocumentsPage() {
 }
 
 function Documents() {
+  useTitle("Documents");
   const router = useRouter();
   const pathname = usePathname();
   const search = useSearchParams();

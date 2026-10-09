@@ -9,6 +9,7 @@ import { bytes } from "@/lib/format";
 import { isFinished } from "@/lib/stages";
 import { clientCheck, refusal, type Refusal } from "@/lib/uploads";
 import { useLiveStages } from "@/lib/useLiveStages";
+import { useTitle } from "@/lib/useTitle";
 
 type DocType = "invoice" | "purchase_order" | "coa" | "general";
 type Row = {
@@ -31,6 +32,7 @@ const TYPES: { value: DocType; label: string }[] = [
 ];
 
 export default function UploadPage() {
+  useTitle("Upload");
   const [docType, setDocType] = useState<DocType>("invoice");
   const [rows, setRows] = useState<Row[]>([]);
   const [dragging, setDragging] = useState(false);
@@ -134,11 +136,11 @@ export default function UploadPage() {
         </label>
 
         {rows.length > 0 && (
-          <section aria-labelledby="session-title" aria-live="polite">
+          <section aria-labelledby="session-title">
             <h2 id="session-title" style={{ fontSize: 18 }}>
               This session
             </h2>
-            <p className="muted" style={{ marginBottom: 8 }}>
+            <p className="muted" style={{ marginBottom: 8 }} role="status" aria-live="polite">
               {ready} ready · {moving} in progress · {needYou} need you
             </p>
             <ul className="upload-list">

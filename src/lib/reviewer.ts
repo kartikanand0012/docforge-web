@@ -10,6 +10,14 @@ export function savedEmail(): string {
   }
 }
 
+export function forgetEmail(): void {
+  try {
+    window.localStorage.removeItem(KEY);
+  } catch {
+    /* storage unavailable: nothing to forget */
+  }
+}
+
 export function rememberEmail(email: string): void {
   try {
     window.localStorage.setItem(KEY, email);

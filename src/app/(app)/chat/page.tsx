@@ -9,6 +9,7 @@ import { Tag } from "@/components/ui";
 import { api } from "@/lib/api";
 import type { Answer, Citation, ChatStatus } from "@/lib/chat";
 import { localTime } from "@/lib/format";
+import { useTitle } from "@/lib/useTitle";
 
 type Summary = { id: string; title: string; document_id: string | null; created_at: string };
 type Message = { id: string; question: string; answer: string; status: string; citations: Citation[]; created_at: string };
@@ -35,6 +36,7 @@ function toTurns(conversationId: string, messages: Message[]): Turn[] {
 }
 
 function Chat() {
+  useTitle("Chat");
   const router = useRouter();
   const search = useSearchParams();
   const conversation = search.get("c");

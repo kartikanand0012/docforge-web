@@ -18,6 +18,7 @@ import { isId } from "@/lib/ids";
 import { buildFields, type Review } from "@/lib/review";
 import { stream } from "@/lib/sse";
 import { isFinished, stageKind, stageWord } from "@/lib/stages";
+import { useTitle } from "@/lib/useTitle";
 
 type DocumentOut = {
   id: string; doc_type: string; filename: string; status: string; stage: string; page_count: number | null;
@@ -190,6 +191,7 @@ function DocumentView() {
   }, [id, reading, load]);
 
   const fields = useMemo(() => (review ? buildFields(review) : []), [review]);
+  useTitle(detail?.document.filename ?? "Document");
   const visible = useMemo(() => (filter === "flagged" ? fields.filter((field) => field.flagged) : fields), [fields, filter]);
 
   const activate = useCallback((path: string) => {

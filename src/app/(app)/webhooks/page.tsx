@@ -8,6 +8,7 @@ import { Alert, Denied, Seg, StatusBadge, Tag, Time } from "@/components/ui";
 import { ApiError, api } from "@/lib/api";
 import { localTime } from "@/lib/format";
 import { DELIVERY_TEXT, maskedUrl, nextAttemptText } from "@/lib/webhooks";
+import { useTitle } from "@/lib/useTitle";
 
 type Webhook = {
   id: string; url: string; events: string[]; active: boolean; created_at: string; created_by: string;
@@ -29,6 +30,7 @@ const EVENT_TEXT: Record<string, string> = {
 const STATUS_KIND: Record<string, "ok" | "fail" | "warn" | "neutral"> = { delivered: "ok", failed: "fail", pending: "warn" };
 
 export default function WebhooksPage() {
+  useTitle("Webhooks");
   const toast = useToast();
   const [hooks, setHooks] = useState<Webhook[] | null>(null);
   const [events, setEvents] = useState<string[]>([]);

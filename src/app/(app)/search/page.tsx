@@ -7,6 +7,7 @@ import { Alert, DocTypeTag, Seg } from "@/components/ui";
 import { ApiError, api } from "@/lib/api";
 import type { CitationBox } from "@/lib/chat";
 import { marked } from "@/lib/search";
+import { useTitle } from "@/lib/useTitle";
 
 type Result = { document_id: string; filename: string; doc_type: string; page: number; text: string; score: number; boxes: CitationBox[] };
 type Answer = { query: string; mode: string; words_only: boolean; results: Result[] };
@@ -21,6 +22,7 @@ export default function SearchPage() {
 }
 
 function Search() {
+  useTitle("Search");
   const router = useRouter();
   const pathname = usePathname();
   const params = useSearchParams();

@@ -5,8 +5,10 @@ import { Marks } from "@/components/ui";
 import type { DemoAccount } from "@/lib/demo";
 import { safeNext } from "@/lib/next";
 import { signInError, validSignIn } from "@/lib/signin";
+import { useTitle } from "@/lib/useTitle";
 
 export default function LoginPage() {
+  useTitle("Sign in");
   const [tenant, setTenant] = useState("");
   const [email, setEmail] = useState("");
   const [pin, setPin] = useState("");

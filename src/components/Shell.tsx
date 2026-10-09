@@ -10,6 +10,7 @@ import { createContext, useContext, useEffect, useState, useSyncExternalStore, t
 import { Marks } from "@/components/ui";
 import { api } from "@/lib/api";
 import { isCurrent, navFor } from "@/lib/nav";
+import { forgetEmail } from "@/lib/reviewer";
 import { initials, type Caller } from "@/lib/signin";
 
 const ICONS: Record<string, LucideIcon> = {
@@ -74,6 +75,7 @@ export function Shell({ caller, children }: { caller: Caller; children: ReactNod
 
   const signOut = async () => {
     await fetch("/api/session", { method: "DELETE" }).catch(() => undefined);
+    forgetEmail(); // a shared computer keeps nothing of the person who signed out
     // A full load on purpose: nothing from the ended session stays in memory.
     // eslint-disable-next-line @next/next/no-location-assign-relative-destination
     window.location.assign("/login");

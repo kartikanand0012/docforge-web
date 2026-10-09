@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { Alert, Marks, StatusBadge } from "@/components/ui";
 import { ApiError, api } from "@/lib/api";
 import { count } from "@/lib/format";
+import { useTitle } from "@/lib/useTitle";
 
 type Evals = {
   extraction?: { model?: string; documents?: number; documents_fully_correct?: number; fields_correct?: number; fields_total?: number; citation_accuracy?: number; latency_ms_p50?: number; latency_ms_p95?: number; input_tokens_per_document?: number; output_tokens_per_document?: number };
@@ -28,6 +29,7 @@ function Metric({ label, figure, sub, badge }: { label: string; figure: string; 
 }
 
 export default function EvalsPage() {
+  useTitle("Evals and cost");
   const [evals, setEvals] = useState<Evals | null>(null);
   const [error, setError] = useState<string | null>(null);
   useEffect(() => {
@@ -71,13 +73,19 @@ export default function EvalsPage() {
                 label="Planted defects caught"
                 figure={`${t?.seeded_cases_caught ?? 0} of ${t?.seeded_cases ?? 0}`}
                 sub={`${t?.seeded_findings_caught ?? 0} of ${t?.seeded_findings_expected ?? 0} expected findings`}
-                badge={t && t.seeded_cases_caught === t.seeded_cases ? { kind: "ok", word: "All caught" } : { kind: "fail", word: "Some missed" }}
+                badge={
+                  typeof t?.seeded_cases === "number" && typeof t.seeded_cases_caught === "number"
+                    ? t.seeded_cases_caught === t.seeded_cases
+                      ? { kind: "ok", word: "All caught" }
+                      : { kind: "fail", word: "Some missed" }
+                    : undefined
+                }
               />
               <Metric
                 label="Silent errors, poor scans"
                 figure={String(poor?.silent_errors ?? 0)}
                 sub={`${poor?.silent_errors_after_order_match ?? 0} left after matching with the order`}
-                badge={poor && !poor.silent_errors_after_order_match ? { kind: "ok", word: "None reached a person unflagged" } : undefined}
+                badge={poor?.silent_errors_after_order_match === 0 ? { kind: "ok", word: "None reached a person unflagged" } : undefined}
               />
               <Metric
                 label="Cost per document"

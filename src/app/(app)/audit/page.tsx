@@ -6,6 +6,7 @@ import { Suspense, useEffect, useRef, useState } from "react";
 import { Alert, Denied, Time } from "@/components/ui";
 import { ApiError, api, apiUrl } from "@/lib/api";
 import { chainNote, detailsText, filtersFromQuery, filtersToQuery, localDayRange, localDaysFromRange, type ChainReport } from "@/lib/audit";
+import { useTitle } from "@/lib/useTitle";
 
 type Entry = {
   id: number; occurred_at: string; actor: string; actor_name: string; action: string; action_label: string;
@@ -23,6 +24,7 @@ export default function AuditPage() {
 }
 
 function Audit() {
+  useTitle("Audit log");
   const router = useRouter();
   const pathname = usePathname();
   const search = useSearchParams();
@@ -84,14 +86,19 @@ function Audit() {
 
   const exportCsv = async () => {
     setExportNote(null);
-    const response = await fetch(apiUrl(`/audit/export.csv${query ? `?${query}` : ""}`), { cache: "no-store" });
+    let response: Response;
+    try {
+      response = await fetch(apiUrl(`/audit/export.csv${query ? `?${query}` : ""}`), { cache: "no-store" });
+    } catch {
+      return setExportNote("The export did not reach DocForge. Try again.");
+    }
     if (!response.ok) return setExportNote(response.status === 429 ? "Exports are limited to 6 a minute." : "The export did not run.");
     const blob = await response.blob();
     const link = document.createElement("a");
     link.href = URL.createObjectURL(blob);
     link.download = "docforge-audit-log.csv";
     link.click();
-    URL.revokeObjectURL(link.href);
+    setTimeout(() => URL.revokeObjectURL(link.href), 10_000); // some browsers read it after the click
     if (response.headers.get("x-docforge-truncated") === "true") setExportNote("The export stopped at 10,000 rows. Narrow the dates to get the rest.");
   };
 

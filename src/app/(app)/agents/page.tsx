@@ -6,6 +6,7 @@ import { useToast } from "@/components/Toast";
 import { Alert, Denied, Marks, StatusBadge, Time } from "@/components/ui";
 import { claudeCodeCommand, mcpEndpoint, OUTCOME_TEXT } from "@/lib/agents";
 import { ApiError, api } from "@/lib/api";
+import { useTitle } from "@/lib/useTitle";
 
 type Key = { prefix: string; name: string; role: string; created_by: string | null; created_at: string; last_used_at: string | null; revoked_at: string | null };
 type Made = { token: string; prefix: string; name: string; role: string };
@@ -27,6 +28,7 @@ function Copy({ text, label }: { text: string; label: string }) {
 }
 
 export default function AgentsPage() {
+  useTitle("AI agents");
   const toast = useToast();
   const [keys, setKeys] = useState<Key[] | null>(null);
   const [calls, setCalls] = useState<Call[]>([]);

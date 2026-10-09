@@ -9,12 +9,14 @@ import { useToast } from "@/components/Toast";
 import { Alert, DocTypeTag, EmptyPanel, StatusBadge, Time } from "@/components/ui";
 import { ApiError, api } from "@/lib/api";
 import { stageKind, stageWord } from "@/lib/stages";
+import { useTitle } from "@/lib/useTitle";
 
 type Collection = { id: string; name: string; description: string; documents: number; created_by: string; created_at: string };
 type Member = { id: string; filename: string; doc_type: string; stage: string; added_at: string };
 type DocumentItem = { id: string; filename: string; doc_type: string };
 
 export default function CollectionsPage() {
+  useTitle("Knowledge bases");
   const router = useRouter();
   const toast = useToast();
   const [collections, setCollections] = useState<Collection[] | null>(null);
