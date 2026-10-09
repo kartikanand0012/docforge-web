@@ -483,3 +483,14 @@ textarea.input { min-height: 72px; resize: vertical; }
 .result:hover { background: color-mix(in srgb, var(--color-accent) 6%, transparent); border-color: var(--color-accent-400); }
 .result-head { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; font-size: 13.5px; }
 .result-text { font-size: 14.5px; line-height: 1.5; }
+
+/* — knowledge bases — */
+.kb-layout { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; align-items: start; }
+.kb-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+.kb-card { width: 100%; text-align: left; display: flex; flex-direction: column; gap: 4px; padding: 12px 14px; border: 1px solid var(--color-divider); border-radius: var(--radius-xl); background: none; cursor: pointer; }
+.kb-card[aria-current="true"] { background: color-mix(in srgb, var(--color-accent) 9%, transparent); border-color: var(--color-accent-400); }
+.kb-detail { grid-column: span 2; display: flex; flex-direction: column; gap: 14px; min-width: 0; }
+.kb-ask { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 12px 14px; border: 1px solid var(--color-divider); border-radius: var(--radius-lg); }
+.inline-form { display: flex; flex-direction: column; gap: 10px; padding: 16px; border: 1px solid var(--color-divider); border-radius: var(--radius-xl); max-width: 560px; }
+.pick-list { list-style: none; margin: 0; padding: 0; max-height: 320px; overflow-y: auto; display: flex; flex-direction: column; gap: 6px; }
+@media (max-width: 899px) { .kb-detail { grid-column: auto; } }
