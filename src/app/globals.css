@@ -289,3 +289,39 @@ textarea.input { min-height: 72px; resize: vertical; }
 .screen-header h1 { font-size: 30px; }
 .screen-header .sub { margin-top: 4px; color: color-mix(in srgb, var(--color-text) 62%, transparent); }
 .screen-body { padding: 20px 28px; display: flex; flex-direction: column; gap: 16px; }
+
+/* — app shell: 232px sidebar, a 60px icon rail below 1100px — */
+.app { display: grid; grid-template-columns: 232px minmax(0, 1fr); height: 100vh; overflow: hidden; }
+.main { min-width: 0; min-height: 0; overflow: hidden; display: flex; flex-direction: column; }
+.sidebar { display: flex; flex-direction: column; gap: 14px; padding: 16px 12px; border-right: 1px solid var(--color-divider); overflow-y: auto; }
+.brand { display: flex; align-items: center; gap: 10px; padding: 2px 4px 8px; }
+.brand-mark { width: 26px; height: 26px; display: grid; place-items: center; flex: none; border: 1px solid var(--color-accent); color: var(--color-accent-700); font-weight: 600; font-size: 14px; }
+.brand-name { display: block; font-size: 19px; font-weight: 600; line-height: 1.1; }
+.brand-org { display: block; font-size: 11.5px; color: var(--color-neutral-700); }
+.nav-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 2px; }
+.nav-item { display: flex; align-items: center; gap: 10px; padding: 7px 10px; border-radius: var(--radius-lg); font-size: 14px; color: var(--color-text); text-decoration: none; }
+.nav-item svg { width: 16px; height: 16px; flex: none; }
+.nav-item:hover { background: color-mix(in srgb, var(--color-text) 7%, transparent); color: var(--color-text); }
+.nav-item[aria-current="page"] { background: var(--color-accent-100); color: var(--color-accent-800); }
+.nav-count { margin-left: auto; font-size: 12px; color: var(--color-neutral-700); }
+.nav-group { margin: 6px 10px 0; font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--color-neutral-700); }
+.sidebar-foot { margin-top: auto; display: flex; flex-direction: column; gap: 8px; padding-top: 12px; border-top: 1px solid var(--color-divider); }
+.avatar { display: none; width: 32px; height: 32px; border-radius: 50%; place-items: center; background: var(--color-accent-100); color: var(--color-accent-800); font-size: 12px; font-weight: 600; }
+.person-name { display: block; font-weight: 500; }
+.person-meta { display: block; font-size: 12px; color: var(--color-neutral-700); overflow-wrap: anywhere; }
+.foot-actions { display: flex; flex-direction: column; gap: 6px; }
+.foot-actions .btn { justify-content: flex-start; }
+@media (max-width: 1099px) {
+  .app { grid-template-columns: 60px minmax(0, 1fr); }
+  .sidebar { padding: 14px 8px; align-items: center; }
+  .sidebar .nav-label { display: none; }
+  .nav-item { justify-content: center; padding: 9px; }
+  .nav-count { display: none; }
+  .avatar { display: grid; }
+  .foot-actions .btn { width: 36px; height: 36px; padding: 0; justify-content: center; }
+}
+
+/* — sign-in — */
+.signin { min-height: 100vh; display: grid; place-items: center; padding: 16px; background-size: 28px 28px; }
+.signin-card { width: min(400px, 100%); padding: 28px; display: flex; flex-direction: column; gap: 14px; background: var(--color-bg); border: 1px solid var(--color-divider); box-shadow: var(--shadow-md); }
+.signin-card .pin-field { letter-spacing: 0.4em; font-size: 18px; }
