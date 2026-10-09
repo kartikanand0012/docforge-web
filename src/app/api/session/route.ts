@@ -1,6 +1,6 @@
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
-import { SESSION_COOKIE, apiBase, cookieOptions, forwardedFor, sameOrigin } from "@/lib/server";
+import { SESSION_COOKIE, WORKSPACE_COOKIE, WORKSPACE_NAME_COOKIE, apiBase, cookieOptions, forwardedFor, sameOrigin } from "@/lib/server";
 
 /** Sign in: the token goes into an HttpOnly cookie; the page never sees it. */
 export async function POST(request: Request) {
@@ -23,7 +23,11 @@ export async function POST(request: Request) {
     const headers = response.headers.get("retry-after") ? { "Retry-After": response.headers.get("retry-after")! } : undefined;
     return NextResponse.json({ detail: payload.detail ?? "Sign-in failed." }, { status: response.status, headers });
   }
-  (await cookies()).set(SESSION_COOKIE, payload.token, cookieOptions(request));
+  const jar = await cookies();
+  jar.set(SESSION_COOKIE, payload.token, cookieOptions(request));
+  // A new session starts in its own workspace, whatever the last person on this browser viewed.
+  jar.delete(WORKSPACE_COOKIE);
+  jar.delete(WORKSPACE_NAME_COOKIE);
   return NextResponse.json({ signedIn: true }, { status: 201 });
 }
 
@@ -40,5 +44,7 @@ export async function DELETE(request: Request) {
     }).catch(() => undefined);
   }
   jar.delete(SESSION_COOKIE);
+  jar.delete(WORKSPACE_COOKIE);
+  jar.delete(WORKSPACE_NAME_COOKIE);
   return new NextResponse(null, { status: 204 });
 }

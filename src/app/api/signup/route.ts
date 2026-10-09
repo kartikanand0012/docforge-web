@@ -1,6 +1,6 @@
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
-import { SESSION_COOKIE, apiBase, cookieOptions, forwardedFor, sameOrigin } from "@/lib/server";
+import { SESSION_COOKIE, WORKSPACE_COOKIE, WORKSPACE_NAME_COOKIE, apiBase, cookieOptions, forwardedFor, sameOrigin } from "@/lib/server";
 
 /** Create an account: the API answers with a session, which goes into the HttpOnly cookie as
  * on sign-in; the page never sees it. */
@@ -26,6 +26,9 @@ export async function POST(request: Request) {
     const detail = typeof payload.detail === "string" ? payload.detail : null;
     return NextResponse.json({ detail }, { status: response.status, headers: retry ? { "Retry-After": retry } : undefined });
   }
-  (await cookies()).set(SESSION_COOKIE, payload.token, cookieOptions(request));
+  const jar = await cookies();
+  jar.set(SESSION_COOKIE, payload.token, cookieOptions(request));
+  jar.delete(WORKSPACE_COOKIE);
+  jar.delete(WORKSPACE_NAME_COOKIE);
   return NextResponse.json({ signedUp: true }, { status: 201 });
 }

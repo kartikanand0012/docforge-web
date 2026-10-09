@@ -19,12 +19,17 @@ const ADMIN: NavItem[] = [
   { href: "/webhooks", label: "Webhooks", icon: "webhook", admin: true },
 ];
 
-export function navFor(role: string): NavItem[] {
-  return role === "admin" ? [...MAIN, ...ADMIN] : MAIN;
+const PLATFORM: NavItem = { href: "/admin", label: "Platform dashboard", icon: "dashboard", admin: true };
+
+/** An account (member) sees the main screens only; a team administrator also the team's
+ * settings; the platform administrator also the dashboard of every workspace. */
+export function navFor(role: string, platformAdmin = false): NavItem[] {
+  const items = role === "admin" ? [...MAIN, ...ADMIN] : MAIN;
+  return platformAdmin ? [...items, PLATFORM] : items;
 }
 
 export function isAdminPath(pathname: string): boolean {
-  return ADMIN.some((item) => pathname === item.href || pathname.startsWith(`${item.href}/`));
+  return [...ADMIN, PLATFORM].some((item) => pathname === item.href || pathname.startsWith(`${item.href}/`));
 }
 
 export function isCurrent(href: string, pathname: string): boolean {

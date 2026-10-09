@@ -57,3 +57,9 @@ export function bytes(size: number): string {
   if (size < 1024 * 1024) return `${(size / 1024).toFixed(0)} KB`;
   return `${(size / (1024 * 1024)).toFixed(1)} MB`;
 }
+
+/** A model cost in US dollars: a fraction of a cent keeps four decimals, so it is not "$0.00". */
+export function usd(value: number | null | undefined): string {
+  if (value === null || value === undefined || !Number.isFinite(value)) return "—";
+  return `$${value.toFixed(value !== 0 && Math.abs(value) < 0.01 ? 4 : 2)}`;
+}

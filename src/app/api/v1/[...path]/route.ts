@@ -1,13 +1,31 @@
 import { cookies } from "next/headers";
 import { NextResponse, type NextRequest } from "next/server";
-import { FORWARDED_HEADERS, MAX_BODY_BYTES, SESSION_COOKIE, apiBase, declaredTooLarge, forwardedFor, sameOrigin } from "@/lib/server";
+import {
+  FORWARDED_HEADERS,
+  MAX_BODY_BYTES,
+  SESSION_COOKIE,
+  WORKSPACE_COOKIE,
+  apiBase,
+  declaredTooLarge,
+  forwardedFor,
+  isWorkspaceId,
+  sameOrigin,
+} from "@/lib/server";
 
 /** The review screen's only way to the API: same origin, with the session token added here,
  * so the browser holds nothing but an HttpOnly cookie. */
 async function forward(request: NextRequest, ctx: RouteContext<"/api/v1/[...path]">) {
   if (!sameOrigin(request)) return NextResponse.json({ detail: "Cross-site request refused." }, { status: 403 });
-  const token = (await cookies()).get(SESSION_COOKIE)?.value;
+  const jar = await cookies();
+  const token = jar.get(SESSION_COOKIE)?.value;
   if (!token) return NextResponse.json({ detail: "Sign in first." }, { status: 401 });
+  // Looking at someone else's workspace is reading only: nothing is sent on their behalf, and
+  // nothing goes to the administrator's own workspace by mistake either.
+  const viewing = jar.get(WORKSPACE_COOKIE)?.value;
+  const reading = request.method === "GET" || request.method === "HEAD";
+  if (isWorkspaceId(viewing) && !reading) {
+    return NextResponse.json({ detail: "You are viewing someone's workspace, read only. Leave it to make changes." }, { status: 403 });
+  }
   const { path } = await ctx.params;
   if (path.some((part) => part === ".." || part === "." || part.includes("/"))) {
     return NextResponse.json({ detail: "Bad path." }, { status: 400 });
@@ -15,6 +33,7 @@ async function forward(request: NextRequest, ctx: RouteContext<"/api/v1/[...path
   const target = `${apiBase()}/v1/${path.map(encodeURIComponent).join("/")}${request.nextUrl.search}`;
   if (declaredTooLarge(request)) return NextResponse.json({ detail: "The file is too large." }, { status: 413 });
   const headers = new Headers({ Authorization: `Bearer ${token}`, ...forwardedFor(request) });
+  if (isWorkspaceId(viewing)) headers.set("X-DocForge-Workspace", viewing);
   const type = request.headers.get("content-type");
   if (type) headers.set("Content-Type", type);
   const hasBody = request.method !== "GET" && request.method !== "HEAD";
@@ -41,7 +60,7 @@ async function forward(request: NextRequest, ctx: RouteContext<"/api/v1/[...path
     const value = upstream.headers.get(name);
     if (value) out.set(name, value);
   }
-  if (upstream.status === 401) (await cookies()).delete(SESSION_COOKIE);
+  if (upstream.status === 401) jar.delete(SESSION_COOKIE);
   return new NextResponse(upstream.status === 204 ? null : upstream.body, { status: upstream.status, headers: out });
 }
 

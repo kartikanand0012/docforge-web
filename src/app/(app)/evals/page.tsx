@@ -67,9 +67,14 @@ export default function EvalsPage() {
         {error && <Alert kind="fail" title="Not loaded.">{error}</Alert>}
         {evals && (
           <>
+            <Alert kind="info" title="What these figures cover.">
+              They are measured on labelled synthetic documents, generated to look like Indian pharma invoices, orders and scans. Real documents
+              vary more: scans and long documents score lower (see the table), and every value is still shown with its source on the page so a
+              person can check it.
+            </Alert>
             <div className="metrics">
               <Metric
-                label="Fields correct, born-digital invoices"
+                label="Fields correct, born-digital invoices (synthetic test set)"
                 figure={percent(x?.fields_correct, x?.fields_total)}
                 sub={`${count(x?.fields_correct ?? 0)} of ${count(x?.fields_total ?? 0)} labelled fields; scans and long documents are in the table`}
               />

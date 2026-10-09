@@ -1,6 +1,16 @@
 /** Server-side only: where the API is, and the session cookie that carries the token. */
 
 export const SESSION_COOKIE = "df_session";
+// A platform administrator looking at someone's workspace: its id, and its name for the
+// banner. The API checks the administrator on every request; this only says which workspace.
+export const WORKSPACE_COOKIE = "df_workspace";
+export const WORKSPACE_NAME_COOKIE = "df_workspace_name";
+
+const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+export function isWorkspaceId(value: string | undefined | null): value is string {
+  return typeof value === "string" && UUID.test(value);
+}
 
 export function apiBase(): string {
   return (process.env.DOCFORGE_API_URL ?? "http://127.0.0.1:8000").replace(/\/$/, "");

@@ -1,7 +1,7 @@
 "use client";
 
 import {
-  BarChart3, Book, Bot, FileText, HelpCircle, Inbox, LogOut, MessageSquare, Moon, Search, ShieldCheck, Sun, Upload, Webhook,
+  BarChart3, Book, Bot, Eye, FileText, HelpCircle, Inbox, LayoutDashboard, LogOut, MessageSquare, Moon, Search, ShieldCheck, Sun, Upload, Webhook,
   type LucideIcon,
 } from "lucide-react";
 import Link from "next/link";
@@ -16,6 +16,7 @@ import { initials, type Caller } from "@/lib/signin";
 const ICONS: Record<string, LucideIcon> = {
   inbox: Inbox, "file-text": FileText, upload: Upload, search: Search, "message-square": MessageSquare, book: Book,
   "bar-chart": BarChart3, "help-circle": HelpCircle, bot: Bot, "shield-check": ShieldCheck, webhook: Webhook,
+  dashboard: LayoutDashboard,
 };
 
 const THEME_KEY = "docforge.theme";
@@ -52,7 +53,9 @@ function currentTheme(): "light" | "dark" {
   return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
 }
 
-export function Shell({ caller, children }: { caller: Caller; children: ReactNode }) {
+export type Viewing = { id: string; name: string } | null;
+
+export function Shell({ caller, viewing = null, children }: { caller: Caller; viewing?: Viewing; children: ReactNode }) {
   const pathname = usePathname();
   const theme = useSyncExternalStore(subscribeTheme, currentTheme, () => null);
   const [waiting, setWaiting] = useState<number | null>(null);
@@ -86,7 +89,14 @@ export function Shell({ caller, children }: { caller: Caller; children: ReactNod
     window.location.assign("/login");
   };
 
-  const items = navFor(caller.role);
+  const items = navFor(caller.role, caller.platform_admin);
+
+  const leaveWorkspace = async () => {
+    await fetch("/api/workspace", { method: "DELETE" }).catch(() => undefined);
+    // A full load, so nothing read from their workspace stays on screen.
+    // eslint-disable-next-line @next/next/no-location-assign-relative-destination
+    window.location.assign("/admin");
+  };
   const main = items.filter((item) => !item.admin);
   const admin = items.filter((item) => item.admin);
   const name = caller.name || "Signed in";
@@ -150,7 +160,20 @@ export function Shell({ caller, children }: { caller: Caller; children: ReactNod
           </div>
         </div>
       </nav>
-      <main className="main">{children}</main>
+      <main className="main">
+        {viewing && (
+          <div className="viewing-strip" role="status">
+            <Eye size={16} strokeWidth={1.5} aria-hidden="true" />
+            <p>
+              Viewing <b>{viewing.name || "a user's workspace"}</b>, read only. Nothing you do here changes it.
+            </p>
+            <button className="btn btn-secondary" onClick={() => void leaveWorkspace()}>
+              Back to the dashboard
+            </button>
+          </div>
+        )}
+        {children}
+      </main>
     </div>
     </CallerContext.Provider>
   );

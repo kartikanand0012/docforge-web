@@ -4,6 +4,7 @@ import { Check, RefreshCw, WifiOff } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { StatsStrip } from "@/components/StatsStrip";
 import { Alert, DocTypeTag, docTypeName, EmptyPanel, Marks, ReasonLine, Tag, Time } from "@/components/ui";
 import { ApiError, api } from "@/lib/api";
 import { localTime, waiting } from "@/lib/format";
@@ -144,6 +145,7 @@ export default function QueuePage() {
           <kbd>J</kbd> <kbd>K</kbd> move · <kbd>Enter</kbd> open
         </p>
       </header>
+      <StatsStrip />
 
       {!online && (
         <div className="offline-strip" role="status">

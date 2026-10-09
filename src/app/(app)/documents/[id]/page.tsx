@@ -1,6 +1,6 @@
 "use client";
 
-import { ChevronLeft, RefreshCw, ShieldCheck } from "lucide-react";
+import { ChevronLeft, Keyboard, RefreshCw, ShieldCheck, Trash2 } from "lucide-react";
 import Link from "next/link";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useCallback, useEffect, useMemo, useRef, useState } from "react";
@@ -13,7 +13,8 @@ import { useCaller } from "@/components/Shell";
 import { useToast } from "@/components/Toast";
 import { Alert, DocTypeTag, Marks, StageProgress, StatusBadge, Time } from "@/components/ui";
 import { ApiError, api } from "@/lib/api";
-import { hashGroups, hashShort } from "@/lib/format";
+import { count, hashGroups, hashShort, usd } from "@/lib/format";
+import { ConfirmDialog, Dialog } from "@/components/Dialog";
 import { isId } from "@/lib/ids";
 import { buildFields, type Review } from "@/lib/review";
 import { heldByOther, useReviewClaim } from "@/lib/claim";
@@ -25,7 +26,8 @@ type DocumentOut = {
   id: string; doc_type: string; filename: string; status: string; stage: string; page_count: number | null;
   ready_for_chat: boolean; created_at: string; media_type: string;
 };  // prettier-ignore
-type Detail = { document: DocumentOut; versions: { version_no: number; status: string; error: string | null }[] };
+type Cost = { model_cost_usd: number | null; input_tokens: number; output_tokens: number; model_calls: number };
+type Detail = { document: DocumentOut; versions: { version_no: number; status: string; error: string | null }[]; cost?: Cost };
 type QueueItem = { document_id: string; filename: string; claimed_by?: string | null };
 type Tab = "values" | "order" | "certificates" | "timeline" | "audit" | "ask";
 
@@ -85,6 +87,10 @@ function DocumentView() {
   const [highlight, setHighlight] = useState<Highlight | null>(null);
   const [askTurns, setAskTurns] = useState<Turn[]>([]);
   const [askConversation, setAskConversation] = useState<string | null>(null);
+  const [deleting, setDeleting] = useState(false);
+  const [deleteBusy, setDeleteBusy] = useState(false);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
+  const [shortcuts, setShortcuts] = useState(false);
   const panel = useRef<HTMLDivElement>(null);
   const loads = useRef(0);
 
@@ -220,7 +226,23 @@ function DocumentView() {
     }
   };
 
-  // J/K move the active value, C corrects it, S signs, Esc steps back out.
+  const remove = async () => {
+    if (deleteBusy) return;
+    setDeleteBusy(true);
+    setDeleteError(null);
+    try {
+      await api(`/documents/${id}`, { method: "DELETE" });
+      toast(`${detail?.document.filename ?? "The document"} deleted. It no longer appears in search or chat.`);
+      router.push("/documents");
+    } catch (error) {
+      setDeleteError(error instanceof ApiError ? error.detail : "It was not deleted. Try again.");
+      setDeleting(false);
+    } finally {
+      setDeleteBusy(false);
+    }
+  };
+
+  // J/K move the active value, C corrects it, S signs, ? lists the keys, Esc steps back out.
   useEffect(() => {
     const onKey = (event: KeyboardEvent) => {
       if (event.metaKey || event.ctrlKey || event.altKey) return;
@@ -231,7 +253,13 @@ function DocumentView() {
         else if (!signing && document.activeElement === document.body) router.push("/");
         return;
       }
-      if (typing(event.target) || signing || !review) return;
+      if (typing(event.target) || signing) return;
+      if (event.key === "?") {
+        setShortcuts(true);
+        event.preventDefault();
+        return;
+      }
+      if (!review) return;
       const index = visible.findIndex((field) => field.path === activePath);
       if (event.key === "j" || event.key === "k") {
         const next = visible[Math.min(Math.max(index + (event.key === "j" ? 1 : -1), 0), visible.length - 1)];
@@ -320,11 +348,61 @@ function DocumentView() {
               {position + 1} of {queue.length} in queue
             </span>
           )}
+          {detail.cost && (
+            <span
+              className="muted num"
+              style={{ fontSize: 12.5 }}
+              title={`${count(detail.cost.model_calls)} model calls · ${count(detail.cost.input_tokens)} tokens in, ${count(detail.cost.output_tokens)} out`}
+            >
+              Cost {usd(detail.cost.model_cost_usd)}
+            </span>
+          )}
+          <button className="btn btn-ghost btn-icon" onClick={() => setShortcuts(true)} aria-label="Keyboard shortcuts" title="Keyboard shortcuts (?)">
+            <Keyboard size={16} strokeWidth={1.5} aria-hidden="true" />
+          </button>
+          <button className="btn btn-ghost btn-icon" onClick={() => setDeleting(true)} disabled={locked} aria-label="Delete this document" title="Delete this document">
+            <Trash2 size={16} strokeWidth={1.5} aria-hidden="true" />
+          </button>
           <button className="btn btn-secondary" onClick={() => void reprocess()} disabled={locked} title={locked ? "Another reviewer has this document open" : undefined}>
             <RefreshCw size={14} strokeWidth={1.5} aria-hidden="true" /> Read again
           </button>
         </div>
       </header>
+
+      {deleteError && <Alert kind="fail" title="Not deleted.">{deleteError}</Alert>}
+      {deleting && (
+        <ConfirmDialog
+          title={`Delete ${doc.filename}?`}
+          body="It disappears from your documents, the queue, search and chat. Its audit trail is kept."
+          action="Delete document"
+          busy={deleteBusy}
+          onClose={() => setDeleting(false)}
+          onConfirm={() => void remove()}
+        />
+      )}
+      {shortcuts && (
+        <Dialog title="Keyboard shortcuts" onClose={() => setShortcuts(false)} width={420}>
+          <dl className="shortcuts">
+            {[
+              ["J / K", "Next or previous value"],
+              ["C", "Correct the selected value"],
+              ["S", "Sign (approve or reject)"],
+              ["?", "This list"],
+              ["Esc", "Close a form, or go back to the queue"],
+            ].map(([keys, what]) => (
+              <div key={keys}>
+                <dt>
+                  <kbd>{keys}</kbd>
+                </dt>
+                <dd>{what}</dd>
+              </div>
+            ))}
+          </dl>
+          <p className="muted" style={{ fontSize: 12.5 }}>
+            In the review queue: <kbd>J</kbd> <kbd>K</kbd> move, <kbd>Enter</kbd> opens.
+          </p>
+        </Dialog>
+      )}
 
       {review?.superseded && (
         <div className="offline-strip" role="status">
