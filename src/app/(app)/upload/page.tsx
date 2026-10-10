@@ -25,10 +25,10 @@ type Row = {
 type Uploaded = { created: boolean; document: { id: string; stage: string } };
 
 const TYPES: { value: DocType; label: string }[] = [
-  { value: "invoice", label: "Invoices" },
-  { value: "purchase_order", label: "Orders" },
-  { value: "coa", label: "Certificates" },
-  { value: "general", label: "General" },
+  { value: "invoice", label: "GST invoices" },
+  { value: "purchase_order", label: "Purchase orders" },
+  { value: "coa", label: "Certificates of analysis" },
+  { value: "general", label: "Anything else" },
 ];
 
 export default function UploadPage() {
@@ -105,7 +105,10 @@ export default function UploadPage() {
         <div style={{ display: "flex", gap: 12, alignItems: "center", flexWrap: "wrap" }}>
           <span>These files are</span>
           <Seg name="upload-type" label="These files are" value={docType} onChange={setDocType} options={TYPES} />
-          <span className="muted" style={{ fontSize: 12.5 }}>Choose General for anything that is only to be searched and asked about.</span>
+          <span className="muted" style={{ fontSize: 12.5, flexBasis: "100%" }}>
+            Invoices, orders and certificates are checked field by field (totals, GSTINs, batches). Receipts, payslips, statements, contracts and
+            everything else: choose <b>Anything else</b>. They are read, searchable, and you can ask questions about them.
+          </span>
         </div>
 
         <label
