@@ -9,7 +9,7 @@ import { AuditTab, CertificatesTab, OrderTab, TimelineTab, type AuditEntry, type
 import { PageViewer, type Highlight } from "@/components/document/PageViewer";
 import { SignDialog } from "@/components/document/SignDialog";
 import { ValuesTab } from "@/components/document/ValuesTab";
-import { useCaller } from "@/components/Shell";
+import { useCaller, useViewing } from "@/components/Shell";
 import { useToast } from "@/components/Toast";
 import { Alert, DocTypeTag, Marks, StageProgress, StatusBadge, Time } from "@/components/ui";
 import { ApiError, api } from "@/lib/api";
@@ -197,13 +197,16 @@ function DocumentView() {
     };
   }, [id, reading, load]);
 
-  const { claim, takeOver, takeOverError } = useReviewClaim(id, Boolean(review && !review.review && !review.superseded));
+  // An administrator viewing someone's workspace only reads: no claim is taken for them.
+  const viewing = useViewing();
+  const { claim, takeOver, takeOverError, takingOver } = useReviewClaim(id, !viewing && Boolean(review && !review.review && !review.superseded));
   // Another reviewer has it open: everything reads, nothing changes (the API refuses it too).
   const locked = heldByOther(claim);
+  const readOnly = locked || viewing;
   const fields = useMemo(() => {
     const all = review ? buildFields(review) : [];
-    return locked ? all.map((field) => ({ ...field, editable: false })) : all;
-  }, [review, locked]);
+    return readOnly ? all.map((field) => ({ ...field, editable: false })) : all;
+  }, [review, readOnly]);
   useTitle(detail?.document.filename ?? "Document");
   const visible = useMemo(() => (filter === "flagged" ? fields.filter((field) => field.flagged) : fields), [fields, filter]);
 
@@ -246,6 +249,8 @@ function DocumentView() {
   useEffect(() => {
     const onKey = (event: KeyboardEvent) => {
       if (event.metaKey || event.ctrlKey || event.altKey) return;
+      // An open dialog has the keys, Esc included: it closes itself, never the page behind it.
+      if (deleting || shortcuts) return;
       if (event.key === "Escape") {
         // Esc steps back out: first the correction form; back to the queue only when nothing
         // else has focus, never from a field being typed in.
@@ -266,14 +271,14 @@ function DocumentView() {
         if (next) activate(next.path);
       } else if (event.key === "c" && activePath && fields.find((field) => field.path === activePath)?.editable) {
         setEditingPath(activePath);
-      } else if (event.key === "s" && !review.review && !locked) {
+      } else if (event.key === "s" && !review.review && !readOnly) {
         setSigning("approved");
       } else return;
       event.preventDefault();
     };
     document.addEventListener("keydown", onKey);
     return () => document.removeEventListener("keydown", onKey);
-  }, [visible, activePath, editingPath, signing, review, fields, activate, router, locked]);
+  }, [visible, activePath, editingPath, signing, review, fields, activate, router, readOnly, deleting, shortcuts]);
 
   if (failure) {
     return (
@@ -360,10 +365,15 @@ function DocumentView() {
           <button className="btn btn-ghost btn-icon" onClick={() => setShortcuts(true)} aria-label="Keyboard shortcuts" title="Keyboard shortcuts (?)">
             <Keyboard size={16} strokeWidth={1.5} aria-hidden="true" />
           </button>
-          <button className="btn btn-ghost btn-icon" onClick={() => setDeleting(true)} disabled={locked} aria-label="Delete this document" title="Delete this document">
+          <button className="btn btn-ghost btn-icon" onClick={() => setDeleting(true)} disabled={readOnly} aria-label="Delete this document" title="Delete this document">
             <Trash2 size={16} strokeWidth={1.5} aria-hidden="true" />
           </button>
-          <button className="btn btn-secondary" onClick={() => void reprocess()} disabled={locked} title={locked ? "Another reviewer has this document open" : undefined}>
+          <button
+            className="btn btn-secondary"
+            onClick={() => void reprocess()}
+            disabled={readOnly}
+            title={viewing ? "Read only while viewing a workspace" : locked ? "Another reviewer has this document open" : undefined}
+          >
             <RefreshCw size={14} strokeWidth={1.5} aria-hidden="true" /> Read again
           </button>
         </div>
@@ -418,8 +428,8 @@ function DocumentView() {
           title={`${claim.reviewer_name} is reviewing this document.`}
           action={
             caller.role === "admin" ? (
-              <button className="btn btn-secondary" onClick={() => void takeOver()}>
-                Take over
+              <button className="btn btn-secondary" onClick={() => void takeOver()} disabled={takingOver || viewing} aria-busy={takingOver}>
+                {takingOver ? "Taking over…" : "Take over"}
               </button>
             ) : undefined
           }
@@ -537,7 +547,7 @@ function DocumentView() {
             )}
           </div>
 
-          {review && <SignBar review={review} onSign={setSigning} locked={locked} />}
+          {review && <SignBar review={review} onSign={setSigning} locked={readOnly} />}
         </section>
       </div>
 

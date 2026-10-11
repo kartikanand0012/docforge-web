@@ -53,7 +53,84 @@ describe("a review claim", () => {
     expect(api).toHaveBeenCalledTimes(3);
 
     unmount();
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(0);
+    });
     expect(fetchSpy).toHaveBeenCalledWith("/api/v1/documents/d1/claim", { method: "DELETE", keepalive: true });
+  });
+
+  it("is let go only after an ask on its way has landed, so the ask cannot undo the release", async () => {
+    let land: (claim: unknown) => void = () => undefined;
+    api.mockImplementationOnce(() => new Promise((resolve) => (land = resolve)));
+    const { unmount } = renderHook(() => useReviewClaim("d1", true));
+    unmount();
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(0);
+    });
+    expect(fetchSpy).not.toHaveBeenCalled();
+    await act(async () => {
+      land({ ...theirs, mine: true });
+      await vi.advanceTimersByTimeAsync(0);
+    });
+    expect(fetchSpy).toHaveBeenCalledTimes(1);
+  });
+
+  it("is asked for again when the page comes back from the back-forward cache", async () => {
+    api.mockResolvedValue({ ...theirs, mine: true });
+    renderHook(() => useReviewClaim("d1", true));
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(0);
+    });
+    expect(api).toHaveBeenCalledTimes(1);
+    await act(async () => {
+      window.dispatchEvent(new PageTransitionEvent("pageshow", { persisted: false }));
+      window.dispatchEvent(new PageTransitionEvent("pageshow", { persisted: true }));
+      await vi.advanceTimersByTimeAsync(0);
+    });
+    expect(api).toHaveBeenCalledTimes(2);
+  });
+
+  it("takes over once however often the button is pressed, and is busy meanwhile", async () => {
+    let land: (claim: unknown) => void = () => undefined;
+    api.mockResolvedValueOnce(theirs).mockImplementationOnce(() => new Promise((resolve) => (land = resolve)));
+    const { result } = renderHook(() => useReviewClaim("d1", true));
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(0);
+    });
+    let first: Promise<void> = Promise.resolve();
+    act(() => {
+      first = result.current.takeOver();
+      void result.current.takeOver();
+    });
+    expect(result.current.takingOver).toBe(true);
+    await act(async () => {
+      land({ ...theirs, mine: true });
+      await first;
+    });
+    expect(api.mock.calls.filter(([, init]) => init.json.take_over)).toHaveLength(1);
+    expect(result.current.takingOver).toBe(false);
+    expect(result.current.claim?.mine).toBe(true);
+  });
+
+  it("drops a take-over that answers after moving to another document", async () => {
+    let land: (claim: unknown) => void = () => undefined;
+    api.mockImplementation((_path: string, init: { json: { take_over: boolean } }) =>
+      init.json.take_over ? new Promise((resolve) => (land = resolve)) : Promise.resolve(theirs),
+    );
+    const { result, rerender } = renderHook(({ id }) => useReviewClaim(id, true), { initialProps: { id: "d1" } });
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(0);
+    });
+    let pending: Promise<void> = Promise.resolve();
+    act(() => {
+      pending = result.current.takeOver();
+    });
+    rerender({ id: "d2" });
+    await act(async () => {
+      land({ ...theirs, reviewer_name: "You", mine: true });
+      await pending;
+    });
+    expect(result.current.claim?.reviewer_name).toBe("Priya Nair");
   });
 
   it("is not asked for when nothing on screen can change", async () => {

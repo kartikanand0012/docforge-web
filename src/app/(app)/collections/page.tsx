@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useRef, useState, type FormEvent } from "react";
 import { ConfirmDialog, Dialog } from "@/components/Dialog";
+import { useViewing } from "@/components/Shell";
 import { useToast } from "@/components/Toast";
 import { Alert, DocTypeTag, EmptyPanel, StatusBadge, Time } from "@/components/ui";
 import { ApiError, api } from "@/lib/api";
@@ -26,6 +27,8 @@ export default function CollectionsPage() {
   const [adding, setAdding] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  // Viewing someone's workspace reads its knowledge bases; making or changing one is off.
+  const viewing = useViewing();
 
   const reload = useCallback(
     () =>
@@ -81,13 +84,13 @@ export default function CollectionsPage() {
           <h1>Knowledge bases</h1>
           <p className="sub">Group documents so questions are answered from that group only.</p>
         </div>
-        <button className="btn btn-secondary" onClick={() => setMaking(true)}>
+        <button className="btn btn-secondary" onClick={() => setMaking(true)} disabled={viewing}>
           <Plus size={14} strokeWidth={1.5} aria-hidden="true" /> New knowledge base
         </button>
       </header>
       <div className="screen-body">
         {error && <Alert kind="fail" title="Not loaded.">{error}</Alert>}
-        {making && (
+        {making && !viewing && (
           <NewCollection
             onCancel={() => setMaking(false)}
             onMade={(made) => {
@@ -104,7 +107,7 @@ export default function CollectionsPage() {
             title="No knowledge bases yet"
             text="Make one to ask questions of a group of documents only, such as one supplier's contracts."
             action={
-              <button className="btn btn-secondary" onClick={() => setMaking(true)}>
+              <button className="btn btn-secondary" onClick={() => setMaking(true)} disabled={viewing}>
                 New knowledge base
               </button>
             }
@@ -135,10 +138,10 @@ export default function CollectionsPage() {
                     {current.description && <p className="muted">{current.description}</p>}
                   </div>
                   <div style={{ display: "flex", gap: 8 }}>
-                    <button className="btn btn-secondary" onClick={() => setAdding(true)}>
+                    <button className="btn btn-secondary" onClick={() => setAdding(true)} disabled={viewing}>
                       Add documents
                     </button>
-                    <button className="btn btn-ghost btn-danger" onClick={() => setDeleting(true)}>
+                    <button className="btn btn-ghost btn-danger" onClick={() => setDeleting(true)} disabled={viewing}>
                       Delete
                     </button>
                   </div>
@@ -179,7 +182,7 @@ export default function CollectionsPage() {
                               <Time iso={member.added_at} />
                             </td>
                             <td className="right">
-                              <button className="btn btn-ghost btn-danger" aria-label={`Remove ${member.filename} from ${current.name}`} disabled={removing === member.id} onClick={() => void remove(member)}>
+                              <button className="btn btn-ghost btn-danger" aria-label={`Remove ${member.filename} from ${current.name}`} disabled={viewing || removing === member.id} onClick={() => void remove(member)}>
                                 Remove
                               </button>
                             </td>

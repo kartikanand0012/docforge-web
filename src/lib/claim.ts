@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { ApiError, api, apiUrl } from "@/lib/api";
 
 /** Who is reviewing a document now. A claim is a lease, not a lock: it lasts a few minutes
@@ -21,37 +21,60 @@ export function heldByOther(claim: Claim | null): boolean {
 export function useReviewClaim(documentId: string, active: boolean) {
   const [claim, setClaim] = useState<Claim | null>(null);
   const [takeOverError, setTakeOverError] = useState<string | null>(null);
+  const [takingOver, setTakingOver] = useState(false);
+  // The document on screen now, so a take-over that answers after a move to another is dropped.
+  const current = useRef(documentId);
+  const busy = useRef(false);
+
+  useEffect(() => {
+    current.current = documentId;
+  }, [documentId]);
 
   useEffect(() => {
     if (!active) return;
     let stopped = false;
-    const ask = () =>
-      api<Claim>(`/documents/${documentId}/claim`, { method: "POST", json: { take_over: false } }).then(
+    // The ask on its way, if any: a release sent before it lands would be undone by it.
+    let pending: Promise<unknown> = Promise.resolve();
+    const ask = () => {
+      pending = api<Claim>(`/documents/${documentId}/claim`, { method: "POST", json: { take_over: false } }).then(
         (found) => !stopped && setClaim(found),
         () => undefined, // the API enforces claims; a missed renewal only delays the banner
       );
-    void ask();
-    const timer = setInterval(() => void ask(), RENEW_EVERY);
+    };
+    ask();
+    const timer = setInterval(ask, RENEW_EVERY);
     // Only the holder's own claim is released; anyone else's is left alone by the API.
     const release = () => void fetch(apiUrl(`/documents/${documentId}/claim`), { method: "DELETE", keepalive: true }).catch(() => undefined);
+    // A page restored from the back-forward cache let its claim go on the way out: ask again.
+    const restored = (event: PageTransitionEvent) => event.persisted && ask();
     window.addEventListener("pagehide", release);
+    window.addEventListener("pageshow", restored);
     return () => {
       stopped = true;
       clearInterval(timer);
       window.removeEventListener("pagehide", release);
-      release();
+      window.removeEventListener("pageshow", restored);
+      void pending.then(release);
       setClaim(null);
     };
   }, [documentId, active]);
 
   const takeOver = useCallback(async () => {
+    if (busy.current) return;
+    busy.current = true;
+    setTakingOver(true);
     setTakeOverError(null);
+    const asked = documentId;
     try {
-      setClaim(await api<Claim>(`/documents/${documentId}/claim`, { method: "POST", json: { take_over: true } }));
+      const taken = await api<Claim>(`/documents/${asked}/claim`, { method: "POST", json: { take_over: true } });
+      if (current.current === asked) setClaim(taken);
     } catch (caught) {
-      setTakeOverError(caught instanceof ApiError ? caught.detail : "It was not taken over. Try again.");
+      if (current.current === asked) setTakeOverError(caught instanceof ApiError ? caught.detail : "It was not taken over. Try again.");
+    } finally {
+      busy.current = false;
+      setTakingOver(false);
     }
   }, [documentId]);
 
-  return { claim, takeOver, takeOverError };
+  return { claim, takeOver, takeOverError, takingOver };
 }

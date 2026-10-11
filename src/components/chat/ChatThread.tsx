@@ -3,6 +3,7 @@
 import { Check, Minus, X } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState, type FormEvent } from "react";
+import { useViewing } from "@/components/Shell";
 import { Alert, Marks, StatusBadge } from "@/components/ui";
 import { ApiError } from "@/lib/api";
 import { answerBadge, answerNote, openQuote, sendsOnEnter, type Answer, type Citation } from "@/lib/chat";
@@ -41,6 +42,8 @@ export function ChatThread({ turns, onTurns, conversationId, onConversation, sco
   const controller = useRef<AbortController | null>(null);
   const newest = useRef<HTMLDivElement>(null);
   const streaming = stage !== null;
+  // Asking writes a conversation, which a viewed workspace does not take.
+  const viewing = useViewing();
 
   useEffect(() => () => controller.current?.abort(), []);
 
@@ -52,7 +55,7 @@ export function ChatThread({ turns, onTurns, conversationId, onConversation, sco
   const ask = async (event?: FormEvent) => {
     event?.preventDefault();
     const text = question.trim();
-    if (!text || streaming) return;
+    if (!text || streaming || viewing) return;
     setError(null);
     setQuestion("");
     const id = `turn-${Date.now()}`;
@@ -180,11 +183,16 @@ export function ChatThread({ turns, onTurns, conversationId, onConversation, sco
               Stop
             </button>
           ) : (
-            <button type="submit" className="btn btn-primary" disabled={!question.trim()}>
+            <button type="submit" className="btn btn-primary" disabled={!question.trim() || viewing} aria-describedby={viewing ? "composer-viewing" : undefined}>
               Ask
             </button>
           )}
         </div>
+        {viewing && (
+          <p id="composer-viewing" className="muted" style={{ fontSize: 12 }}>
+            Asking is off while you view someone&apos;s workspace: a question would be saved to their conversations.
+          </p>
+        )}
         {streaming && <p className="muted" style={{ fontSize: 12 }}>Stopping keeps the answer in this conversation.</p>}
       </form>
     </div>

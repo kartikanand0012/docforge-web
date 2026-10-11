@@ -3,7 +3,8 @@
 import { Upload as UploadIcon } from "lucide-react";
 import Link from "next/link";
 import { useMemo, useRef, useState, type DragEvent } from "react";
-import { Seg, StageProgress, StatusBadge } from "@/components/ui";
+import { useViewing } from "@/components/Shell";
+import { Alert, Seg, StageProgress, StatusBadge } from "@/components/ui";
 import { ApiError, upload } from "@/lib/api";
 import { bytes } from "@/lib/format";
 import { isFinished } from "@/lib/stages";
@@ -33,6 +34,7 @@ const TYPES: { value: DocType; label: string }[] = [
 
 export default function UploadPage() {
   useTitle("Upload");
+  const viewing = useViewing();
   const [docType, setDocType] = useState<DocType>("invoice");
   const [rows, setRows] = useState<Row[]>([]);
   const [dragging, setDragging] = useState(false);
@@ -102,41 +104,50 @@ export default function UploadPage() {
         </div>
       </header>
       <div className="screen-body" style={{ maxWidth: 920 }}>
-        <div style={{ display: "flex", gap: 12, alignItems: "center", flexWrap: "wrap" }}>
-          <span>These files are</span>
-          <Seg name="upload-type" label="These files are" value={docType} onChange={setDocType} options={TYPES} />
-          <span className="muted" style={{ fontSize: 12.5, flexBasis: "100%" }}>
-            Invoices, orders and certificates are checked field by field (totals, GSTINs, batches). Receipts, payslips, statements, contracts and
-            everything else: choose <b>Anything else</b>. They are read, searchable, and you can ask questions about them.
-          </span>
-        </div>
+        {viewing ? (
+          // A viewed workspace is read only: nothing can be uploaded into it.
+          <Alert kind="info" title="Uploading is off while you view someone's workspace.">
+            Go back to the dashboard to upload to your own.
+          </Alert>
+        ) : (
+          <>
+            <div style={{ display: "flex", gap: 12, alignItems: "center", flexWrap: "wrap" }}>
+              <span>These files are</span>
+              <Seg name="upload-type" label="These files are" value={docType} onChange={setDocType} options={TYPES} />
+              <span className="muted" style={{ fontSize: 12.5, flexBasis: "100%" }}>
+                Invoices, orders and certificates are checked field by field (totals, GSTINs, batches). Receipts, payslips, statements, contracts and
+                everything else: choose <b>Anything else</b>. They are read, searchable, and you can ask questions about them.
+              </span>
+            </div>
 
-        <label
-          htmlFor="file-input"
-          className={`dropzone${dragging ? " dragging" : ""}`}
-          onDragOver={(event) => {
-            event.preventDefault();
-            setDragging(true);
-          }}
-          onDragLeave={() => setDragging(false)}
-          onDrop={onDrop}
-        >
-          <UploadIcon size={28} strokeWidth={1.5} aria-hidden="true" />
-          <span style={{ fontSize: 17, fontWeight: 600 }}>Drop files here</span>
-          <span className="muted">or choose files. Many at once is fine; each is checked on its own.</span>
-          <input
-            ref={input}
-            id="file-input"
-            type="file"
-            multiple
-            className="sr-only"
-            accept=".pdf,.docx,.xlsx,.pptx,.png,.jpg,.jpeg,.tif,.tiff"
-            onChange={(event) => {
-              add(event.target.files);
-              event.target.value = "";
-            }}
-          />
-        </label>
+            <label
+              htmlFor="file-input"
+              className={`dropzone${dragging ? " dragging" : ""}`}
+              onDragOver={(event) => {
+                event.preventDefault();
+                setDragging(true);
+              }}
+              onDragLeave={() => setDragging(false)}
+              onDrop={onDrop}
+            >
+              <UploadIcon size={28} strokeWidth={1.5} aria-hidden="true" />
+              <span style={{ fontSize: 17, fontWeight: 600 }}>Drop files here</span>
+              <span className="muted">or choose files. Many at once is fine; each is checked on its own.</span>
+              <input
+                ref={input}
+                id="file-input"
+                type="file"
+                multiple
+                className="sr-only"
+                accept=".pdf,.docx,.xlsx,.pptx,.png,.jpg,.jpeg,.tif,.tiff"
+                onChange={(event) => {
+                  add(event.target.files);
+                  event.target.value = "";
+                }}
+              />
+            </label>
+          </>
+        )}
 
         {rows.length > 0 && (
           <section aria-labelledby="session-title">

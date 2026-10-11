@@ -35,6 +35,14 @@ export function useSecret(): "PIN" | "password" {
   return useContext(CallerContext)?.credential === "password" ? "password" : "PIN";
 }
 
+const ViewingContext = createContext(false);
+
+/** An administrator is viewing someone's workspace: the screens read, and offer no changes
+ * (the proxy refuses them anyway). False outside the shell. */
+export function useViewing(): boolean {
+  return useContext(ViewingContext);
+}
+
 const THEME_EVENT = "docforge-theme";
 
 function subscribeTheme(change: () => void): () => void {
@@ -119,6 +127,7 @@ export function Shell({ caller, viewing = null, children }: { caller: Caller; vi
 
   return (
     <CallerContext.Provider value={caller}>
+    <ViewingContext.Provider value={viewing !== null}>
     <div className="app">
       <nav className="sidebar" aria-label="DocForge">
         <div className="brand">
@@ -175,6 +184,7 @@ export function Shell({ caller, viewing = null, children }: { caller: Caller; vi
         {children}
       </main>
     </div>
+    </ViewingContext.Provider>
     </CallerContext.Provider>
   );
 }
