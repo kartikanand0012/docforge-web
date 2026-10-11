@@ -40,5 +40,8 @@ describe("a model cost", () => {
     expect(usd(1.5)).toBe("$1.50");
     expect(usd(0)).toBe("$0.00");
     expect(usd(null)).toBe("—");
+    // A refund or correction is negative: the sign comes before the symbol.
+    expect(usd(-0.001)).toBe("-$0.0010");
+    expect(usd(-2)).toBe("-$2.00");
   });
 });

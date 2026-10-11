@@ -33,6 +33,14 @@ describe("toOverlay", () => {
     expect(overlay.width).toBe("10.000%");
   });
 
+  it("places a box with a missing coordinate at the edge instead of writing NaN", () => {
+    const overlay = toOverlay({ page: 1, x0: Number.NaN, y0: 100, x1: 180, y1: Number.NaN }, page);
+
+    expect(overlay.left).toBe("0.000%");
+    expect(overlay.top).toBe("0.000%");
+    expect(Object.values(overlay).join(" ")).not.toContain("NaN");
+  });
+
   it("refuses a page without a size", () => {
     expect(() => toOverlay({ page: 1, x0: 0, y0: 0, x1: 1, y1: 1 }, { width: 0, height: 10 })).toThrow();
   });

@@ -58,13 +58,20 @@ export function signInError(
   return { kind: "fail", text: "Signing in is unavailable at the moment. Try again shortly." };
 }
 
+/** Enough of a caller to draw the shell: a role and a name, as strings. */
+function isCaller(body: unknown): body is Caller {
+  if (typeof body !== "object" || body === null) return false;
+  const { role, name } = body as { role?: unknown; name?: unknown };
+  return typeof role === "string" && typeof name === "string";
+}
+
 const UNKNOWN: Caller = { kind: "session", name: "", email: null, role: "reviewer", organisation: "" };
 
 /** The caller from `GET /v1/sessions/current`; null only when the session itself is refused
  * (401, 403). An API from before that endpoint (404, 405), or one briefly unwell (5xx), still
  * lets the person in, shown as a reviewer: the API checks every request anyway. */
 export function callerFrom(status: number, body: unknown): Caller | null {
-  if (status === 200 && body && typeof body === "object") return body as Caller;
+  if (status === 200 && isCaller(body)) return body;
   if (status === 401 || status === 403) return null;
   return UNKNOWN;
 }

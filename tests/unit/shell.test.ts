@@ -39,6 +39,14 @@ describe("who is signed in", () => {
     expect(callerFrom(405, null)?.role).toBe("reviewer");
     expect(callerFrom(401, null)).toBeNull();
   });
+
+  it("is shown as a reviewer when the answer is not a caller (no role or name, or not strings)", () => {
+    const unknown = { kind: "session", name: "", email: null, role: "reviewer", organisation: "" };
+    expect(callerFrom(200, {})).toEqual(unknown);
+    expect(callerFrom(200, { name: "Priya", role: 1 })).toEqual(unknown);
+    expect(callerFrom(200, { name: { first: "Priya" }, role: "admin" })).toEqual(unknown);
+    expect(callerFrom(200, "admin")).toEqual(unknown);
+  });
 });
 
 describe("navigation", () => {

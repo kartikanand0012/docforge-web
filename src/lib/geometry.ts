@@ -5,7 +5,8 @@ export type Box = { page: number; x0: number; y0: number; x1: number; y1: number
 export type PageSize = { width: number; height: number };
 export type Overlay = { left: string; top: string; width: string; height: string };
 
-const percent = (value: number): string => `${Math.max(0, Math.min(100, value)).toFixed(3)}%`;
+// A box with a missing coordinate (NaN) sits at the corner rather than writing "NaN%".
+const percent = (value: number): string => `${Number.isFinite(value) ? Math.max(0, Math.min(100, value)).toFixed(3) : "0.000"}%`;
 
 export function toOverlay(box: Box, page: PageSize): Overlay {
   if (page.width <= 0 || page.height <= 0) {

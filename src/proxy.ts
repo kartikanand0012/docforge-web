@@ -11,7 +11,7 @@ export function proxy(request: NextRequest) {
   // shared on LinkedIn stays the bare address).
   if (pathname === "/") return NextResponse.rewrite(new URL("/welcome", request.url));
   const login = new URL("/login", request.url);
-  if (pathname !== "/") login.searchParams.set("next", `${pathname}${search}`);
+  login.searchParams.set("next", `${pathname}${search}`);
   return NextResponse.redirect(login);
 }
 

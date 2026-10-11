@@ -5,9 +5,18 @@ import "./globals.css";
 const plexSans = IBM_Plex_Sans({ variable: "--font-plex-sans", subsets: ["latin"], weight: ["400", "500", "600"] });
 const plexMono = IBM_Plex_Mono({ variable: "--font-plex-mono", subsets: ["latin"], weight: ["400", "500"] });
 
+/** Shared links (LinkedIn) need the preview image's full address. An empty or malformed
+ * setting falls back to the local address rather than breaking every page. */
+function publicUrl(): URL {
+  try {
+    return new URL(process.env.DOCFORGE_PUBLIC_URL || "http://localhost:3000");
+  } catch {
+    return new URL("http://localhost:3000");
+  }
+}
+
 export const metadata: Metadata = {
-  // Shared links (LinkedIn) need the preview image's full address.
-  metadataBase: new URL(process.env.DOCFORGE_PUBLIC_URL ?? "http://localhost:3000"),
+  metadataBase: publicUrl(),
   title: { default: "DocForge", template: "%s · DocForge" },
   description: "Documents read, checked and signed, with every value traced to its page.",
 };

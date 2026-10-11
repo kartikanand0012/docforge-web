@@ -61,5 +61,7 @@ export function bytes(size: number): string {
 /** A model cost in US dollars: a fraction of a cent keeps four decimals, so it is not "$0.00". */
 export function usd(value: number | null | undefined): string {
   if (value === null || value === undefined || !Number.isFinite(value)) return "—";
-  return `$${value.toFixed(value !== 0 && Math.abs(value) < 0.01 ? 4 : 2)}`;
+  // The sign goes before the symbol: "-$0.0010", not "$-0.0010".
+  const amount = Math.abs(value).toFixed(value !== 0 && Math.abs(value) < 0.01 ? 4 : 2);
+  return value < 0 ? `-$${amount}` : `$${amount}`;
 }
