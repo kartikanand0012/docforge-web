@@ -58,7 +58,8 @@ export async function api<T>(path: string, init: RequestInit & { json?: unknown 
   });
   if (!response.ok) {
     const body = await response.json().catch(() => null);
-    if (response.status === 401) toLogin();
+    // Only an ended session goes to sign-in; a wrong password re-entered stays on the page.
+    if (response.status === 401 && response.headers.has("www-authenticate")) toLogin();
     throw errorFrom(response.status, body, response.headers);
   }
   if (response.status === 204) return undefined as T;
@@ -83,7 +84,7 @@ export function upload<T>(path: string, form: FormData, onProgress: (fraction: n
         /* not JSON */
       }
       if (request.status >= 200 && request.status < 300) return resolve({ status: request.status, body: body as T });
-      if (request.status === 401) toLogin();
+      if (request.status === 401 && request.getResponseHeader("www-authenticate")) toLogin();
       const headers = new Headers();
       const retry = request.getResponseHeader("retry-after");
       if (retry) headers.set("retry-after", retry);

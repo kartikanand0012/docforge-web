@@ -77,7 +77,14 @@ export function declaredTooLarge(request: Request, limit: number = MAX_BODY_BYTE
 
 /** Headers of the API's answer passed back to the browser: its type and caching, when to try
  * again, a download's name, and whether an export was cut short. */
-export const FORWARDED_HEADERS = ["content-type", "cache-control", "retry-after", "content-disposition", "x-docforge-truncated"];
+export const FORWARDED_HEADERS = ["content-type", "cache-control", "retry-after", "content-disposition", "x-docforge-truncated", "www-authenticate"];
+
+/** A 401 that ends the session carries WWW-Authenticate (the API's "a valid session is
+ * needed"); a wrong password re-entered to confirm something is a 401 without it, and the
+ * session stays. */
+export function sessionRefused(response: { status: number; headers: Headers }): boolean {
+  return response.status === 401 && response.headers.has("www-authenticate");
+}
 
 /** How long a call to the API may take before the person is told it is unavailable, rather
  * than waiting until the platform gives up on the request. */

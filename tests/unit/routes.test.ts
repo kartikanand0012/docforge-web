@@ -193,10 +193,20 @@ describe("the API proxy", () => {
     expect(fetchSpy).not.toHaveBeenCalled();
   });
 
-  it("forgets a session the API refuses", async () => {
-    fetchSpy.mockResolvedValue(json(401, { detail: "Sign in." }));
-    expect((await call("GET", ["documents"])).status).toBe(401);
+  it("forgets a session the API refuses, and says so to the page", async () => {
+    fetchSpy.mockResolvedValue(json(401, { detail: "Sign in." }, { "www-authenticate": "Bearer" }));
+    const refused = await call("GET", ["documents"]);
+    expect(refused.status).toBe(401);
+    expect(refused.headers.get("www-authenticate")).toBe("Bearer");
     expect(jar.values.has(SESSION_COOKIE)).toBe(false);
+  });
+
+  it("keeps the session when a 401 is only a wrong password re-entered", async () => {
+    fetchSpy.mockResolvedValue(json(401, { detail: "The email or password is not right." }));
+    const wrong = await call("DELETE", ["accounts", "current"], { body: JSON.stringify({ password: "x" }) });
+    expect(wrong.status).toBe(401);
+    expect(wrong.headers.get("www-authenticate")).toBeNull();
+    expect(jar.values.has(SESSION_COOKIE)).toBe(true);
   });
 
   it("refuses an oversized body, declared or not", async () => {

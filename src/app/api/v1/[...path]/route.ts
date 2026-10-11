@@ -11,6 +11,7 @@ import {
   isWorkspaceId,
   readCapped,
   sameOrigin,
+  sessionRefused,
 } from "@/lib/server";
 
 /** The review screen's only way to the API: same origin, with the session token added here,
@@ -19,7 +20,7 @@ async function forward(request: NextRequest, ctx: RouteContext<"/api/v1/[...path
   if (!sameOrigin(request)) return NextResponse.json({ detail: "Cross-site request refused." }, { status: 403 });
   const jar = await cookies();
   const token = jar.get(SESSION_COOKIE)?.value;
-  if (!token) return NextResponse.json({ detail: "Sign in first." }, { status: 401 });
+  if (!token) return NextResponse.json({ detail: "Sign in first." }, { status: 401, headers: { "WWW-Authenticate": "Bearer" } });
   // Looking at someone else's workspace is reading only: nothing is sent on their behalf, and
   // nothing goes to the administrator's own workspace by mistake either.
   const viewing = jar.get(WORKSPACE_COOKIE)?.value;
@@ -68,7 +69,7 @@ async function forward(request: NextRequest, ctx: RouteContext<"/api/v1/[...path
     const value = upstream.headers.get(name);
     if (value) out.set(name, value);
   }
-  if (upstream.status === 401) jar.delete(SESSION_COOKIE);
+  if (sessionRefused(upstream)) jar.delete(SESSION_COOKIE);
   return new NextResponse(upstream.status === 204 ? null : upstream.body, { status: upstream.status, headers: out });
 }
 

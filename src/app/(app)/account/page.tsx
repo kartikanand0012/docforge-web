@@ -79,7 +79,7 @@ function DeleteAccount({ onClose }: { onClose: () => void }) {
     } catch (caught) {
       setPassword("");
       setBusy(false);
-      if (caught instanceof ApiError && caught.status === 401) return setError("That password is not right.");
+      if (caught instanceof ApiError && (caught.status === 401 || caught.status === 403)) return setError("That password is not right.");
       if (caught instanceof ApiError && caught.status === 429) return setError("Too many wrong tries. Try again in 15 minutes.");
       return setError(caught instanceof ApiError ? caught.detail : "Your account was not deleted. Try again.");
     }
