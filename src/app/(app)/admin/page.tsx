@@ -16,7 +16,7 @@ type Workspace = {
   created_at: string; last_active_at: string | null; documents: number; pages: number; signed: number; questions: number;
   model_cost_usd: number | null; sign_ins: number;
 };  // prettier-ignore
-type Overview = { totals: Totals; workspaces: Workspace[] };
+type Overview = { totals: Totals; workspaces: Workspace[]; next_offset?: number | null };
 type Activity = { id: number; occurred_at: string; tenant_id: string; organisation: string; actor_name: string; action: string; action_label: string; target_label: string | null };
 type ActivityPage = { items: Activity[]; next_before: number | null };
 
@@ -34,6 +34,7 @@ function Figure({ label, figure, sub }: { label: string; figure: string; sub?: s
 export default function PlatformDashboard() {
   useTitle("Platform dashboard");
   const [overview, setOverview] = useState<Overview | null>(null);
+  const [moreWorkspaces, setMoreWorkspaces] = useState(false);
   // Null while the activity for the current filter is on its way.
   const [activity, setActivity] = useState<Activity[] | null>(null);
   const [next, setNext] = useState<number | null>(null);
@@ -210,6 +211,32 @@ export default function PlatformDashboard() {
                   </tbody>
                 </table>
               </div>
+            )}
+            {typeof overview.next_offset === "number" && (
+              <button
+                className="btn btn-secondary"
+                style={{ alignSelf: "center" }}
+                disabled={moreWorkspaces}
+                onClick={async () => {
+                  const offset = overview.next_offset;
+                  if (typeof offset !== "number") return;
+                  setMoreWorkspaces(true);
+                  try {
+                    const page = await api<Overview>(`/platform/overview?offset=${offset}`);
+                    setOverview((current) =>
+                      current
+                        ? { ...page, workspaces: [...current.workspaces, ...page.workspaces.filter((w) => !current.workspaces.some((shown) => shown.tenant_id === w.tenant_id))] }
+                        : page,
+                    );
+                  } catch (caught) {
+                    setError(caught instanceof ApiError ? caught.detail : "More workspaces could not be loaded.");
+                  } finally {
+                    setMoreWorkspaces(false);
+                  }
+                }}
+              >
+                {moreWorkspaces ? "Loading…" : "More workspaces"}
+              </button>
             )}
           </section>
         )}

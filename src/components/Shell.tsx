@@ -151,9 +151,11 @@ export function Shell({ caller, viewing = null, children }: { caller: Caller; vi
             {initials(name)}
           </span>
           <div className="nav-label person">
-            <span className="person-name">{name}</span>
+            <Link href="/account" className="person-name">
+              {name}
+            </Link>
             <span className="person-meta">
-              {caller.role === "admin" ? "Administrator" : "Reviewer"}
+              {caller.role === "admin" ? "Administrator" : caller.role === "member" ? "Your workspace" : "Reviewer"}
               {caller.email ? ` · ${caller.email}` : ""}
             </span>
           </div>
