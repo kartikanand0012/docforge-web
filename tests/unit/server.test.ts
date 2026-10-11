@@ -82,3 +82,96 @@ describe("headers passed back from the API", () => {
     );
   });
 });
+
+import { readCapped, readSmallBody, safeDecode, detailFrom, tokenFrom, SMALL_BODY_BYTES } from "@/lib/server";
+
+/** A body sent in pieces with no Content-Length, as a chunked upload is. */
+function chunked(pieces: Uint8Array[], fail = false): Request {
+  const stream = new ReadableStream<Uint8Array>({
+    start(controller) {
+      for (const piece of pieces) controller.enqueue(piece);
+      if (fail) controller.error(new Error("aborted"));
+      else controller.close();
+    },
+  });
+  return new Request("https://x/api", { method: "POST", body: stream, duplex: "half" } as RequestInit);
+}
+
+describe("declaredTooLarge at the edges", () => {
+  const sized = (length?: string) =>
+    new Request("https://x/api", { method: "POST", headers: length === undefined ? {} : { "content-length": length } });
+
+  it("lets through a body exactly at the limit, a missing header and a header that is not a number", () => {
+    expect(declaredTooLarge(sized("100"), 100)).toBe(false);
+    expect(declaredTooLarge(sized("101"), 100)).toBe(true);
+    expect(declaredTooLarge(sized(), 100)).toBe(false);
+    expect(declaredTooLarge(sized("lots"), 100)).toBe(false);
+  });
+});
+
+describe("readCapped", () => {
+  it("reads a body up to and exactly at the limit", async () => {
+    const body = await readCapped(chunked([new Uint8Array(60), new Uint8Array(40)]), 100);
+    expect(body?.byteLength).toBe(100);
+  });
+
+  it("gives up as soon as an undeclared body passes the limit", async () => {
+    expect(await readCapped(chunked([new Uint8Array(60), new Uint8Array(41)]), 100)).toBeNull();
+  });
+
+  it("reads no body as empty", async () => {
+    expect((await readCapped(new Request("https://x/api", { method: "POST" }), 100))?.byteLength).toBe(0);
+  });
+
+  it("rejects when the sender goes away mid-body, for the caller to answer", async () => {
+    await expect(readCapped(chunked([new Uint8Array(10)], true), 100)).rejects.toThrow();
+  });
+});
+
+describe("readSmallBody", () => {
+  it("reads a sign-in as text", async () => {
+    const request = new Request("https://x/api", { method: "POST", body: JSON.stringify({ email: "a@b.in" }) });
+    expect(await readSmallBody(request)).toBe('{"email":"a@b.in"}');
+  });
+
+  it("refuses a body declared too large without reading it, and one that lied about its size", async () => {
+    const declared = new Request("https://x/api", { method: "POST", headers: { "content-length": String(SMALL_BODY_BYTES + 1) }, body: "x" });
+    expect(await readSmallBody(declared)).toBeNull();
+    expect(await readSmallBody(chunked([new Uint8Array(SMALL_BODY_BYTES + 1)]))).toBeNull();
+  });
+});
+
+describe("tokenFrom", () => {
+  const token = `dfs_0123456789ab_${"A".repeat(43)}`;
+
+  it("takes a session token of the API's shape", () => {
+    expect(tokenFrom({ token })).toBe(token);
+  });
+
+  it("trusts nothing else", () => {
+    expect(tokenFrom(null)).toBeNull();
+    expect(tokenFrom("dfs_x")).toBeNull();
+    expect(tokenFrom({})).toBeNull();
+    expect(tokenFrom({ token: 42 })).toBeNull();
+    expect(tokenFrom({ token: "" })).toBeNull();
+    expect(tokenFrom({ token: `${token}; Path=/` })).toBeNull();
+    expect(tokenFrom({ token: token.replace("dfs_", "dfk_") })).toBeNull();
+  });
+});
+
+describe("detailFrom", () => {
+  it("passes on a sentence and nothing else", () => {
+    expect(detailFrom({ detail: "Too many attempts." }, "Failed.")).toBe("Too many attempts.");
+    expect(detailFrom({ detail: [{ loc: ["body", "email"] }] }, "Failed.")).toBe("Failed.");
+    expect(detailFrom({ detail: "" }, null)).toBeNull();
+    expect(detailFrom(null, "Failed.")).toBe("Failed.");
+  });
+});
+
+describe("safeDecode", () => {
+  it("decodes a cookie, and gives nothing for a missing or malformed one", () => {
+    expect(safeDecode(encodeURIComponent("Acme Pharma · Pune"))).toBe("Acme Pharma · Pune");
+    expect(safeDecode(undefined)).toBe("");
+    expect(safeDecode("%E0%A4%A")).toBe("");
+  });
+});

@@ -9,6 +9,7 @@ import {
   declaredTooLarge,
   forwardedFor,
   isWorkspaceId,
+  readCapped,
   sameOrigin,
 } from "@/lib/server";
 
@@ -36,11 +37,16 @@ async function forward(request: NextRequest, ctx: RouteContext<"/api/v1/[...path
   if (isWorkspaceId(viewing)) headers.set("X-DocForge-Workspace", viewing);
   const type = request.headers.get("content-type");
   if (type) headers.set("Content-Type", type);
-  const hasBody = request.method !== "GET" && request.method !== "HEAD";
-  const body = hasBody ? await request.arrayBuffer() : undefined;
-  // An undeclared length is checked once read; the front proxy caps it before that.
-  if (body && body.byteLength > MAX_BODY_BYTES) {
-    return NextResponse.json({ detail: "The file is too large." }, { status: 413 });
+  let body: ArrayBuffer | null | undefined;
+  if (!reading) {
+    // An undeclared length (a chunked upload) is counted as it arrives and cut off at the limit.
+    try {
+      body = await readCapped(request, MAX_BODY_BYTES);
+    } catch {
+      // The browser went away mid-upload; there is no one left to answer.
+      return NextResponse.json({ detail: "The upload was interrupted." }, { status: 400 });
+    }
+    if (body === null) return NextResponse.json({ detail: "The file is too large." }, { status: 413 });
   }
   let upstream: Response;
   try {
@@ -49,6 +55,8 @@ async function forward(request: NextRequest, ctx: RouteContext<"/api/v1/[...path
       headers,
       body,
       cache: "no-store",
+      // A redirect is passed back as it is, never followed with the token attached.
+      redirect: "manual",
       // A closed tab or a stopped answer ends the API's stream too.
       signal: request.signal,
     });

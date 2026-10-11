@@ -78,3 +78,67 @@ export function declaredTooLarge(request: Request, limit: number = MAX_BODY_BYTE
 /** Headers of the API's answer passed back to the browser: its type and caching, when to try
  * again, a download's name, and whether an export was cut short. */
 export const FORWARDED_HEADERS = ["content-type", "cache-control", "retry-after", "content-disposition", "x-docforge-truncated"];
+
+/** How long a call to the API may take before the person is told it is unavailable, rather
+ * than waiting until the platform gives up on the request. */
+export const API_TIMEOUT_MS = 10_000;
+
+/** A sign-in or sign-up body is a few hundred bytes. These routes are open to anyone, so a
+ * larger one is refused before it is read into memory, and again once read if it lied. */
+export const SMALL_BODY_BYTES = 16 * 1024;
+
+export async function readSmallBody(request: Request, limit: number = SMALL_BODY_BYTES): Promise<string | null> {
+  if (declaredTooLarge(request, limit)) return null;
+  const capped = await readCapped(request, limit);
+  return capped === null ? null : new TextDecoder().decode(capped);
+}
+
+/** The body, read at most `limit` bytes into memory: null as soon as it goes past the limit,
+ * whatever Content-Length said (a chunked upload declares none). */
+export async function readCapped(request: Request, limit: number): Promise<ArrayBuffer | null> {
+  if (!request.body) return new ArrayBuffer(0);
+  const reader = request.body.getReader();
+  const chunks: Uint8Array[] = [];
+  let size = 0;
+  for (;;) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    size += value.byteLength;
+    if (size > limit) {
+      await reader.cancel().catch(() => undefined);
+      return null;
+    }
+    chunks.push(value);
+  }
+  const whole = new Uint8Array(size);
+  let at = 0;
+  for (const chunk of chunks) {
+    whole.set(chunk, at);
+    at += chunk.byteLength;
+  }
+  return whole.buffer;
+}
+
+/** The session token in the API's answer, if it is one; anything else is not trusted. Its
+ * shape is the API's `dfs_<prefix>_<secret>`, which is also safe to put in a cookie as is. */
+export function tokenFrom(payload: unknown): string | null {
+  if (typeof payload !== "object" || payload === null) return null;
+  const token = (payload as { token?: unknown }).token;
+  return typeof token === "string" && /^dfs_[0-9a-f]{12}_[A-Za-z0-9_-]{32,128}$/.test(token) ? token : null;
+}
+
+/** A sentence from the API's answer, or the fallback: a validation error's list is not shown. */
+export function detailFrom<F extends string | null>(payload: unknown, fallback: F): string | F {
+  const detail = typeof payload === "object" && payload !== null ? (payload as { detail?: unknown }).detail : null;
+  return typeof detail === "string" && detail ? detail : fallback;
+}
+
+/** A cookie value decoded, or "" if it is not valid encoding (a cookie is the browser's to send). */
+export function safeDecode(value: string | undefined): string {
+  if (!value) return "";
+  try {
+    return decodeURIComponent(value);
+  } catch {
+    return "";
+  }
+}

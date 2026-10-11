@@ -1,16 +1,28 @@
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
-import { SESSION_COOKIE, WORKSPACE_COOKIE, WORKSPACE_NAME_COOKIE, cookieOptions, isWorkspaceId, sameOrigin } from "@/lib/server";
+import { SESSION_COOKIE, WORKSPACE_COOKIE, WORKSPACE_NAME_COOKIE, cookieOptions, isWorkspaceId, readSmallBody, sameOrigin } from "@/lib/server";
+
+function parsed(text: string): { tenant_id?: unknown; name?: unknown } {
+  try {
+    const value: unknown = JSON.parse(text);
+    return typeof value === "object" && value !== null ? value : {};
+  } catch {
+    return {};
+  }
+}
 
 /** A platform administrator starts looking at a workspace, read only. Whether they may is the
  * API's decision, on every request; an ordinary account that sets this gets a refusal. */
 export async function POST(request: Request) {
   if (!sameOrigin(request)) return NextResponse.json({ detail: "Cross-site request refused." }, { status: 403 });
   if (!(await cookies()).get(SESSION_COOKIE)) return NextResponse.json({ detail: "Sign in first." }, { status: 401 });
-  const body = (await request.json().catch(() => ({}))) as { tenant_id?: unknown; name?: unknown };
+  const text = await readSmallBody(request).catch(() => null);
+  if (text === null) return NextResponse.json({ detail: "That request is too large." }, { status: 413 });
+  const body = parsed(text);
   const id = typeof body.tenant_id === "string" ? body.tenant_id : null;
   if (!isWorkspaceId(id)) return NextResponse.json({ detail: "Not a workspace." }, { status: 400 });
-  const name = typeof body.name === "string" ? body.name.slice(0, 120) : "";
+  // Cut by characters, not UTF-16 units, so an emoji at the cut is not split in half.
+  const name = typeof body.name === "string" ? Array.from(body.name).slice(0, 120).join("") : "";
   const jar = await cookies();
   jar.set(WORKSPACE_COOKIE, id, cookieOptions(request));
   jar.set(WORKSPACE_NAME_COOKIE, encodeURIComponent(name), cookieOptions(request));
