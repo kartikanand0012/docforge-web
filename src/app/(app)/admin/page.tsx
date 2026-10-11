@@ -34,45 +34,65 @@ function Figure({ label, figure, sub }: { label: string; figure: string; sub?: s
 export default function PlatformDashboard() {
   useTitle("Platform dashboard");
   const [overview, setOverview] = useState<Overview | null>(null);
-  const [activity, setActivity] = useState<Activity[]>([]);
+  // Null while the activity for the current filter is on its way.
+  const [activity, setActivity] = useState<Activity[] | null>(null);
   const [next, setNext] = useState<number | null>(null);
   const [only, setOnly] = useState<string>("");
   const [denied, setDenied] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [more, setMore] = useState(false);
+  const [opening, setOpening] = useState<string | null>(null);
   const loads = useRef(0);
+  const activityHeading = useRef<HTMLHeadingElement>(null);
+  const filter = only ? `&tenant_id=${encodeURIComponent(only)}` : "";
 
-  const refuse = useCallback((caught: unknown, what: string) => {
-    if (caught instanceof ApiError && caught.status === 403) setDenied(true);
-    else setError(caught instanceof ApiError ? caught.detail : `${what} could not be loaded.`);
-  }, []);
-
+  // Both parts together; only the newest load is applied, and its outcome replaces any earlier
+  // error, so a refresh that works clears the message.
   const load = useCallback(() => {
     const ticket = ++loads.current;
-    const filter = only ? `&tenant_id=${only}` : "";
-    api<Overview>("/platform/overview").then((found) => ticket === loads.current && setOverview(found), (caught: unknown) => refuse(caught, "The overview"));
-    api<ActivityPage>(`/platform/activity?limit=50${filter}`).then(
-      (page) => {
-        if (ticket !== loads.current) return;
-        setActivity(page.items);
-        setNext(page.next_before);
-      },
-      (caught: unknown) => refuse(caught, "The activity"),
-    );
-  }, [only, refuse]);
+    return Promise.allSettled([api<Overview>("/platform/overview"), api<ActivityPage>(`/platform/activity?limit=50${filter}`)]).then(([found, page]) => {
+      if (ticket !== loads.current) return;
+      if (found.status === "fulfilled") setOverview(found.value);
+      if (page.status === "fulfilled") {
+        setActivity(page.value.items);
+        setNext(page.value.next_before);
+      } else {
+        setActivity((current) => current ?? []); // not left loading; the error says why
+      }
+      const failed = found.status === "rejected" ? found : page.status === "rejected" ? page : null;
+      if (failed && failed.reason instanceof ApiError && failed.reason.status === 403) setDenied(true);
+      else if (failed) setError(failed.reason instanceof ApiError ? failed.reason.detail : `${failed === found ? "The overview" : "The activity"} could not be loaded.`);
+      else setError(null);
+    });
+  }, [filter]);
 
   useEffect(() => {
-    load();
+    void load();
   }, [load]);
+
+  // Another filter starts from nothing: the old workspace's rows and their error are not shown
+  // under the new one while it loads.
+  const filterBy = (tenantId: string) => {
+    setActivity(null);
+    setNext(null);
+    setError(null);
+    setOnly(tenantId);
+  };
+
+  const showActivity = (tenantId: string) => {
+    filterBy(tenantId);
+    activityHeading.current?.scrollIntoView({ block: "start" });
+    activityHeading.current?.focus({ preventScroll: true });
+  };
 
   const loadMore = async () => {
     if (next === null || more) return;
     const ticket = loads.current;
     setMore(true);
     try {
-      const page = await api<ActivityPage>(`/platform/activity?limit=50&before=${next}${only ? `&tenant_id=${only}` : ""}`);
+      const page = await api<ActivityPage>(`/platform/activity?limit=50&before=${next}${filter}`);
       if (ticket !== loads.current) return;
-      setActivity((current) => [...current, ...page.items.filter((item) => !current.some((shown) => shown.id === item.id))]);
+      setActivity((current) => [...(current ?? []), ...page.items.filter((item) => !current?.some((shown) => shown.id === item.id))]);
       setNext(page.next_before);
     } catch (caught) {
       setError(caught instanceof ApiError ? caught.detail : "More activity could not be loaded.");
@@ -82,12 +102,18 @@ export default function PlatformDashboard() {
   };
 
   const view = async (workspace: Workspace) => {
+    if (opening) return;
+    setOpening(workspace.tenant_id);
     const response = await fetch("/api/workspace", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ tenant_id: workspace.tenant_id, name: workspace.owner_name ? `${workspace.owner_name}'s workspace` : workspace.organisation }),
     }).catch(() => null);
-    if (!response?.ok) return setError("That workspace could not be opened.");
+    if (!response?.ok) {
+      setOpening(null);
+      return setError("That workspace could not be opened.");
+    }
+    // Left busy on success: the page is on its way to the workspace.
     // A full load: every screen then reads that workspace, read only.
     // eslint-disable-next-line @next/next/no-location-assign-relative-destination
     window.location.assign("/documents");
@@ -103,7 +129,7 @@ export default function PlatformDashboard() {
           <h1>Platform dashboard</h1>
           <p className="sub">Every workspace and what is happening in it. Opening one shows it read only, and the visit is recorded in its audit log.</p>
         </div>
-        <button className="btn btn-secondary" onClick={load}>
+        <button className="btn btn-secondary" onClick={() => void load()}>
           <RefreshCw size={14} strokeWidth={1.5} aria-hidden="true" /> Refresh
         </button>
       </header>
@@ -126,7 +152,7 @@ export default function PlatformDashboard() {
             {!overview.workspaces.length ? (
               <p className="muted">No workspaces yet.</p>
             ) : (
-              <div className="table-wrap">
+              <div className="table-wrap" tabIndex={0} role="region" aria-label="Workspaces, scrolls sideways">
                 <table className="table" style={{ minWidth: 960, fontSize: 13 }}>
                   <thead>
                     <tr>
@@ -167,10 +193,15 @@ export default function PlatformDashboard() {
                         <td className="right num">{count(workspace.sign_ins)}</td>
                         <td className="right num">{usd(workspace.model_cost_usd)}</td>
                         <td style={{ whiteSpace: "nowrap" }}>
-                          <button className="btn btn-ghost" onClick={() => setOnly(workspace.tenant_id)} aria-label={`Show the activity of ${workspace.owner_name ?? workspace.organisation}`}>
+                          <button className="btn btn-ghost" onClick={() => showActivity(workspace.tenant_id)} aria-label={`Show the activity of ${workspace.owner_name ?? workspace.organisation}`}>
                             Activity
                           </button>
-                          <button className="btn btn-secondary" onClick={() => void view(workspace)} aria-label={`View ${workspace.owner_name ?? workspace.organisation}'s workspace, read only`}>
+                          <button
+                            className="btn btn-secondary"
+                            onClick={() => void view(workspace)}
+                            disabled={opening !== null}
+                            aria-busy={opening === workspace.tenant_id}
+                            aria-label={`View ${workspace.owner_name ?? workspace.organisation}'s workspace, read only`}>
                             <Eye size={14} strokeWidth={1.5} aria-hidden="true" /> View
                           </button>
                         </td>
@@ -185,22 +216,24 @@ export default function PlatformDashboard() {
 
         <section aria-labelledby="activity" style={{ display: "flex", flexDirection: "column", gap: 10 }}>
           <div style={{ display: "flex", alignItems: "center", gap: 12, flexWrap: "wrap" }}>
-            <h2 id="activity" style={{ fontSize: 18 }}>
+            <h2 id="activity" ref={activityHeading} tabIndex={-1} style={{ fontSize: 18, scrollMarginTop: 16 }}>
               Activity
             </h2>
             {only && (
               <>
                 <Tag>{overview?.workspaces.find((workspace) => workspace.tenant_id === only)?.owner_name ?? "One workspace"}</Tag>
-                <button className="btn btn-ghost" onClick={() => setOnly("")}>
+                <button className="btn btn-ghost" onClick={() => filterBy("")}>
                   Show every workspace
                 </button>
               </>
             )}
           </div>
-          {!activity.length ? (
+          {activity === null ? (
+            <p className="muted" aria-busy="true">Loading the activity…</p>
+          ) : !activity.length ? (
             <p className="muted">Nothing has happened yet.</p>
           ) : (
-            <div className="table-wrap">
+            <div className="table-wrap" tabIndex={0} role="region" aria-label="Activity, scrolls sideways">
               <table className="table" style={{ minWidth: 760, fontSize: 13 }}>
                 <thead>
                   <tr>
@@ -227,7 +260,7 @@ export default function PlatformDashboard() {
               </table>
             </div>
           )}
-          {next !== null && activity.length > 0 && (
+          {next !== null && activity && activity.length > 0 && (
             <button className="btn btn-secondary" style={{ alignSelf: "center" }} disabled={more} onClick={() => void loadMore()}>
               {more ? "Loading…" : "Load more"}
             </button>
