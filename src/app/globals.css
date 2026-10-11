@@ -291,7 +291,8 @@ textarea.input { min-height: 72px; resize: vertical; }
 .screen-body { padding: 20px 28px; display: flex; flex-direction: column; gap: 16px; }
 
 /* — app shell: 232px sidebar, a 60px icon rail below 1100px — */
-.app { display: grid; grid-template-columns: 232px minmax(0, 1fr); height: 100vh; overflow: hidden; }
+/* dvh: the visible height on a phone, whose browser bars otherwise hide the bottom (100vh first for browsers without it). */
+.app { display: grid; grid-template-columns: 232px minmax(0, 1fr); height: 100vh; height: 100dvh; overflow: hidden; }
 .main { min-width: 0; min-height: 0; overflow: hidden; display: flex; flex-direction: column; }
 .sidebar { display: flex; flex-direction: column; gap: 14px; padding: 16px 12px; border-right: 1px solid var(--color-divider); overflow-y: auto; }
 .brand { display: flex; align-items: center; gap: 10px; padding: 2px 4px 8px; }
@@ -559,7 +560,7 @@ textarea.input { min-height: 72px; resize: vertical; }
 }
 
 /* — the public landing page — */
-.landing { min-height: 100vh; overflow: auto; height: 100vh; }
+.landing { min-height: 100vh; min-height: 100dvh; overflow: auto; height: 100vh; height: 100dvh; }
 .landing-nav { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 14px clamp(16px, 4vw, 48px); border-bottom: 1px solid var(--color-divider); position: sticky; top: 0; background: var(--color-bg); z-index: 2; }
 .landing-nav .brand { padding: 0; }
 .landing-nav-links { display: flex; gap: 8px; }
@@ -606,11 +607,11 @@ textarea.input { min-height: 72px; resize: vertical; }
 }
 
 /* — a platform administrator looking at someone's workspace — */
-.viewing-strip { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; padding: 10px 28px; background: var(--color-accent-100); color: var(--color-accent-900); border-bottom: 1px solid var(--color-divider); }
+.viewing-strip { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; padding: 10px clamp(16px, 4vw, 28px); background: var(--color-accent-100); color: var(--color-accent-900); border-bottom: 1px solid var(--color-divider); }
 .viewing-strip p { flex: 1; min-width: 200px; }
 
 /* — the workspace at a glance, above the queue — */
-.stats-strip { list-style: none; margin: 0; padding: 14px 28px; display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px 20px; border-bottom: 1px solid var(--color-divider); }
+.stats-strip { list-style: none; margin: 0; padding: 14px clamp(16px, 4vw, 28px); display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px 20px; border-bottom: 1px solid var(--color-divider); }
 .stats-strip li { display: flex; flex-direction: column; gap: 2px; font-size: 12.5px; }
 .stats-figure { font-size: 22px; font-weight: 600; color: var(--color-text); text-decoration: none; line-height: 1.2; }
 a.stats-figure:hover { text-decoration: underline; }
