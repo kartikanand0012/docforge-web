@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { isAdminPath, navFor, needsSignIn } from "@/lib/nav";
-import { callerFrom, signInError, signUpError, validSignIn, validSignUp } from "@/lib/signin";
+import { callerFrom, checkSignIn, checkSignUp, signInError, signUpError, validSignIn, validSignUp } from "@/lib/signin";
 
 describe("signing in", () => {
   it("lets through only what needs no session", () => {
@@ -17,6 +17,9 @@ describe("signing in", () => {
     expect(validSignIn({ tenant: "", email: "a@b.in", pin: "a long password" })).toBeNull();
     expect(validSignIn({ tenant: "acme", email: "a@b.in", pin: "123" })).toBe("Enter your 6-digit PIN.");
     expect(validSignIn({ tenant: "acme", email: "a@b.in", pin: "123456" })).toBeNull();
+    // The message names the field it is about, for the page to point at.
+    expect(checkSignIn({ tenant: "", email: " ", pin: "" })?.field).toBe("email");
+    expect(checkSignIn({ tenant: "acme", email: "a@b.in", pin: "1" })?.field).toBe("pin");
   });
 
   it("says one thing whatever was wrong, and when a lock ends", () => {
@@ -66,6 +69,9 @@ describe("creating an account", () => {
     expect(validSignUp({ name: "Asha", email: "not-an-email", password: "x".repeat(10) })).toBe("Enter a valid email address.");
     expect(validSignUp({ name: "Asha", email: "asha@example.in", password: "short" })).toBe("Choose a password of at least 10 characters.");
     expect(validSignUp({ name: "Asha", email: "asha@example.in", password: "x".repeat(10) })).toBeNull();
+    expect(checkSignUp({ name: "", email: "", password: "" })?.field).toBe("name");
+    expect(checkSignUp({ name: "Asha", email: "nope", password: "" })?.field).toBe("email");
+    expect(checkSignUp({ name: "Asha", email: "asha@example.in", password: "x".repeat(129) })?.field).toBe("password");
   });
 
   it("says what went wrong in words", () => {

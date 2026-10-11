@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useState, type FormEvent } from "react";
 import { Marks } from "@/components/ui";
-import { signUpError, validSignUp } from "@/lib/signin";
+import { checkSignUp, signUpError, type SignUp } from "@/lib/signin";
 import { useTitle } from "@/lib/useTitle";
 
 export default function SignUpPage() {
@@ -14,11 +14,19 @@ export default function SignUpPage() {
   const [shown, setShown] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+  // The field a validation error is about: marked invalid, described by the error, focused.
+  const [invalidField, setInvalidField] = useState<keyof SignUp | null>(null);
+  const describedBy = (field: keyof SignUp, own?: string) =>
+    [own, invalidField === field ? "signup-error" : undefined].filter(Boolean).join(" ") || undefined;
 
   const submit = async (event: FormEvent) => {
     event.preventDefault();
-    const invalid = validSignUp({ name, email, password });
-    if (invalid) return setError(invalid);
+    const invalid = checkSignUp({ name, email, password });
+    setInvalidField(invalid?.field ?? null);
+    if (invalid) {
+      document.getElementById(invalid.field)?.focus();
+      return setError(invalid.text);
+    }
     setBusy(true);
     setError(null);
     try {
@@ -28,23 +36,24 @@ export default function SignUpPage() {
         body: JSON.stringify({ name: name.trim(), email: email.trim(), password }),
       });
       if (!response.ok) {
+        setBusy(false);
         const body = (await response.json().catch(() => ({}))) as { detail?: string | null };
         const retry = Number(response.headers.get("retry-after"));
         return setError(signUpError(response.status, body.detail ?? null, Number.isFinite(retry) && retry > 0 ? retry : null));
       }
       // A full load on purpose: the signed-in layout reads the new session from the cookie.
+      // Busy stays on while it loads, so the account is not asked for twice.
       // eslint-disable-next-line @next/next/no-location-assign-relative-destination
       window.location.assign("/upload");
     } catch {
-      setError(signUpError(503, null, null));
-    } finally {
       setBusy(false);
+      setError(signUpError(503, null, null));
     }
   };
 
   return (
     <main className="signin blueprint-grid">
-      <form className="signin-card marked" onSubmit={submit} noValidate aria-describedby={error ? "signup-error" : "signup-note"}>
+      <form className="signin-card marked" onSubmit={submit} noValidate aria-describedby="signup-note">
         <Marks />
         <Link href="/" style={{ fontSize: 15, fontWeight: 600, color: "var(--color-accent-700)", textDecoration: "none" }}>
           DocForge
@@ -55,11 +64,31 @@ export default function SignUpPage() {
         </p>
         <div className="field">
           <label htmlFor="name">Your name</label>
-          <input id="name" className="input" autoComplete="name" value={name} onChange={(e) => setName(e.target.value)} autoFocus maxLength={120} />
+          <input
+            id="name"
+            className="input"
+            autoComplete="name"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            autoFocus
+            maxLength={120}
+            aria-invalid={invalidField === "name" || undefined}
+            aria-describedby={describedBy("name")}
+          />
         </div>
         <div className="field">
           <label htmlFor="email">Email</label>
-          <input id="email" className="input" type="email" autoComplete="email" value={email} onChange={(e) => setEmail(e.target.value)} maxLength={320} />
+          <input
+            id="email"
+            className="input"
+            type="email"
+            autoComplete="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            maxLength={320}
+            aria-invalid={invalidField === "email" || undefined}
+            aria-describedby={describedBy("email")}
+          />
         </div>
         <div className="field">
           <label htmlFor="password">Password</label>
@@ -72,7 +101,8 @@ export default function SignUpPage() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               maxLength={128}
-              aria-describedby="password-hint"
+              aria-invalid={invalidField === "password" || undefined}
+              aria-describedby={describedBy("password", "password-hint")}
             />
             <button type="button" className="btn btn-secondary" onClick={() => setShown((now) => !now)} aria-pressed={shown}>
               {shown ? "Hide" : "Show"}

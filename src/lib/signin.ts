@@ -13,22 +13,35 @@ export type Caller = {
 
 export type SignIn = { tenant: string; email: string; pin: string };
 
+/** What is wrong with a form, and which of its fields to point at. */
+export type Invalid<F extends string> = { field: F; text: string };
+
 /** An account signs in with its email and password; a team's reviewer adds the
  * organisation and uses a PIN. */
-export function validSignIn({ tenant, email, pin }: SignIn): string | null {
-  if (!email.trim()) return "Enter your email.";
-  if (tenant.trim() ? !/^\d{6,}$/.test(pin) : pin.length < 6) return tenant.trim() ? "Enter your 6-digit PIN." : "Enter your password.";
+export function checkSignIn({ tenant, email, pin }: SignIn): Invalid<"email" | "pin"> | null {
+  if (!email.trim()) return { field: "email", text: "Enter your email." };
+  if (tenant.trim() ? !/^\d{6,}$/.test(pin) : pin.length < 6) {
+    return { field: "pin", text: tenant.trim() ? "Enter your 6-digit PIN." : "Enter your password." };
+  }
   return null;
+}
+
+export function validSignIn(form: SignIn): string | null {
+  return checkSignIn(form)?.text ?? null;
 }
 
 export type SignUp = { name: string; email: string; password: string };
 
-export function validSignUp({ name, email, password }: SignUp): string | null {
-  if (!name.trim()) return "Enter your name.";
-  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) return "Enter a valid email address.";
-  if (password.length < 10) return "Choose a password of at least 10 characters.";
-  if (password.length > 128) return "Choose a password of at most 128 characters.";
+export function checkSignUp({ name, email, password }: SignUp): Invalid<keyof SignUp> | null {
+  if (!name.trim()) return { field: "name", text: "Enter your name." };
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) return { field: "email", text: "Enter a valid email address." };
+  if (password.length < 10) return { field: "password", text: "Choose a password of at least 10 characters." };
+  if (password.length > 128) return { field: "password", text: "Choose a password of at most 128 characters." };
   return null;
+}
+
+export function validSignUp(form: SignUp): string | null {
+  return checkSignUp(form)?.text ?? null;
 }
 
 /** What went wrong creating an account, in words. */

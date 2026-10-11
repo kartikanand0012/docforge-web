@@ -5,7 +5,7 @@ import { useEffect, useState, type FormEvent } from "react";
 import { Marks } from "@/components/ui";
 import type { DemoAccount } from "@/lib/demo";
 import { safeNext } from "@/lib/next";
-import { signInError, validSignIn } from "@/lib/signin";
+import { checkSignIn, signInError } from "@/lib/signin";
 import { useTitle } from "@/lib/useTitle";
 
 export default function LoginPage() {
@@ -15,6 +15,8 @@ export default function LoginPage() {
   const [pin, setPin] = useState("");
   const [error, setError] = useState<{ kind: "fail" | "warn"; text: string } | null>(null);
   const [busy, setBusy] = useState(false);
+  // The field a validation error is about: marked invalid, described by the error, focused.
+  const [invalidField, setInvalidField] = useState<"email" | "pin" | null>(null);
   const [demo, setDemo] = useState<DemoAccount | null>(null);
   // A team's reviewer signs in to a named organisation with a PIN; an account needs neither.
   const [team, setTeam] = useState(false);
@@ -29,8 +31,12 @@ export default function LoginPage() {
   const submit = async (event: FormEvent) => {
     event.preventDefault();
     const organisation = team ? tenant : "";
-    const invalid = validSignIn({ tenant: organisation, email, pin });
-    if (invalid) return setError({ kind: "fail", text: invalid });
+    const invalid = checkSignIn({ tenant: organisation, email, pin });
+    setInvalidField(invalid?.field ?? null);
+    if (invalid) {
+      document.getElementById(invalid.field)?.focus();
+      return setError({ kind: "fail", text: invalid.text });
+    }
     setBusy(true);
     setError(null);
     try {
@@ -41,21 +47,22 @@ export default function LoginPage() {
       });
       if (!response.ok) {
         setPin("");
+        setBusy(false);
         const retry = Number(response.headers.get("retry-after"));
         return setError(signInError(response.status, Number.isFinite(retry) && retry > 0 ? retry : null));
       }
+      // Busy stays on: the next page is loading, and a second press would sign in again.
       const next = safeNext(new URLSearchParams(window.location.search).get("next"), window.location.origin);
       window.location.assign(next);
     } catch {
-      setError(signInError(503, null));
-    } finally {
       setBusy(false);
+      setError(signInError(503, null));
     }
   };
 
   return (
     <main className="signin blueprint-grid">
-      <form className="signin-card marked" onSubmit={submit} noValidate aria-describedby={error ? "signin-error" : undefined}>
+      <form className="signin-card marked" onSubmit={submit} noValidate>
         <Marks />
         <Link href="/" style={{ fontSize: 15, fontWeight: 600, color: "var(--color-accent-700)", textDecoration: "none" }}>
           DocForge
@@ -91,7 +98,17 @@ export default function LoginPage() {
         )}
         <div className="field">
           <label htmlFor="email">Email</label>
-          <input id="email" className="input" type="email" autoComplete="username" value={email} onChange={(e) => setEmail(e.target.value)} autoFocus />
+          <input
+            id="email"
+            className="input"
+            type="email"
+            autoComplete="username"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            autoFocus
+            aria-invalid={invalidField === "email" || undefined}
+            aria-describedby={invalidField === "email" ? "signin-error" : undefined}
+          />
         </div>
         <div className="field">
           <label htmlFor="pin">{team ? "PIN" : "Password"}</label>
@@ -104,6 +121,8 @@ export default function LoginPage() {
             maxLength={team ? 12 : 128}
             value={pin}
             onChange={(e) => setPin(team ? e.target.value.replace(/\D/g, "") : e.target.value)}
+            aria-invalid={invalidField === "pin" || undefined}
+            aria-describedby={invalidField === "pin" ? "signin-error" : undefined}
           />
         </div>
         <label style={{ display: "flex", gap: 8, alignItems: "center", fontSize: 13 }}>
