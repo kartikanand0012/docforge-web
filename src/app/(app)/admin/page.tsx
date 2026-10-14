@@ -10,6 +10,9 @@ import { useTitle } from "@/lib/useTitle";
 type Totals = {
   workspaces: number; accounts: number; documents: number; pages: number; signed: number; questions: number;
   model_cost_usd: number | null; documents_last_7_days: number; signups_last_7_days: number;
+  // Absent from an API older than V2 0.3: shown as a dash.
+  reading_cost_usd?: number | null; question_cost_usd?: number | null; readings?: number; pages_read?: number;
+  cost_per_reading_usd?: number | null; cost_per_page_usd?: number | null; fixed_monthly_usd?: number | null;
 };  // prettier-ignore
 type Workspace = {
   tenant_id: string; organisation: string; kind: "personal" | "organisation"; owner_name: string | null; owner_email: string | null;
@@ -142,6 +145,21 @@ export default function PlatformDashboard() {
             <Figure label="Documents" figure={count(totals.documents)} sub={`${count(totals.documents_last_7_days)} in the last 7 days · ${count(totals.pages)} pages`} />
             <Figure label="Signed" figure={count(totals.signed)} sub={`${count(totals.questions)} questions asked`} />
             <Figure label="Model cost" figure={usd(totals.model_cost_usd)} sub="Gemini, all workspaces" />
+          </div>
+        )}
+        {totals && (
+          <div className="metrics">
+            <Figure
+              label="Cost per page"
+              figure={usd(totals.cost_per_page_usd)}
+              sub={`${usd(totals.cost_per_reading_usd)} a document read · ${totals.pages_read === undefined ? "—" : count(totals.pages_read)} pages read`}
+            />
+            <Figure label="Reading documents" figure={usd(totals.reading_cost_usd)} sub={`${usd(totals.question_cost_usd)} answering questions`} />
+            <Figure
+              label="Fixed a month"
+              figure={usd(totals.fixed_monthly_usd)}
+              sub={totals.fixed_monthly_usd == null ? "Set PLATFORM_FIXED_MONTHLY_USD on the API" : "Hosting and other fixed costs"}
+            />
           </div>
         )}
 
