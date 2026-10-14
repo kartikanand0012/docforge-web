@@ -53,3 +53,29 @@ describe("platform dashboard (React review M2, L4, L5)", () => {
     vi.unstubAllGlobals();
   });
 });
+
+describe("platform dashboard costs (V2 0.3)", () => {
+  it("shows what a page and a reading cost, what chat cost, and the fixed monthly cost", async () => {
+    const costed = {
+      ...overview,
+      totals: {
+        ...overview.totals, reading_cost_usd: 0.42, question_cost_usd: 0.08, readings: 120, pages_read: 150,
+        cost_per_reading_usd: 0.0035, cost_per_page_usd: 0.0028, fixed_monthly_usd: 35,
+      },
+    };  // prettier-ignore
+    api.mockImplementation((path: string) => Promise.resolve(path.startsWith("/platform/overview") ? costed : { items: [], next_before: null }));
+    render(<PlatformDashboard />);
+    expect(await screen.findByText("$0.0028")).toBeInTheDocument();
+    expect(screen.getByText(/\$0\.0035 a document read · 150 pages read/)).toBeInTheDocument();
+    expect(screen.getByText("$0.42")).toBeInTheDocument();
+    expect(screen.getByText(/\$0\.08 answering questions/)).toBeInTheDocument();
+    expect(screen.getByText("$35.00")).toBeInTheDocument();
+  });
+
+  it("an API without the cost figures shows a dash, and an unset fixed cost says how to set it", async () => {
+    render(<PlatformDashboard />);
+    await screen.findByText("Signed in");
+    expect(screen.getByText("Cost per page").parentElement).toHaveTextContent("—");
+    expect(screen.getByText(/PLATFORM_FIXED_MONTHLY_USD/)).toBeInTheDocument();
+  });
+});
