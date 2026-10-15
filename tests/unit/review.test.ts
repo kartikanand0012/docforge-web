@@ -86,6 +86,17 @@ describe("the values of a document", () => {
     expect(blockerTarget("the certificate for batch X has results outside their limits", fields)).toEqual({ tab: "certificates" });
   });
 
+  it("points a possible duplicate at the earlier bill", () => {
+    const duplicates = [
+      { document_id: "d0", filename: "bill.pdf", matched_on: "irn" as const },
+      { document_id: "d9", filename: "bill (2).pdf", matched_on: "seller_and_number" as const },
+    ];
+    expect(blockerTarget("it may be a duplicate of bill (2).pdf, which has the same seller GSTIN and invoice number", fields, duplicates)).toEqual({ document: "d9" });
+    expect(blockerTarget("it may be a duplicate of bill.pdf, which has the same IRN", fields, duplicates)).toEqual({ document: "d0" });
+    // An older API without the list: nowhere to go.
+    expect(blockerTarget("it may be a duplicate of bill.pdf, which has the same IRN", fields)).toBeNull();
+  });
+
   it("groups other document types sensibly", () => {
     expect(groupOf("tests[2].result", "coa")).toBe("Tests");
     expect(groupOf("supplier_name", "purchase_order")).toBe("Parties");
