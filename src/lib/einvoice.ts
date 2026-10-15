@@ -1,7 +1,7 @@
 /** An invoice's signed GST e-invoice QR as the review screen shows it: EinvoiceOut (on
  * ReviewOut.einvoice) turned into a banner's kind, title and lines. */
 
-export type EinvoiceRule = { rule_id: string; outcome: string; severity: string; message: string };
+export type EinvoiceRule = { rule_id: string; outcome: "passed" | "failed" | "not_evaluated"; severity: "error" | "warning"; message: string };
 export type SignedInvoice = {
   seller_gstin: string; buyer_gstin: string; invoice_no: string; document_type: string;
   invoice_date: string; total: string; line_count: number; main_hsn: string | null;
@@ -19,7 +19,7 @@ export type Einvoice = {
   rules: EinvoiceRule[];
 };
 
-export type EinvoiceBanner = { kind: "ok" | "warn" | "fail"; title: string; lines: string[] };
+export type BannerModel = { kind: "ok" | "warn" | "fail"; title: string; lines: string[] };
 
 const PORTALS: Record<string, string> = { NIC1: "NIC IRP-1", NIC2: "NIC IRP-2", NIC: "NIC" };
 
@@ -42,7 +42,7 @@ const list = (items: string[]) => (items.length < 2 ? items.join("") : `${items.
 
 /** The banner for `einvoice`; null when there is nothing to say: no QR, a failed scan, a
  * document never scanned, or an API from before e-invoice checks. */
-export function einvoiceBanner(einvoice: Einvoice | null | undefined): EinvoiceBanner | null {
+export function einvoiceBanner(einvoice: Einvoice | null | undefined): BannerModel | null {
   if (!einvoice || einvoice.status === "none" || einvoice.status === "unreadable") return null;
   const reason = einvoice.reason ? [sentence(einvoice.reason)] : [];
   if (einvoice.status === "bad_signature") {
@@ -58,9 +58,14 @@ export function einvoiceBanner(einvoice: Einvoice | null | undefined): EinvoiceB
   const warnings = failed.filter((rule) => rule.severity !== "error");
   const outcome = new Map(einvoice.rules.map((rule) => [rule.rule_id, rule.outcome]));
   const matched = MATCHED.filter(([id]) => outcome.get(id) === "passed").map(([, name]) => name);
+  // A comparison that did not run is not a match: say so rather than show it as verified.
+  const unchecked = MATCHED.filter(([id]) => outcome.get(id) !== "passed" && outcome.get(id) !== "failed").map(([, name]) => name);
   const head = !errors.length && matched.length ? `Signed by ${portal}. ${sentence(`${list(matched)} match the page`)}` : `Signed by ${portal}.`;
   const lines = [head, ...[...errors, ...warnings].map((rule) => sentence(rule.message))];
+  if (unchecked.length) lines.push(sentence(`Not compared with the page: ${list(unchecked)}`));
+  if (einvoice.altered_beside) lines.push("Another QR on this invoice was altered after it was signed.");
   if (!einvoice.key_confirmed) lines.push("Its key is not yet confirmed against a real QR.");
   if (errors.length) return { kind: "fail", title: "E-invoice QR disagrees with the page", lines };
-  return { kind: warnings.length ? "warn" : "ok", title: "Verified e-invoice", lines };
+  const doubtful = warnings.length || unchecked.length || einvoice.altered_beside || outcome.get("einvoice.signature") !== "passed";
+  return { kind: doubtful ? "warn" : "ok", title: "Verified e-invoice", lines };
 }

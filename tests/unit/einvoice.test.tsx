@@ -3,7 +3,7 @@ import { describe, expect, it } from "vitest";
 import { EinvoiceBanner } from "@/components/document/EinvoiceBanner";
 import { einvoiceBanner, type Einvoice, type EinvoiceRule } from "@/lib/einvoice";
 
-const rule = (rule_id: string, outcome: string, severity = "error", message = `${rule_id} ${outcome}`): EinvoiceRule => ({
+const rule = (rule_id: string, outcome: EinvoiceRule["outcome"], severity: EinvoiceRule["severity"] = "error", message = `${rule_id} ${outcome}`): EinvoiceRule => ({
   rule_id,
   outcome,
   severity,
@@ -61,6 +61,27 @@ describe("the e-invoice banner's words", () => {
     expect(banner.lines).toContain("The IRN is not printed on the page.");
   });
 
+  it("an altered QR beside the verified one is never shown as fine", () => {
+    const banner = einvoiceBanner({ ...verified, altered_beside: true })!;
+    expect(banner.kind).not.toBe("ok");
+    expect(banner.lines).toContain("Another QR on this invoice was altered after it was signed.");
+  });
+
+  it("comparisons that did not run are not shown as matches", () => {
+    const none = einvoiceBanner({ ...verified, rules: [] })!;
+    expect(none.kind).toBe("warn");
+    expect(none.lines).toContain("Not compared with the page: seller GSTIN, buyer GSTIN, invoice number, date and total.");
+    const some = einvoiceBanner({ ...verified, rules: [...passed.filter((r) => r.rule_id !== "einvoice.invoice_date"), rule("einvoice.invoice_date", "not_evaluated")] })!;
+    expect(some.kind).toBe("warn");
+    expect(some.lines).toContain("Not compared with the page: date.");
+  });
+
+  it("lines that repeat are all shown", () => {
+    const same = rule("einvoice.line_count", "failed", "warning", "Its key is not yet confirmed against a real QR");
+    render(<EinvoiceBanner einvoice={{ ...verified, key_confirmed: false, rules: [...passed, same] }} />);
+    expect(screen.getAllByText("Its key is not yet confirmed against a real QR.")).toHaveLength(2);
+  });
+
   it("an unconfirmed key says so", () => {
     const banner = einvoiceBanner({ ...verified, key_confirmed: false })!;
     expect(banner.lines).toContain("Its key is not yet confirmed against a real QR.");
@@ -104,6 +125,7 @@ describe("the e-invoice banner", () => {
     expect(region).toHaveTextContent("Verified e-invoice");
     expect(region).toHaveTextContent("Signed by NIC IRP-1");
     expect(region).toHaveTextContent("Invoice MS/24-25/04417");
+    expect(region).toHaveTextContent("b".repeat(64));
   });
 
   it("renders nothing without a QR", () => {

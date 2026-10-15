@@ -16,14 +16,14 @@ export function EinvoiceBanner({ einvoice }: { einvoice: Einvoice | null | undef
         <p>
           <b>{banner.title}</b>
         </p>
-        {banner.lines.map((line) => (
-          <p key={line} style={{ fontSize: 13 }}>
+        {banner.lines.map((line, index) => (
+          <p key={index} className="einvoice-line">
             {line}
           </p>
         ))}
         {signed && (
-          <p className="muted" style={{ fontSize: 12 }}>
-            Invoice {signed.invoice_no} · IRN <span title={signed.irn}>{signed.irn.slice(0, 12)}…</span>
+          <p className="muted einvoice-meta">
+            Invoice {signed.invoice_no} · IRN <span className="einvoice-irn">{signed.irn}</span>
             {einvoice?.page ? ` · QR on page ${einvoice.page}` : ""}
           </p>
         )}
