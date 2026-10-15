@@ -2,6 +2,7 @@
 
 import { AlertTriangle, Check, HelpCircle, Info, Pencil, X } from "lucide-react";
 import { useEffect, useRef, useState, type FormEvent } from "react";
+import { EinvoiceBanner } from "@/components/document/EinvoiceBanner";
 import { PinInput } from "@/components/PinInput";
 import { useSecret } from "@/components/Shell";
 import { ReasonLine, Seg } from "@/components/ui";
@@ -38,6 +39,7 @@ export function ValuesTab(props: Props) {
 
   return (
     <div className="values">
+      {review.doc_type === "invoice" && <EinvoiceBanner einvoice={review.einvoice} />}
       {review.blockers.length > 0 && !review.review && (
         <div className="blockers" role="region" aria-label="What needs a person">
           <p className="blockers-title">
