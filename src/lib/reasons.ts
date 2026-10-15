@@ -1,7 +1,7 @@
 /** Why a document needs a person: the backend's reason sentences (trust/assess.py and
  * review/service.py) named the way the design names them (component 8). */
 
-export type ReasonLabel = "Check failed" | "Uncertain value" | "Does not match its order" | "Not linked yet";
+export type ReasonLabel = "Check failed" | "Uncertain value" | "Does not match its order" | "Not linked yet" | "Possible duplicate";
 export type Reason = { kind: "fail" | "warn" | "info"; label: ReasonLabel; text: string };
 
 const capital = (text: string) => text.charAt(0).toUpperCase() + text.slice(1);
@@ -9,6 +9,8 @@ const capital = (text: string) => text.charAt(0).toUpperCase() + text.slice(1);
 export function classify(sentence: string): Reason {
   const text = capital(sentence.trim());
   const lower = sentence.toLowerCase();
+  // First: the earlier bill's file name, quoted in it, could say anything.
+  if (lower.startsWith("it may be a duplicate of ")) return { kind: "fail", label: "Possible duplicate", text };
   if (lower.includes("does not match its purchase order")) return { kind: "fail", label: "Does not match its order", text };
   if (lower.includes("no purchase order on file")) return { kind: "info", label: "Not linked yet", text };
   if (lower.includes("failed") || lower.includes("outside their limits")) return { kind: "fail", label: "Check failed", text };
@@ -32,6 +34,7 @@ export function queueSummary(items: { reasons: string[] }[]): string {
     counts.get("Uncertain value") && plural(counts.get("Uncertain value")!, "uncertain value", "uncertain values"),
     counts.get("Does not match its order") && plural(counts.get("Does not match its order")!, "order mismatch", "order mismatches"),
     counts.get("Not linked yet") && plural(counts.get("Not linked yet")!, "without an order", "without an order"),
+    counts.get("Possible duplicate") && plural(counts.get("Possible duplicate")!, "possible duplicate", "possible duplicates"),
   ].filter(Boolean);
   return parts.length ? `${head} · ${parts.join(", ")}` : head;
 }

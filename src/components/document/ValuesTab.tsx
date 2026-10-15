@@ -1,6 +1,7 @@
 "use client";
 
 import { AlertTriangle, Check, HelpCircle, Info, Pencil, X } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import { EinvoiceBanner } from "@/components/document/EinvoiceBanner";
 import { PinInput } from "@/components/PinInput";
@@ -31,6 +32,7 @@ type Props = {
 
 export function ValuesTab(props: Props) {
   const { review, fields, filter, activePath, hoveredPath, editingPath } = props;
+  const router = useRouter();
   const shown = filter === "flagged" ? fields.filter((field) => field.flagged) : fields;
   const flagged = fields.filter((field) => field.flagged).length;
   const groups = [...new Set([...groupOrder(review.doc_type), ...shown.map((field) => field.group)])].filter((group) =>
@@ -48,13 +50,14 @@ export function ValuesTab(props: Props) {
           </p>
           {review.blockers.map((blocker) => {
             const why = blockerKind(blocker);
-            const target = blockerTarget(blocker, fields);
+            const target = blockerTarget(blocker, fields, review.duplicates);
             return (
               <button
                 key={blocker}
                 className="blocker"
                 onClick={() => {
                   if (target && "path" in target) props.onActivate(target.path);
+                  else if (target && "document" in target) router.push(`/documents/${target.document}`);
                   else if (target) props.onBlockerTab(target.tab);
                 }}
               >

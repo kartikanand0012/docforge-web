@@ -1,6 +1,6 @@
 /** The small shared pieces of the design system (handoff README, Components). */
 
-import { AlertCircle, AlertTriangle, Check, GitCompare, HelpCircle, Info, Lock, X, type LucideIcon } from "lucide-react";
+import { AlertCircle, AlertTriangle, Check, Copy, GitCompare, HelpCircle, Info, Lock, X, type LucideIcon } from "lucide-react";
 import Link from "next/link";
 import type { ReactNode } from "react";
 import { localTime } from "@/lib/format";
@@ -69,6 +69,7 @@ const REASON_ICONS: Record<string, LucideIcon> = {
   "Uncertain value": HelpCircle,
   "Does not match its order": GitCompare,
   "Not linked yet": HelpCircle,
+  "Possible duplicate": Copy,
 };
 
 type ReasonProps = { kind: "fail" | "warn" | "info"; label: string; text: ReactNode; box?: boolean; id?: string };

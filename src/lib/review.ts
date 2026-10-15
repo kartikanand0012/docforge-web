@@ -19,6 +19,7 @@ export type Discrepancy = {
   invoice_path: string | null; order_path: string | null; invoice_value: string | null; order_value: string | null;
 };  // prettier-ignore
 export type Certificate = { batch_no: string; document_id: string; status: string };
+export type Duplicate = { document_id: string; filename: string; matched_on: "irn" | "seller_and_number" };
 
 export type Review = {
   document_id: string;
@@ -43,6 +44,7 @@ export type Review = {
   superseded: boolean;
   certificates: Certificate[];
   einvoice?: Einvoice | null; // absent from an API before e-invoice checks
+  duplicates?: Duplicate[]; // absent from an API before duplicate checks
 };
 
 export type FieldStatus = "passed" | "uncertain" | "failed" | "corrected";
@@ -136,12 +138,17 @@ export function buildFields(review: Review): FieldView[] {
   });
 }
 
-export type BlockerTarget = { path: string } | { tab: "order" | "certificates" } | null;
+export type BlockerTarget = { path: string } | { tab: "order" | "certificates" } | { document: string } | null;
 
-/** Where a blocker is answered: the first value it is about, or the tab that explains it. */
-export function blockerTarget(blocker: string, fields: FieldView[]): BlockerTarget {
+/** Where a blocker is answered: the first value it is about, the tab that explains it, or the
+ * earlier bill it may duplicate. */
+export function blockerTarget(blocker: string, fields: FieldView[], duplicates: Duplicate[] = []): BlockerTarget {
   const reason = classify(blocker);
   const lower = blocker.toLowerCase();
+  if (reason.label === "Possible duplicate") {
+    const earlier = duplicates.find((duplicate) => blocker.startsWith(`it may be a duplicate of ${duplicate.filename}, `));
+    return earlier ? { document: earlier.document_id } : null;
+  }
   if (reason.label === "Does not match its order" || reason.label === "Not linked yet") return { tab: "order" };
   if (lower.includes("certificate")) return { tab: "certificates" };
   const wanted: FieldStatus = reason.label === "Check failed" ? "failed" : "uncertain";
