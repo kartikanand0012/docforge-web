@@ -1,6 +1,7 @@
 /** The document view's model: ReviewOut (GET /v1/documents/{id}/review) turned into the
  * values a person checks, each with its checks in words and its boxes on the page. */
 
+import type { Einvoice } from "@/lib/einvoice";
 import { fieldAt, label } from "@/lib/fields";
 import type { Box } from "@/lib/geometry";
 import { classify } from "@/lib/reasons";
@@ -41,6 +42,7 @@ export type Review = {
   meanings: Record<string, string>;
   superseded: boolean;
   certificates: Certificate[];
+  einvoice?: Einvoice | null; // absent from an API before e-invoice checks
 };
 
 export type FieldStatus = "passed" | "uncertain" | "failed" | "corrected";
