@@ -14,6 +14,11 @@ describe("why a person is needed", () => {
     expect(classify("there is no purchase order on file to compare it with")).toMatchObject({ kind: "info", label: "Not linked yet" });
     expect(classify("the certificate for batch AMX-1 has results outside their limits").label).toBe("Check failed");
     expect(classify("the certificate for batch AMX-1 could not be fully checked").label).toBe("Uncertain value");
+    expect(classify("it may be a duplicate of bill.pdf, which has the same IRN")).toEqual({
+      kind: "fail", label: "Possible duplicate", text: "It may be a duplicate of bill.pdf, which has the same IRN",
+    });
+    // A file name that happens to say "failed" is still a duplicate.
+    expect(classify("it may be a duplicate of failed-scan.pdf, which has the same seller GSTIN and invoice number").label).toBe("Possible duplicate");
   });
 
   it("sums the queue up in one line", () => {
@@ -26,5 +31,8 @@ describe("why a person is needed", () => {
       "3 documents need a person, oldest first · 2 failed checks, 1 uncertain value, 1 order mismatch",
     );
     expect(queueSummary([{ reasons: [] }])).toBe("1 document needs a person, oldest first");
+    expect(queueSummary([{ reasons: ["it may be a duplicate of bill.pdf, which has the same IRN"] }])).toBe(
+      "1 document needs a person, oldest first · 1 possible duplicate",
+    );
   });
 });
