@@ -19,6 +19,9 @@ export type Discrepancy = {
   invoice_path: string | null; order_path: string | null; invoice_value: string | null; order_value: string | null;
 };  // prettier-ignore
 export type Certificate = { batch_no: string; document_id: string; status: string };
+/** A bill line for the Schedule H1 register: the schedule names its molecule, or the workspace
+ * marked its product (or both). `joins_on`: the molecule's day in force, when after the bill. */
+export type H1Line = { path: string; product_name: string; molecule: string | null; notification: string | null; product_id: string | null; joins_on: string | null };
 export type Duplicate = { document_id: string; filename: string; matched_on: "irn" | "seller_and_number" };
 
 export type Review = {
@@ -46,6 +49,7 @@ export type Review = {
   einvoice?: Einvoice | null; // absent from an API before e-invoice checks
   duplicates?: Duplicate[]; // absent from an API before duplicate checks
   near_expiry_months?: number; // the workspace's window the checks used, 0 for off; absent before 3.4
+  schedule_h1?: H1Line[]; // absent before Schedule H1 checks
 };
 
 export type FieldStatus = "passed" | "uncertain" | "failed" | "corrected";
@@ -113,6 +117,21 @@ export function nearExpirySummary(review: Review): string | null {
   const months = review.near_expiry_months;
   if (!lines || !months) return null;
   return `${lines === 1 ? "1 line expires" : `${lines} lines expire`} within ${months === 1 ? "1 month" : `${months} months`} of the bill`;
+}
+
+/** "1 Schedule H1 line: enter it in the H1 register", or null when there is none. */
+export function h1Summary(review: Review): string | null {
+  const count = review.schedule_h1?.length ?? 0;
+  if (!count) return null;
+  return count === 1 ? "1 Schedule H1 line: enter it in the H1 register" : `${count} Schedule H1 lines: enter them in the H1 register`;
+}
+
+/** Why a line is H1, in words. */
+export function h1Reason(line: H1Line): string {
+  const date = line.joins_on ? new Date(`${line.joins_on}T00:00:00`).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" }) : null;
+  if (line.molecule && date) return `${line.molecule} joins Schedule H1 on ${date}`;
+  if (line.molecule) return `${line.molecule} is on Schedule H1${line.notification ? ` (${line.notification})` : ""}`;
+  return "Marked as Schedule H1 in this workspace";
 }
 
 /** Every value of the record, with what was found about it. Corrected outranks a failed

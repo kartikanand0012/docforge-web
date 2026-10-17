@@ -506,6 +506,11 @@ function DocumentView() {
                 editingPath={editingPath}
                 onEdit={setEditingPath}
                 callerEmail={caller.email}
+                mayMarkH1={caller.role === "admin" || caller.role === "reviewer" || caller.role === "member"}
+                onReviewChanged={(nextReview, message) => {
+                  setReview(nextReview);
+                  toast(message);
+                }}
                 onBlockerTab={(target) => setTab(target)}
                 onCorrected={(nextReview, path) => {
                   setReview(nextReview);
