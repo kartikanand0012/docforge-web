@@ -46,17 +46,56 @@ describe("workspace settings (V2 3.4)", () => {
     expect(screen.getByText(/Last changed by Asha Rao/)).toBeInTheDocument();
   });
 
-  it("refuses a window that is not 0 to 36 whole months without asking the API", async () => {
+  it.each(["37", "2.5", "-1", "six", ""])("refuses %j without asking the API", async (wrong) => {
     render(<WorkspaceSettings mayChange />);
     const input = await screen.findByLabelText("Flag stock expiring within (months)");
 
-    for (const wrong of ["37", "2.5", "-1", "six"]) {
-      await userEvent.clear(input);
-      await userEvent.type(input, wrong);
-      await userEvent.click(screen.getByRole("button", { name: "Save" }));
-      expect(screen.getByText("Enter a whole number of months from 0 to 36.")).toBeInTheDocument();
-    }
+    await userEvent.clear(input);
+    if (wrong) await userEvent.type(input, wrong);
+    await userEvent.click(screen.getByRole("button", { name: "Save" }));
+
+    expect(screen.getByText("Enter a whole number of months from 0 to 36.")).toBeInTheDocument();
+    expect(input).toHaveAttribute("aria-invalid", "true");
     expect(api).toHaveBeenCalledTimes(1); // only the load
+  });
+
+  it("clears the error as soon as the value is edited", async () => {
+    render(<WorkspaceSettings mayChange />);
+    const input = await screen.findByLabelText("Flag stock expiring within (months)");
+    await userEvent.clear(input);
+    await userEvent.type(input, "40");
+    await userEvent.click(screen.getByRole("button", { name: "Save" }));
+
+    await userEvent.type(input, "{backspace}");
+
+    expect(screen.queryByText("Enter a whole number of months from 0 to 36.")).toBeNull();
+    expect(input).not.toHaveAttribute("aria-invalid");
+  });
+
+  it("does not record an unchanged window", async () => {
+    render(<WorkspaceSettings mayChange />);
+    await screen.findByLabelText("Flag stock expiring within (months)");
+
+    await userEvent.click(screen.getByRole("button", { name: "Save" }));
+
+    expect(api).toHaveBeenCalledTimes(1);
+    expect(screen.getByRole("status")).toHaveTextContent("Saved.");
+  });
+
+  it("shows why a save was refused and lets the person try again", async () => {
+    const { ApiError } = await import("@/lib/api");
+    render(<WorkspaceSettings mayChange />);
+    const input = await screen.findByLabelText("Flag stock expiring within (months)");
+    api.mockImplementationOnce(() => Promise.reject(new ApiError("refused")));
+
+    await userEvent.clear(input);
+    await userEvent.type(input, "9");
+    await userEvent.click(screen.getByRole("button", { name: "Save" }));
+
+    expect(await screen.findByText("Not allowed.")).toBeInTheDocument();
+    expect(input).toHaveAttribute("aria-describedby", "settings-error");
+    expect(screen.getByRole("button", { name: "Save" })).toBeEnabled();
+    expect(screen.getByRole("status")).toHaveTextContent("");
   });
 
   it("says 0 is off", async () => {

@@ -32,8 +32,11 @@ export function WorkspaceSettings({ mayChange }: { mayChange: boolean }) {
 
   const submit = async (event: FormEvent) => {
     event.preventDefault();
+    if (busy) return;
     const value = Number(months);
     if (!/^\d+$/.test(months.trim()) || value > 36) return setError("Enter a whole number of months from 0 to 36.");
+    // Nothing to change, so nothing to record in the audit trail.
+    if (value === settings?.near_expiry_months) return setSaved(true);
     setBusy(true);
     setError(null);
     setSaved(false);
@@ -79,6 +82,7 @@ export function WorkspaceSettings({ mayChange }: { mayChange: boolean }) {
               onChange={(e) => {
                 setMonths(e.target.value);
                 setSaved(false);
+                setError(null);
               }}
               aria-invalid={error ? true : undefined}
               aria-describedby={error ? "settings-error" : undefined}
@@ -96,7 +100,10 @@ export function WorkspaceSettings({ mayChange }: { mayChange: boolean }) {
           {settings.updated_at ? ` on ${new Date(settings.updated_at).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" })}` : ""}.
         </p>
       )}
-      {saved && <p role="status" className="muted">Saved. Bills in review use it now; bills already read keep theirs until they are read again.</p>}
+      {/* Mounted throughout, so a screen reader announces the text when it arrives. */}
+      <p role="status" className="muted">
+        {saved ? "Saved. Bills in review use it now; bills already read keep theirs until they are read again." : ""}
+      </p>
       {error && (
         <Alert kind="fail" title="Not saved.">
           <span id="settings-error">{error}</span>
