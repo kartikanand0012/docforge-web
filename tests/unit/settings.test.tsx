@@ -6,7 +6,12 @@ const api = vi.hoisted(() => vi.fn());
 vi.mock("@/lib/api", () => ({
   api,
   ApiError: class extends Error {
-    detail = "Not allowed.";
+    constructor(
+      readonly status: number,
+      readonly detail: string,
+    ) {
+      super(detail);
+    }
   },
 }));
 
@@ -86,7 +91,7 @@ describe("workspace settings (V2 3.4)", () => {
     const { ApiError } = await import("@/lib/api");
     render(<WorkspaceSettings mayChange />);
     const input = await screen.findByLabelText("Flag stock expiring within (months)");
-    api.mockImplementationOnce(() => Promise.reject(new ApiError("refused")));
+    api.mockImplementationOnce(() => Promise.reject(new ApiError(403, "Not allowed.")));
 
     await userEvent.clear(input);
     await userEvent.type(input, "9");
