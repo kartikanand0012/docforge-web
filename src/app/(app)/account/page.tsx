@@ -3,6 +3,7 @@
 import { useState, type FormEvent } from "react";
 import { Dialog } from "@/components/Dialog";
 import { useCaller } from "@/components/Shell";
+import { WorkspaceSettings } from "@/components/WorkspaceSettings";
 import { Alert } from "@/components/ui";
 import { ApiError, api } from "@/lib/api";
 import { useTitle } from "@/lib/useTitle";
@@ -40,6 +41,8 @@ export default function AccountPage() {
             <dd>{caller.credential === "password" ? "Your password" : "A PIN"}</dd>
           </div>
         </dl>
+
+        <WorkspaceSettings mayChange={caller.role === "admin" || caller.role === "member"} />
 
         {own ? (
           <section className="panel" aria-labelledby="delete-account" style={{ display: "flex", flexDirection: "column", gap: 10 }}>

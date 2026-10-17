@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { blockerTarget, buildFields, groupOf, type Review } from "@/lib/review";
+import { blockerTarget, buildFields, groupOf, nearExpiryPaths, nearExpirySummary, type Review } from "@/lib/review";
 
 const box = { page: 1, x0: 30, y0: 786.5, x1: 120, y1: 792.5 };
 
@@ -102,5 +102,53 @@ describe("the values of a document", () => {
     expect(groupOf("supplier_name", "purchase_order")).toBe("Parties");
     expect(groupOf("po_no", "purchase_order")).toBe("Order");
     expect(groupOf("batch_no", "coa")).toBe("Certificate");
+  });
+});
+
+describe("near-expiry stock (V2 3.4)", () => {
+  const shelf = (path: string, months = 4) => ({
+    rule_id: "line.shelf_life", version: 2, severity: "warning", outcome: "failed", paths: [path],
+    message: `Stock expires 2027-01, ${months} months after the bill date; this workspace flags stock with less than 6 months left.`,
+  });  // prettier-ignore
+  const near = (rules: Review["assessment"]["rules"], months = 6): Review => ({
+    ...review,
+    near_expiry_months: months,
+    record: { ...review.record, lines: [{ expiry: { value: "2027-01", raw: "01/27", block_ids: ["b40"] } }, { expiry: { value: "2027-02", raw: "02/27", block_ids: ["b41"] } }] },
+    assessment: {
+      ...review.assessment,
+      fields: [...review.assessment.fields, { path: "lines[0].expiry", status: "verified", needs_review: false, reasons: [], boxes: [box], found_in: [] }],
+      rules: [...review.assessment.rules, ...rules],
+    },
+  });
+
+  it("is an amber flag on the expiry, not a failed value and not something for a person", () => {
+    const field = buildFields(near([shelf("lines[0].expiry")])).find((f) => f.path === "lines[0].expiry");
+
+    expect(field?.status).toBe("passed");
+    expect(field?.flagged).toBe(false);
+    expect(field?.checks).toEqual([{ kind: "warn", word: "Near expiry", text: expect.stringContaining("4 months after the bill date") }]);
+  });
+
+  it("does not hide a real failure on the same value", () => {
+    const expired = { rule_id: "line.not_expired", version: 1, severity: "error", outcome: "failed", message: "Stock expired", paths: ["lines[0].expiry"] };
+    const field = buildFields(near([expired, shelf("lines[0].expiry")])).find((f) => f.path === "lines[0].expiry");
+
+    expect(field?.status).toBe("failed");
+    expect(field?.checks.map((c) => c.word)).toEqual(["Failed", "Near expiry"]);
+  });
+
+  it("is summed up by line, with the workspace's window", () => {
+    expect(nearExpiryPaths(near([shelf("lines[0].expiry"), shelf("lines[1].expiry")]))).toEqual(["lines[0].expiry", "lines[1].expiry"]);
+    expect(nearExpirySummary(near([shelf("lines[0].expiry"), shelf("lines[1].expiry")]))).toBe("2 lines expire within 6 months of the bill");
+    expect(nearExpirySummary(near([shelf("lines[0].expiry")], 1))).toBe("1 line expires within 1 month of the bill");
+  });
+
+  it("says nothing when no line is near expiry, the flag is off, or the API predates it", () => {
+    expect(nearExpirySummary(near([]))).toBeNull();
+    expect(nearExpirySummary(near([{ ...shelf("lines[0].expiry"), outcome: "passed" }]))).toBeNull();
+    expect(nearExpirySummary(near([shelf("lines[0].expiry")], 0))).toBeNull();
+    const older: Review = near([shelf("lines[0].expiry")]);
+    delete older.near_expiry_months;
+    expect(nearExpirySummary(older)).toBeNull();
   });
 });

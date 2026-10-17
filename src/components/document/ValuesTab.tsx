@@ -10,9 +10,9 @@ import { ReasonLine, Seg } from "@/components/ui";
 import { ApiError, api } from "@/lib/api";
 import { fieldAt } from "@/lib/fields";
 import { rememberEmail, savedEmail } from "@/lib/reviewer";
-import { blockerKind, blockerTarget, groupOrder, type FieldView, type Review } from "@/lib/review";
+import { blockerKind, blockerTarget, groupOrder, nearExpiryPaths, nearExpirySummary, type FieldView, type Review } from "@/lib/review";
 
-const CHECK_ICONS = { Passed: Check, Uncertain: HelpCircle, Failed: X, Corrected: Info };
+const CHECK_ICONS = { Passed: Check, Uncertain: HelpCircle, Failed: X, Corrected: Info, "Near expiry": AlertTriangle };
 
 type Props = {
   review: Review;
@@ -68,6 +68,8 @@ export function ValuesTab(props: Props) {
         </div>
       )}
 
+      {review.doc_type === "invoice" && <StockNotes review={review} />}
+
       <div className="values-filter">
         <Seg
           name="value-filter"
@@ -117,6 +119,17 @@ export function ValuesTab(props: Props) {
             ))}
         </section>
       ))}
+    </div>
+  );
+}
+
+/** What a person should know about the stock on the bill, without anything to approve. */
+function StockNotes({ review }: { review: Review }) {
+  const nearExpiry = nearExpirySummary(review);
+  if (!nearExpiry) return null;
+  return (
+    <div className="stock-notes" role="region" aria-label="About the stock">
+      <ReasonLine kind="warn" label="Near expiry" text={`${nearExpiry}.`} box />
     </div>
   );
 }
@@ -172,7 +185,8 @@ function FieldRow({
 function LinesTable({ review, fields }: { review: Review; fields: FieldView[] }) {
   const lines = (review.record.lines as unknown[] | undefined) ?? [];
   if (!lines.length) return null;
-  const flagged = new Set(fields.filter((field) => field.flagged).map((field) => field.path));
+  // Flagged values, and expiries near enough to flag though they need no person.
+  const flagged = new Set([...fields.filter((field) => field.flagged).map((field) => field.path), ...nearExpiryPaths(review)]);
   const cell = (index: number, name: string) => {
     const path = `lines[${index}].${name}`;
     const found = fieldAt(review.record, path);
@@ -186,6 +200,7 @@ function LinesTable({ review, fields }: { review: Review; fields: FieldView[] })
   const columns = [
     { name: "batch_no", label: "Batch", right: false },
     { name: "hsn", label: "HSN", right: false },
+    { name: "expiry", label: "Expiry", right: false },
     { name: "qty", label: "Qty", right: true },
     { name: rate, label: "Rate", right: true },
     { name: "amount", label: "Amount", right: true },
