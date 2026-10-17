@@ -45,10 +45,11 @@ export type Review = {
   certificates: Certificate[];
   einvoice?: Einvoice | null; // absent from an API before e-invoice checks
   duplicates?: Duplicate[]; // absent from an API before duplicate checks
+  near_expiry_months?: number; // the workspace's window the checks used, 0 for off; absent before 3.4
 };
 
 export type FieldStatus = "passed" | "uncertain" | "failed" | "corrected";
-export type Check = { kind: "ok" | "warn" | "fail" | "info"; word: "Passed" | "Uncertain" | "Failed" | "Corrected"; text: string };
+export type Check = { kind: "ok" | "warn" | "fail" | "info"; word: "Passed" | "Uncertain" | "Failed" | "Corrected" | "Near expiry"; text: string };
 export type FieldView = {
   path: string;
   label: string;
@@ -99,6 +100,21 @@ function display(value: unknown): string {
   return String(field.value);
 }
 
+export const NEAR_EXPIRY_RULE = "line.shelf_life";
+
+/** The expiry values that are within the workspace's near-expiry window of the bill date. */
+export function nearExpiryPaths(review: Review): string[] {
+  return review.assessment.rules.filter((rule) => rule.rule_id === NEAR_EXPIRY_RULE && rule.outcome === "failed").flatMap((rule) => rule.paths);
+}
+
+/** "2 lines expire within 6 months of the bill", or null when none does or the flag is off. */
+export function nearExpirySummary(review: Review): string | null {
+  const lines = new Set(nearExpiryPaths(review).map((path) => path.split(".")[0])).size;
+  const months = review.near_expiry_months;
+  if (!lines || !months) return null;
+  return `${lines === 1 ? "1 line expires" : `${lines} lines expire`} within ${months === 1 ? "1 month" : `${months} months`} of the bill`;
+}
+
 /** Every value of the record, with what was found about it. Corrected outranks a failed
  * check (a person has spoken), a failed check outranks an uncertain reading. */
 export function buildFields(review: Review): FieldView[] {
@@ -109,6 +125,10 @@ export function buildFields(review: Review): FieldView[] {
     const assessment = assessed.get(path);
     const corrections = review.corrections.filter((correction) => correction.path === path);
     const failed = review.assessment.rules.filter((rule) => rule.outcome === "failed" && rule.paths.includes(path));
+    // Near expiry is a flag for the person, not a fault in the reading: it neither fails the
+    // value nor asks for a person.
+    const nearExpiry = failed.filter((rule) => rule.rule_id === NEAR_EXPIRY_RULE);
+    const faults = failed.filter((rule) => rule.rule_id !== NEAR_EXPIRY_RULE);
     const checks: Check[] = [];
     const latest = corrections.at(-1);
     if (latest) {
@@ -118,12 +138,13 @@ export function buildFields(review: Review): FieldView[] {
         text: `by ${latest.reviewer_name} from ${latest.old_text ?? "nothing"}. ${latest.reason}`.trim(),
       });
     }
-    for (const rule of failed) checks.push({ kind: "fail", word: "Failed", text: rule.message });
+    for (const rule of faults) checks.push({ kind: "fail", word: "Failed", text: rule.message });
+    for (const rule of nearExpiry) checks.push({ kind: "warn", word: "Near expiry", text: rule.message });
     if (assessment?.needs_review) {
       for (const reason of assessment.reasons) checks.push({ kind: "warn", word: "Uncertain", text: sentence(reason) });
     }
     if (!checks.length && assessment) checks.push({ kind: "ok", word: "Passed", text: "Found where it says on the page." });
-    const status: FieldStatus = latest ? "corrected" : failed.length ? "failed" : assessment?.needs_review ? "uncertain" : "passed";
+    const status: FieldStatus = latest ? "corrected" : faults.length ? "failed" : assessment?.needs_review ? "uncertain" : "passed";
     return {
       path,
       label: label(path),
