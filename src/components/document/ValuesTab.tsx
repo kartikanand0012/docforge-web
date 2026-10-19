@@ -10,7 +10,10 @@ import { ReasonLine, Seg } from "@/components/ui";
 import { ApiError, api } from "@/lib/api";
 import { fieldAt } from "@/lib/fields";
 import { rememberEmail, savedEmail } from "@/lib/reviewer";
-import { blockerKind, blockerTarget, groupOrder, nearExpiryPaths, nearExpirySummary, type FieldView, type Review } from "@/lib/review";
+import {
+  blockerKind, blockerTarget, groupOrder, h1Reason, h1Summary, nearExpiryPaths, nearExpirySummary,
+  type FieldView, type H1Line, type Review,
+} from "@/lib/review";  // prettier-ignore
 
 const CHECK_ICONS = { Passed: Check, Uncertain: HelpCircle, Failed: X, Corrected: Info, "Near expiry": AlertTriangle };
 
@@ -28,6 +31,9 @@ type Props = {
   onCorrected: (review: Review, path: string) => void;
   onBlockerTab: (tab: "order" | "certificates") => void;
   callerEmail: string | null;
+  // Whoever reviews may mark a line's product as Schedule H1 for the workspace.
+  mayMarkH1?: boolean;
+  onReviewChanged?: (review: Review, message: string) => void;
 };
 
 export function ValuesTab(props: Props) {
@@ -93,7 +99,9 @@ export function ValuesTab(props: Props) {
           <h3 id={`group-${group}`} className="group-label values-group">
             {group}
           </h3>
-          {group === "Lines" && filter === "all" && <LinesTable review={review} fields={fields} />}
+          {group === "Lines" && filter === "all" && (
+            <LinesTable review={review} fields={fields} mayMarkH1={props.mayMarkH1 ?? false} onReviewChanged={props.onReviewChanged} />
+          )}
           {shown
             .filter((field) => field.group === group)
             .map((field) => (
@@ -126,11 +134,66 @@ export function ValuesTab(props: Props) {
 /** What a person should know about the stock on the bill, without anything to approve. */
 function StockNotes({ review }: { review: Review }) {
   const nearExpiry = nearExpirySummary(review);
-  if (!nearExpiry) return null;
+  const h1 = h1Summary(review);
+  if (!nearExpiry && !h1) return null;
   return (
     <div className="stock-notes" role="region" aria-label="About the stock">
-      <ReasonLine kind="warn" label="Near expiry" text={`${nearExpiry}.`} box />
+      {nearExpiry && <ReasonLine kind="warn" label="Near expiry" text={`${nearExpiry}.`} box />}
+      {h1 && <ReasonLine kind="info" label="Schedule H1" text={`${h1}.`} box />}
     </div>
+  );
+}
+
+/** A line's product name with its Schedule H1 badge, and marking for those who review. */
+function ItemCell({
+  review, index, name, h1, mayMark, onReviewChanged,
+}: { review: Review; index: number; name: React.ReactNode; h1: H1Line | undefined; mayMark: boolean; onReviewChanged?: (review: Review, message: string) => void }) {  // prettier-ignore
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const product = fieldAt(review.record, `lines[${index}].product_name`)?.value;
+  const productName = typeof product === "string" ? product.trim() : "";
+
+  const change = async () => {
+    if (busy || !onReviewChanged) return;
+    setBusy(true);
+    setError(null);
+    try {
+      if (h1?.product_id) await api(`/schedule-h1/products/${h1.product_id}`, { method: "DELETE" });
+      else await api("/schedule-h1/products", { method: "POST", json: { product_name: productName } });
+      const next = await api<Review>(`/documents/${review.document_id}/review`);
+      onReviewChanged(
+        next,
+        h1?.product_id ? `${productName} is no longer marked as Schedule H1.` : `${productName} is marked as Schedule H1 on every bill in this workspace.`,
+      );
+    } catch (caught) {
+      setError(caught instanceof ApiError ? caught.detail : "That did not save. Try again.");
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  // A molecule on the schedule is the law's, not the workspace's: only a mark can be removed.
+  const canMark = mayMark && onReviewChanged && productName && (!h1 || h1.product_id);
+  return (
+    <>
+      {name}
+      {h1 && (
+        <span className="badge badge-info h1-badge" title={h1Reason(h1)}>
+          {h1.joins_on && !h1.product_id ? "H1 soon" : "Schedule H1"}
+          <span className="sr-only">: {h1Reason(h1)}</span>
+        </span>
+      )}
+      {canMark && (
+        <button type="button" className="btn btn-ghost h1-mark" onClick={change} disabled={busy} aria-label={`${h1 ? "Remove the Schedule H1 mark from" : "Mark as Schedule H1:"} ${productName}`}>
+          {busy ? "Saving…" : h1 ? "Remove H1 mark" : "Mark H1"}
+        </button>
+      )}
+      {error && (
+        <span role="alert" className="reason reason-fail" style={{ fontSize: 12 }}>
+          {error}
+        </span>
+      )}
+    </>
   );
 }
 
@@ -182,7 +245,10 @@ function FieldRow({
   );
 }
 
-function LinesTable({ review, fields }: { review: Review; fields: FieldView[] }) {
+function LinesTable({
+  review, fields, mayMarkH1, onReviewChanged,
+}: { review: Review; fields: FieldView[]; mayMarkH1: boolean; onReviewChanged?: (review: Review, message: string) => void }) {  // prettier-ignore
+  const h1 = new Map((review.schedule_h1 ?? []).map((line) => [line.path, line]));
   const lines = (review.record.lines as unknown[] | undefined) ?? [];
   if (!lines.length) return null;
   // Flagged values, and expiries near enough to flag though they need no person.
@@ -221,7 +287,16 @@ function LinesTable({ review, fields }: { review: Review; fields: FieldView[] })
         <tbody>
           {lines.map((_, index) => (
             <tr key={index}>
-              <td>{cell(index, "product_name")}</td>
+              <td>
+                <ItemCell
+                  review={review}
+                  index={index}
+                  name={cell(index, "product_name")}
+                  h1={h1.get(`lines[${index}]`)}
+                  mayMark={mayMarkH1 && review.doc_type === "invoice"}
+                  onReviewChanged={onReviewChanged}
+                />
+              </td>
               {columns.map((column) => (
                 <td key={column.name} className={column.right ? "right" : undefined}>
                   {cell(index, column.name)}
