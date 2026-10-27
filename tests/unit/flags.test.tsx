@@ -154,12 +154,12 @@ describe("caught on your bills (V2 P0)", () => {
   });
 
   it("says 'at least' when there were more invoices than it counted", async () => {
-    api.mockResolvedValue({ ...summary, invoices: 5000, capped: true });
+    api.mockResolvedValue({ ...summary, invoices: 10000, capped: true });
     render(<FlagsCard />);
 
     const card = await screen.findByRole("region", { name: "Caught on your bills" });
     expect(card).toHaveTextContent("DocForge caught at least 2 possible duplicates, 3 near-expiry lines and 1 Schedule H1 line.");
-    expect(card).toHaveTextContent("There were more invoices in this range than were counted (5,000), so the real numbers may be higher.");
+    expect(card).toHaveTextContent("There were more invoices in this range than one summary counts (10,000), so the real numbers may be higher.");
   });
 
   it("asks for another range, and shows the API's sentence when it is refused", async () => {

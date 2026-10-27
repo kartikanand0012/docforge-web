@@ -15,7 +15,7 @@ vi.mock("@/lib/api", () => ({
   },
 }));
 
-import { OrderTab } from "@/components/document/DocumentTabs";
+import { AuditTab, OrderTab } from "@/components/document/DocumentTabs";
 import { ApiError } from "@/lib/api";
 import type { Review } from "@/lib/review";
 
@@ -53,6 +53,11 @@ describe("linking an invoice to its order by hand (V2 P0)", () => {
   it("offers a different order when the bill does not match the one found", () => {
     render(<OrderTab review={review({ match_status: "mismatch", counterpart_document_id: "o9" })} mayLink onLinked={vi.fn()} />);
     expect(screen.getByRole("button", { name: "Link a different order…" })).toBeInTheDocument();
+  });
+
+  it("offers a quiet relink when a matched order may be the wrong one", () => {
+    render(<OrderTab review={review({ match_status: "match", counterpart_document_id: "o9", blockers: [] })} mayLink onLinked={vi.fn()} />);
+    expect(screen.getByRole("button", { name: "Link a different order…" })).toHaveClass("btn-ghost");
   });
 
   it("lists the orders on file, the same supplier's first and marked", async () => {
@@ -122,5 +127,12 @@ describe("linking an invoice to its order by hand (V2 P0)", () => {
     await userEvent.click(screen.getByRole("button", { name: "Link an order…" }));
 
     expect(await screen.findByText("No purchase orders on file yet. Upload the order first, then link it here.")).toBeInTheDocument();
+  });
+});
+
+describe("a hand link in the audit trail (V2 P0)", () => {
+  it("is named in words", () => {
+    render(<AuditTab entries={[{ id: 7, occurred_at: "2026-10-27T06:00:00Z", actor: "reviewer:r1", action: "match.linked" }]} />);
+    expect(screen.getByText("Linked to its order by hand")).toBeInTheDocument();
   });
 });
