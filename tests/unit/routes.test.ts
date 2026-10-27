@@ -239,6 +239,35 @@ describe("the API proxy", () => {
     expect(fetchSpy.mock.calls[0][1]?.redirect).toBe("manual");
   });
 
+  it("passes a multipart upload on byte for byte, with its boundary (V2 P1 masters import)", async () => {
+    fetchSpy.mockResolvedValue(json(200, { rows: 1, imported: 1, already_known: 0, rejected: [] }));
+    const form = new FormData();
+    form.append("file", new File(["name,type\nABC Pharma,supplier\n"], "masters.csv", { type: "text/csv" }));
+    const request = new Request("http://x/", { method: "POST", body: form });
+    const type = request.headers.get("content-type")!;
+    const bytes = await request.arrayBuffer();
+    const response = await call("POST", ["settings", "mappings", "import"], { body: bytes, headers: { "content-type": type } });
+    expect(response.status).toBe(200);
+    const [url, init] = fetchSpy.mock.calls[0];
+    expect(String(url)).toMatch(/\/v1\/settings\/mappings\/import$/);
+    expect((init!.headers as Headers).get("content-type")).toBe(type);
+    expect(type).toMatch(/^multipart\/form-data; boundary=/);
+    expect(new Uint8Array(init!.body as ArrayBuffer)).toEqual(new Uint8Array(bytes));
+  });
+
+  it("passes a file download back with its name and bytes (V2 P1 export file)", async () => {
+    fetchSpy.mockResolvedValue(
+      new Response("invoice_no,item\nINV-1,Cefix 200\n", {
+        status: 200,
+        headers: { "content-type": "text/csv; charset=utf-8", "content-disposition": 'attachment; filename="docforge-tally.csv"' },
+      }),
+    );
+    const response = await call("GET", ["exports", "runs", "r1", "file"]);
+    expect(response.headers.get("content-disposition")).toBe('attachment; filename="docforge-tally.csv"');
+    expect(response.headers.get("content-type")).toBe("text/csv; charset=utf-8");
+    expect(await response.text()).toBe("invoice_no,item\nINV-1,Cefix 200\n");
+  });
+
   it("sends a write's body on", async () => {
     fetchSpy.mockResolvedValue(new Response(null, { status: 204 }));
     const response = await call("POST", ["documents", "d1", "claim"], { body: '{"take_over":false}', headers: { "content-type": "application/json" } });
