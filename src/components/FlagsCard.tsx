@@ -82,7 +82,7 @@ export function FlagsCard() {
       </ul>
       {summary.capped && (
         <p className="muted" style={{ fontSize: 12.5 }}>
-          There were more invoices in this range than were counted ({summary.invoices.toLocaleString("en-IN")}), so the real numbers may be higher.
+          There were more invoices in this range than one summary counts ({summary.invoices.toLocaleString("en-IN")}), so the real numbers may be higher.
         </p>
       )}
       {error && <Alert kind="warn" title="Not updated.">{error}</Alert>}

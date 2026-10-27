@@ -23,10 +23,12 @@ export function OrderTab({ review, mayLink = false, onLinked }: OrderTabProps) {
   const [linking, setLinking] = useState(false);
   const status = review.match_status;
   const unlinked = status === "no_counterpart" || (!review.counterpart_document_id && status !== "match" && status !== "mismatch");
-  const canLink = mayLink && onLinked && review.doc_type === "invoice" && (unlinked || status === "mismatch");
+  // Any unsigned invoice may be linked by hand; a match that may be the wrong order gets a quiet button.
+  const canLink = mayLink && onLinked && review.doc_type === "invoice";
+  const quiet = !unlinked && status === "match";
   const link = canLink ? (
     <>
-      <button type="button" className="btn btn-secondary" style={{ alignSelf: "flex-start" }} onClick={() => setLinking(true)}>
+      <button type="button" className={`btn ${quiet ? "btn-ghost" : "btn-secondary"}`} style={{ alignSelf: "flex-start" }} onClick={() => setLinking(true)}>
         {unlinked ? "Link an order…" : "Link a different order…"}
       </button>
       {linking && (
@@ -187,6 +189,7 @@ const ACTIONS: Record<string, string> = {
   "review.corrected": "Value corrected",
   "review.signed": "Signed",
   "match.evaluated": "Matched with its order",
+  "match.linked": "Linked to its order by hand",
 };
 
 function who(actor: string): string {
