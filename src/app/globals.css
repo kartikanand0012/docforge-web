@@ -644,3 +644,13 @@ a.stats-figure:hover { text-decoration: underline; }
 .account-facts { margin: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px 24px; }
 .account-facts dt { font-size: 12px; color: var(--color-neutral-700); }
 .account-facts dd { margin: 2px 0 0; font-weight: 500; overflow-wrap: anywhere; }
+
+/* — V2 P1: mappings and exports — */
+.section-card { padding: 16px; border: 1px solid var(--color-divider); border-radius: var(--radius-xl); display: flex; flex-direction: column; gap: 10px; }
+.mapping-list, .task-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+.mapping-row { display: flex; gap: 12px; padding: 12px 14px; border: 1px solid var(--color-divider); border-radius: var(--radius-lg); flex-wrap: wrap; }
+.mapping-row-found { border-color: var(--color-accent); box-shadow: inset 3px 0 0 var(--color-accent); }
+.mapping-fields { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 10px 14px; }
+.task-card { padding: 12px 14px; border: 1px solid var(--color-divider); border-radius: var(--radius-lg); }
+.task-suggestions { display: flex; flex-wrap: wrap; gap: 6px; }
+.task-problems { margin: 0; padding-left: 18px; display: flex; flex-direction: column; gap: 4px; }

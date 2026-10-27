@@ -5,6 +5,8 @@ export type NavItem = { href: string; label: string; icon: string; admin?: boole
 const MAIN: NavItem[] = [
   { href: "/", label: "Review queue", icon: "inbox" },
   { href: "/documents", label: "Documents", icon: "file-text" },
+  { href: "/exports", label: "Export to Tally / Marg", icon: "download" },
+  { href: "/settings/mappings", label: "Tally / Marg names", icon: "link" },
   { href: "/upload", label: "Upload", icon: "upload" },
   { href: "/search", label: "Search", icon: "search" },
   { href: "/chat", label: "Chat", icon: "message-square" },

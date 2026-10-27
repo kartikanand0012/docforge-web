@@ -150,8 +150,8 @@ describe("exporting to Tally or Marg (V2 P1)", () => {
 
     serve((path, init) => (init?.method === "POST" ? run({ id: "r3" }) : path === "/exports/runs" ? [run({ id: "r3" }), blocked] : tasks));
     await userEvent.click(screen.getByRole("button", { name: "Run export again" }));
-    expect(api).toHaveBeenLastCalledWith("/exports/runs", { method: "POST", json: { target: "tally", from: "2026-10-01", to: "2026-10-27" } });
-    expect(await screen.findByText("12 invoices, 48 lines.")).toBeInTheDocument();
+    expect(calls("POST").at(-1)).toEqual(["/exports/runs", { method: "POST", json: { target: "tally", from: "2026-10-01", to: "2026-10-27" } }]);
+    expect(await screen.findByRole("region", { name: "This export" })).toHaveTextContent("12 invoices, 48 lines.");
   });
 
   it("shows the API's sentence when a confirm is refused, and keeps the task open", async () => {
