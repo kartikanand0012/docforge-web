@@ -25,7 +25,7 @@ const supplier = (overrides: Partial<SupplierMapping> = {}): SupplierMapping => 
 
 describe("the mappings API, through the app's proxy (V2 P1)", () => {
   it("lists a page of suppliers or items, searched, after a cursor", async () => {
-    fetchSpy.mockResolvedValue(json(200, { items: [], total: 0, next_after: null }));
+    fetchSpy.mockImplementation(async () => json(200, { items: [], total: 0, next_after: null }));
     await listMappings("suppliers", "");
     await listMappings("items", "  cefixime 200 ", "cursor-1");
     expect(sent(0).url).toBe("/api/v1/settings/mappings/suppliers?limit=50");

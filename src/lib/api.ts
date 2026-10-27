@@ -7,6 +7,8 @@ export class ApiError extends Error {
     readonly detail: string,
     readonly retryAfter: number | null = null,
     readonly fields: string[] = [],
+    /** A 409 for something already there names it (a mapping's `existing_id`). */
+    readonly existingId: string | null = null,
   ) {
     super(detail);
   }
@@ -32,7 +34,8 @@ export function errorFrom(status: number, body: unknown, headers: Headers): ApiE
     return new ApiError(status, "Some of what was entered is not valid.", retryAfter, fields);
   }
   const sentence = typeof detail === "string" && detail ? detail : (FALLBACK[status] ?? "Something went wrong.");
-  return new ApiError(status, sentence, retryAfter);
+  const existing = (body as { existing_id?: unknown } | null)?.existing_id;
+  return new ApiError(status, sentence, retryAfter, [], typeof existing === "string" && existing ? existing : null);
 }
 
 export function toLogin(): void {
