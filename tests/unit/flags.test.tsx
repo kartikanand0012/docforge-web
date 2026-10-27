@@ -23,7 +23,10 @@ import { ApiError } from "@/lib/api";
 import { nearExpirySentence, queueBadges } from "@/lib/flags";
 import type { Review } from "@/lib/review";
 
-beforeEach(() => api.mockReset());
+// A block, not an arrow's value: a function returned from beforeEach is run after the test.
+beforeEach(() => {
+  api.mockReset();
+});
 
 function review(overrides: Partial<Review> = {}): Review {
   return {
@@ -176,7 +179,10 @@ describe("caught on your bills (V2 P0)", () => {
   it("shows nothing for an API without the summary", async () => {
     api.mockRejectedValue(new ApiError(404, "Not found."));
     const { container } = render(<FlagsCard />);
-    await vi.waitFor(() => expect(api).toHaveBeenCalled());
+    await vi.waitFor(() => {
+      expect(api).toHaveBeenCalled();
+    });
+    await new Promise((resolve) => setTimeout(resolve, 0)); // the refusal has arrived
     expect(container).toBeEmptyDOMElement();
   });
 });

@@ -2,6 +2,7 @@
  * values a person checks, each with its checks in words and its boxes on the page. */
 
 import type { Einvoice } from "@/lib/einvoice";
+import type { NearExpiryLine } from "@/lib/flags";
 import { fieldAt, label } from "@/lib/fields";
 import type { Box } from "@/lib/geometry";
 import { classify } from "@/lib/reasons";
@@ -50,6 +51,7 @@ export type Review = {
   duplicates?: Duplicate[]; // absent from an API before duplicate checks
   near_expiry_months?: number; // the workspace's window the checks used, 0 for off; absent before 3.4
   schedule_h1?: H1Line[]; // absent before Schedule H1 checks
+  near_expiry?: NearExpiryLine[]; // each near-expiry line, from the bill date; absent before V2 P0
 };
 
 export type FieldStatus = "passed" | "uncertain" | "failed" | "corrected";
