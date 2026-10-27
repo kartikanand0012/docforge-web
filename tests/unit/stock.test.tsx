@@ -42,7 +42,7 @@ describe("near-expiry stock on the bill (V2 3.4)", () => {
   it("sums it up above the values, as a note and not as something to approve", () => {
     show(review());
 
-    const notes = screen.getByRole("region", { name: "About the stock" });
+    const notes = screen.getByRole("region", { name: "Flagged on this bill" });
     expect(notes).toHaveTextContent("Near expiry: 1 line expires within 6 months of the bill.");
     expect(screen.queryByRole("region", { name: "What needs a person" })).toBeNull();
   });
@@ -58,11 +58,11 @@ describe("near-expiry stock on the bill (V2 3.4)", () => {
 
   it("says nothing when no line is near expiry or the window is off", () => {
     const { unmount } = show(review({ assessment: { decision: "accept", reasons: [], fields: [], rules: [], issues: [] } }));
-    expect(screen.queryByRole("region", { name: "About the stock" })).toBeNull();
+    expect(screen.queryByRole("region", { name: "Flagged on this bill" })).toBeNull();
     unmount();
 
     show(review({ near_expiry_months: 0 }));
-    expect(screen.queryByRole("region", { name: "About the stock" })).toBeNull();
+    expect(screen.queryByRole("region", { name: "Flagged on this bill" })).toBeNull();
   });
 
   it("leaves out the Expiry column where lines print none (a purchase order)", () => {
@@ -70,7 +70,7 @@ describe("near-expiry stock on the bill (V2 3.4)", () => {
     show(review({ doc_type: "purchase_order", record: order, assessment: { decision: "accept", reasons: [], fields: [], rules: [], issues: [] } }));
 
     expect(screen.queryByRole("columnheader", { name: "Expiry" })).toBeNull();
-    expect(screen.queryByRole("region", { name: "About the stock" })).toBeNull();
+    expect(screen.queryByRole("region", { name: "Flagged on this bill" })).toBeNull();
   });
 });
 
@@ -81,7 +81,7 @@ describe("Schedule H1 lines on the bill (V2 3.6)", () => {
   it("sums them up as a note, and badges each line", () => {
     show(review({ schedule_h1: [levo, marked] }));
 
-    expect(screen.getByRole("region", { name: "About the stock" })).toHaveTextContent("Schedule H1: 2 Schedule H1 lines: enter them in the H1 register.");
+    expect(screen.getByRole("region", { name: "Flagged on this bill" })).toHaveTextContent("Schedule H1: 2 Schedule H1 lines: enter them in the H1 register.");
     const table = screen.getByRole("table");
     expect(within(table).getAllByText("Schedule H1")).toHaveLength(2);
     expect(within(table).getByText(/Levofloxacin is on Schedule H1/)).toBeInTheDocument();
