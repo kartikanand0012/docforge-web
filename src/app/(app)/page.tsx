@@ -4,9 +4,12 @@ import { Check, RefreshCw, WifiOff } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { QueueFlagBadges } from "@/components/FlagBadges";
+import { FlagsCard } from "@/components/FlagsCard";
 import { StatsStrip } from "@/components/StatsStrip";
 import { Alert, DocTypeTag, docTypeName, EmptyPanel, Marks, ReasonLine, Tag, Time } from "@/components/ui";
 import { ApiError, api } from "@/lib/api";
+import type { QueueFlags } from "@/lib/flags";
 import { localTime, waiting } from "@/lib/format";
 import { classify, queueSummary } from "@/lib/reasons";
 import { useTitle } from "@/lib/useTitle";
@@ -20,6 +23,7 @@ type QueueItem = {
   reasons: string[];
   match_status: string;
   claimed_by?: string | null; // another reviewer has it open now
+  flags?: QueueFlags; // absent before V2 P0
 };
 
 type Load =
@@ -146,6 +150,7 @@ export default function QueuePage() {
         </p>
       </header>
       <StatsStrip />
+      <FlagsCard />
 
       {!online && (
         <div className="offline-strip" role="status">
@@ -243,6 +248,7 @@ export default function QueuePage() {
                       {item.filename}
                     </Link>
                   </p>
+                  <QueueFlagBadges flags={item.flags} />
                   {item.reasons.map((reason) => {
                     const why = classify(reason);
                     return <ReasonLine key={reason} kind={why.kind} label={why.label} text={why.text} />;
@@ -264,6 +270,7 @@ export default function QueuePage() {
                 {docTypeName(current.doc_type)} · {selected + 1} of {items.length}
               </p>
               <h2 style={{ fontSize: 24, overflowWrap: "anywhere" }}>{current.filename}</h2>
+              <QueueFlagBadges flags={current.flags} />
               <h3 className="group-label" style={{ marginTop: 10 }}>Why a person is needed</h3>
               {current.reasons.map((reason) => {
                 const why = classify(reason);
