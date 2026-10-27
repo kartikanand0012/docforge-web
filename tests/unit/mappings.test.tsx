@@ -119,8 +119,9 @@ describe("the suppliers list (V2 P1)", () => {
     await userEvent.click(within(dialog).getByRole("button", { name: "Save changes" }));
 
     expect(api).toHaveBeenLastCalledWith("/settings/mappings/suppliers/s1", { method: "PATCH", json: { marg_party: "ABC PHARMA", purchase_ledger: null } });
-    expect(await screen.findByText(/Marg party: ABC PHARMA/)).toBeInTheDocument();
-    expect(screen.queryByRole("dialog")).toBeNull();
+    await waitFor(() => expect(screen.queryByRole("dialog")).toBeNull());
+    expect(screen.getByRole("listitem")).toHaveTextContent("Marg party: ABC PHARMA");
+    expect(screen.getByRole("listitem")).not.toHaveTextContent("Purchase ledger");
   });
 
   it("adds a supplier, needing a Tally or Marg name, and shows the API's sentence for one already mapped", async () => {
