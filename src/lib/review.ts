@@ -93,9 +93,14 @@ const sentence = (text: string) => {
   return /[.!?]$/.test(capital) ? capital : `${capital}.`;
 };
 
-function display(value: unknown): string {
+// Values read from part of a printed string: the string is never theirs to show ("Gujarat [24]"
+// holds the place and its code; neither is the whole of it).
+const PART_OF_PRINTED = new Set(["place_of_supply", "place_of_supply_code"]);
+
+function display(value: unknown, path = ""): string {
   const field = value as { value?: unknown; raw?: string | null } | undefined;
   if (!field) return "—";
+  if (PART_OF_PRINTED.has(path)) return field.value === null || field.value === undefined || field.value === "" ? "—" : String(field.value);
   // Shown as printed, unless the value is only part of what was printed: one string can hold
   // two values ("Gujarat (24)" is the place and its code).
   if (typeof field.value === "string" && field.value && field.raw && field.raw !== field.value && field.raw.includes(field.value)) return field.value;
@@ -168,7 +173,7 @@ export function buildFields(review: Review): FieldView[] {
       path,
       label: label(path),
       group: groupOf(path, review.doc_type),
-      display: display(fieldAt(review.record, path)),
+      display: display(fieldAt(review.record, path), path),
       status,
       checks,
       boxes: assessment?.boxes ?? [],
