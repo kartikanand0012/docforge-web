@@ -2,6 +2,8 @@
 
 import { AlertTriangle, Check, GitCompare, X } from "lucide-react";
 import Link from "next/link";
+import { useState } from "react";
+import { LinkOrderDialog } from "@/components/document/LinkOrderDialog";
 import { Marks, ReasonLine, StatusBadge, Time } from "@/components/ui";
 import { label as fieldLabel } from "@/lib/fields";
 import type { Review } from "@/lib/review";
@@ -10,12 +12,45 @@ import { stageKind, stageWord } from "@/lib/stages";
 export type TimelineStep = { stage: string; at: string; detail?: string | null };
 export type AuditEntry = { id: number; occurred_at: string; actor: string; action: string; details?: Record<string, unknown> };
 
-export function OrderTab({ review }: { review: Review }) {
+type OrderTabProps = {
+  review: Review;
+  // Whoever may review may link the invoice to an order by hand.
+  mayLink?: boolean;
+  onLinked?: (review: Review, message: string) => void;
+};
+
+export function OrderTab({ review, mayLink = false, onLinked }: OrderTabProps) {
+  const [linking, setLinking] = useState(false);
   const status = review.match_status;
-  if (status === "no_counterpart" || (!review.counterpart_document_id && status !== "match" && status !== "mismatch")) {
+  const unlinked = status === "no_counterpart" || (!review.counterpart_document_id && status !== "match" && status !== "mismatch");
+  const canLink = mayLink && onLinked && review.doc_type === "invoice" && (unlinked || status === "mismatch");
+  const link = canLink ? (
+    <>
+      <button type="button" className="btn btn-secondary" style={{ alignSelf: "flex-start" }} onClick={() => setLinking(true)}>
+        {unlinked ? "Link an order…" : "Link a different order…"}
+      </button>
+      {linking && (
+        <LinkOrderDialog
+          review={review}
+          onClose={() => setLinking(false)}
+          onLinked={(next, message) => {
+            setLinking(false);
+            onLinked(next, message);
+          }}
+        />
+      )}
+    </>
+  ) : null;
+  if (unlinked) {
     return (
       <div className="tab-body">
-        <ReasonLine kind="info" label="Not linked yet" text="There is no purchase order on file to compare it with. Upload the order and it is matched by its number." box />
+        <ReasonLine
+          kind="info"
+          label="Not linked yet"
+          text={`There is no purchase order on file to compare it with. Upload the order and it is matched by its number${canLink ? ", or link the order by hand" : ""}.`}
+          box
+        />
+        {link}
       </div>
     );
   }
@@ -30,7 +65,7 @@ export function OrderTab({ review }: { review: Review }) {
         )}
         {review.counterpart_document_id && (
           <span>
-            Matched with <Link href={`/documents/${review.counterpart_document_id}`}>its purchase order</Link> by order number
+            Matched with <Link href={`/documents/${review.counterpart_document_id}`}>its purchase order</Link>
           </span>
         )}
       </p>
@@ -70,6 +105,7 @@ export function OrderTab({ review }: { review: Review }) {
       {errors.map((item, index) => (
         <ReasonLine key={index} kind="fail" label="Does not match its order" box text={`${item.message} Correct the value if the page was misread, or reject the invoice.`} />
       ))}
+      {link}
     </div>
   );
 }

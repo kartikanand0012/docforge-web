@@ -203,6 +203,8 @@ function DocumentView() {
   // Another reviewer has it open: everything reads, nothing changes (the API refuses it too).
   const locked = heldByOther(claim);
   const readOnly = locked || viewing;
+  // Who may review: correct, mark Schedule H1, link an order.
+  const mayReview = caller.role === "admin" || caller.role === "reviewer" || caller.role === "member";
   const fields = useMemo(() => {
     const all = review ? buildFields(review) : [];
     return readOnly ? all.map((field) => ({ ...field, editable: false })) : all;
@@ -506,7 +508,7 @@ function DocumentView() {
                 editingPath={editingPath}
                 onEdit={setEditingPath}
                 callerEmail={caller.email}
-                mayMarkH1={caller.role === "admin" || caller.role === "reviewer" || caller.role === "member"}
+                mayMarkH1={mayReview}
                 onReviewChanged={(nextReview, message) => {
                   setReview(nextReview);
                   toast(message);
@@ -521,7 +523,17 @@ function DocumentView() {
                 }}
               />
             )}
-            {currentTab === "order" && review && <OrderTab review={review} />}
+            {currentTab === "order" && review && (
+              <OrderTab
+                review={review}
+                mayLink={mayReview && !readOnly && !review.review && !review.superseded}
+                onLinked={(nextReview, message) => {
+                  setReview(nextReview);
+                  toast(message);
+                  void api<AuditEntry[]>(`/documents/${id}/audit`).then(setAudit).catch(() => undefined);
+                }}
+              />
+            )}
             {currentTab === "certificates" && review && <CertificatesTab review={review} />}
             {currentTab === "timeline" && <TimelineTab steps={steps} live={!isFinished(doc.stage)} />}
             {currentTab === "audit" && <AuditTab entries={audit} />}
