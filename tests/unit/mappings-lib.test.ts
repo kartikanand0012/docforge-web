@@ -142,12 +142,15 @@ describe("mappings in words (V2 P1)", () => {
     const tasks = (s: number, i: number, p = 0): Tasks => ({
       suppliers: Array.from({ length: s }, () => ({}) as SupplierTask),
       items: Array.from({ length: i }, () => ({}) as ItemTask),
-      problems: Array.from({ length: p }, () => ({ document_id: "d", filename: "f", problem: "x" })),
+      problems: Array.from({ length: p }, (_, n) => ({ document_id: `d${n}`, filename: "f", problem: "x" })),
     });
     expect(blockedSentence(tasks(2, 3))).toBe("2 suppliers and 3 items need mapping before this export can be made. No file was made.");
     expect(blockedSentence(tasks(1, 0))).toBe("1 supplier needs mapping before this export can be made. No file was made.");
     expect(blockedSentence(tasks(0, 1))).toBe("1 item needs mapping before this export can be made. No file was made.");
     expect(blockedSentence(tasks(0, 0, 2))).toBe("2 bills need correcting before this export can be made. No file was made.");
+    // V2 P3: a Marg import's checks name lines; two lines of one bill are one bill to correct.
+    const lines: Tasks = { suppliers: [], items: [], problems: [1, 3].map((line) => ({ document_id: "d", filename: "f", problem: "x", line })) };
+    expect(blockedSentence(lines)).toBe("1 bill needs correcting before this export can be made. No file was made.");
   });
 });
 

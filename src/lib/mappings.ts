@@ -30,7 +30,8 @@ export type ItemTask = {
   item_key: string; product_name: string; pack: string | null; printed_hsn: string | null; bills: number; mapping_id: string | null;
   suggestions: Suggestion[];
 };  // prettier-ignore
-export type Problem = { document_id: string; filename: string; problem: string };
+/** `line` (from 1) when the problem is one line of the bill: a Marg import's checks before any file. */
+export type Problem = { document_id: string; filename: string; problem: string; line?: number | null };
 export type Tasks = { suppliers: SupplierTask[]; items: ItemTask[]; problems: Problem[] };
 
 export type ImportReport = { rows: number; imported: number; already_known: number; rejected: { line: number; reason: string }[] };
@@ -112,7 +113,7 @@ export function blockedSentence(tasks: Tasks): string {
   const suppliers = tasks.suppliers.length;
   const items = tasks.items.length;
   if (!suppliers && !items) {
-    const bills = tasks.problems.length;
+    const bills = new Set(tasks.problems.map((problem) => problem.document_id)).size;
     return `${plural(bills, "bill", "bills")} ${bills === 1 ? "needs" : "need"} correcting ${after}`;
   }
   const parts = [suppliers ? plural(suppliers, "supplier", "suppliers") : "", items ? plural(items, "item", "items") : ""].filter(Boolean);

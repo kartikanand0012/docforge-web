@@ -9,6 +9,8 @@ export class ApiError extends Error {
     readonly fields: string[] = [],
     /** A 409 for something already there names it (a mapping's `existing_id`). */
     readonly existingId: string | null = null,
+    /** A refusal the screen acts on, beyond its sentence (a Marg import's `no_active_profile`). */
+    readonly code: string | null = null,
   ) {
     super(detail);
   }
@@ -35,7 +37,10 @@ export function errorFrom(status: number, body: unknown, headers: Headers): ApiE
   }
   const sentence = typeof detail === "string" && detail ? detail : (FALLBACK[status] ?? "Something went wrong.");
   const existing = (body as { existing_id?: unknown } | null)?.existing_id;
-  return new ApiError(status, sentence, retryAfter, [], typeof existing === "string" && existing ? existing : null);
+  const code = (body as { code?: unknown } | null)?.code;
+  return new ApiError(
+    status, sentence, retryAfter, [], typeof existing === "string" && existing ? existing : null, typeof code === "string" && code ? code : null,
+  );  // prettier-ignore
 }
 
 export function toLogin(): void {
