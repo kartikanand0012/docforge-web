@@ -5,43 +5,61 @@ import { useEffect, useId, useState, type FormEvent } from "react";
 import { Alert, StatusBadge } from "@/components/ui";
 import { ApiError, api } from "@/lib/api";
 import { plural } from "@/lib/flags";
-import type { ExportRun } from "@/lib/exports";
-import { BOOKS_NAME, NAME_LABEL, confirmRequest, nameField, runSuggestions, type Books, type Suggestion, type TaskRef, type Tasks } from "@/lib/mappings";
+import { BOOKS_NAME, NAME_LABEL, confirmRequest, nameField, runSuggestions, type Books, type Problem, type Suggestion, type TaskRef, type Tasks } from "@/lib/mappings";
 
 const keyOf = (ref: TaskRef) => (ref.kind === "supplier" ? `s:${ref.task.seller_gstin}` : `i:${ref.task.item_key}`);
 
-/** What a run that stopped needs: each supplier and item to map, with names to offer, and the
- * bills to correct. A suggestion only fills the name; Confirm mapping saves it. */
-export function MappingTasks({ run, mayMap, onRunAgain, again }: { run: ExportRun; mayMap: boolean; onRunAgain: () => void; again: boolean }) {
-  const [tasks, setTasks] = useState<Tasks>(run.tasks ?? { suppliers: [], items: [], problems: [] });
-  const [suggesting, setSuggesting] = useState(true);
+type Bill = { document_id: string; filename: string; problems: Problem[] };
+
+/** Problems by bill, in the order listed: a Marg import's checks name each line. */
+export function problemsByBill(problems: Problem[]): Bill[] {
+  const bills = new Map<string, Bill>();
+  for (const problem of problems) {
+    const bill = bills.get(problem.document_id) ?? { document_id: problem.document_id, filename: problem.filename, problems: [] };
+    bill.problems.push(problem);
+    bills.set(problem.document_id, bill);
+  }
+  return [...bills.values()];
+}
+
+/** What a run (or a profile check) that stopped needs: each supplier and item to map, with
+ * names to offer, and the bills - and lines - to correct. A suggestion only fills the name;
+ * Confirm mapping saves it. Suggestions are asked for when there is a run to ask about. */
+export function MappingTasks({
+  tasks: listed, books, runId = null, mayMap, onRunAgain, again = false, againLabel = "Run export again",
+}: { tasks: Tasks; books: Books; runId?: string | null; mayMap: boolean; onRunAgain?: () => void; again?: boolean; againLabel?: string }) {  // prettier-ignore
+  const [tasks, setTasks] = useState<Tasks>(listed);
+  const [suggesting, setSuggesting] = useState(runId !== null);
   const [done, setDone] = useState<Record<string, string>>({});
 
   useEffect(() => {
+    if (runId === null) return;
     let live = true;
-    runSuggestions(run.id)
+    runSuggestions(runId)
       .then((found) => live && setTasks(found))
       .catch(() => undefined) // the list without suggestions still stands
       .finally(() => live && setSuggesting(false));
     return () => {
       live = false;
     };
-  }, [run.id]);
+  }, [runId]);
 
   // Tasks mapped since the run are left out of the suggestions' list, so the run's own list
   // is the one to finish.
   const all: TaskRef[] = [
-    ...(run.tasks?.suppliers ?? []).map((task) => ({ kind: "supplier" as const, task })),
-    ...(run.tasks?.items ?? []).map((task) => ({ kind: "item" as const, task })),
+    ...listed.suppliers.map((task) => ({ kind: "supplier" as const, task })),
+    ...listed.items.map((task) => ({ kind: "item" as const, task })),
   ];
   const withSuggestions = (ref: TaskRef): TaskRef =>
     ref.kind === "supplier"
       ? { kind: "supplier", task: tasks.suppliers.find((task) => task.seller_gstin === ref.task.seller_gstin) ?? ref.task }
       : { kind: "item", task: tasks.items.find((task) => task.item_key === ref.task.item_key) ?? ref.task };
   const mappedSince = (ref: TaskRef) =>
-    !suggesting && (ref.kind === "supplier" ? !tasks.suppliers.some((t) => t.seller_gstin === ref.task.seller_gstin) : !tasks.items.some((t) => t.item_key === ref.task.item_key));
+    runId !== null &&
+    !suggesting &&
+    (ref.kind === "supplier" ? !tasks.suppliers.some((t) => t.seller_gstin === ref.task.seller_gstin) : !tasks.items.some((t) => t.item_key === ref.task.item_key));
   const finished = all.every((ref) => keyOf(ref) in done || mappedSince(ref));
-  const problems = run.tasks?.problems ?? [];
+  const bills = problemsByBill(listed.problems);
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
@@ -52,7 +70,7 @@ export function MappingTasks({ run, mayMap, onRunAgain, again }: { run: ExportRu
             <li key={keyOf(ref)}>
               <TaskCard
                 taskRef={withSuggestions(ref)}
-                books={run.target}
+                books={books}
                 mayMap={mayMap}
                 done={done[keyOf(ref)] ?? null}
                 mappedSince={mappedSince(ref)}
@@ -62,28 +80,38 @@ export function MappingTasks({ run, mayMap, onRunAgain, again }: { run: ExportRu
           ))}
         </ul>
       )}
-      {problems.length > 0 && (
+      {bills.length > 0 && (
         <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-          <h3 style={{ fontSize: 15 }}>{plural(problems.length, "bill", "bills")} to correct first</h3>
+          <h3 style={{ fontSize: 15 }}>{plural(bills.length, "bill", "bills")} to correct first</h3>
           <ul className="task-problems">
-            {problems.map((problem) => (
-              <li key={`${problem.document_id}-${problem.problem}`}>
-                <Link href={`/documents/${problem.document_id}`} style={{ fontWeight: 500, overflowWrap: "anywhere" }}>
-                  {problem.filename}
+            {bills.map((bill) => (
+              <li key={bill.document_id}>
+                <Link href={`/documents/${bill.document_id}`} style={{ fontWeight: 500, overflowWrap: "anywhere" }}>
+                  {bill.filename}
                 </Link>{" "}
-                <span>{problem.problem}</span>
+                {bill.problems.length === 1 && !bill.problems[0].line ? (
+                  <span>{bill.problems[0].problem}</span>
+                ) : (
+                  <ul className="task-lines" aria-label={`What to correct on ${bill.filename}`}>
+                    {bill.problems.map((problem, index) => (
+                      <li key={`${problem.line ?? "bill"}-${index}`}>
+                        {problem.line ? <b className="num">Line {problem.line}:</b> : <b>The bill:</b>} <span>{problem.problem}</span>
+                      </li>
+                    ))}
+                  </ul>
+                )}
               </li>
             ))}
           </ul>
         </div>
       )}
-      {finished && (
+      {finished && onRunAgain && (
         <div style={{ display: "flex", gap: 10, alignItems: "center", flexWrap: "wrap" }}>
           <button className="btn btn-primary" onClick={onRunAgain} disabled={again}>
-            {again ? "Running…" : "Run export again"}
+            {again ? "Running…" : againLabel}
           </button>
           <span className="muted">
-            {all.length ? "Everything above is mapped." : ""} {problems.length ? "Correct the bills listed first, or the export stops again." : ""}
+            {all.length ? "Everything above is mapped." : ""} {bills.length ? "Correct the bills listed first, or it stops again." : ""}
           </span>
         </div>
       )}
