@@ -662,3 +662,12 @@ a.stats-figure:hover { text-decoration: underline; }
 .profile-columns { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
 .profile-column { display: flex; flex-direction: column; gap: 8px; min-width: 0; margin: 0; }
 .profile-column-missing { border-color: var(--st-warn-line); box-shadow: inset 3px 0 0 var(--st-warn-line); }
+
+/* — purchase register (V2 P4) — */
+.register-totals { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px 20px; }
+.register-totals li { display: flex; flex-direction: column; gap: 2px; font-size: 12.5px; }
+.register-totals .stats-figure { font-size: 18px; }
+.register-twob { display: flex; flex-direction: column; gap: 8px; padding-top: 6px; border-top: 1px solid var(--color-divider); }
+.register-table { min-width: 1280px; font-size: 13px; }
+.register-table td, .register-table th { white-space: nowrap; }
+.register-table td:last-child { white-space: normal; min-width: 220px; }
