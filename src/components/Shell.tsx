@@ -1,7 +1,7 @@
 "use client";
 
 import {
-  BarChart3, Book, Bot, Download, Eye, FileSpreadsheet, FileText, HelpCircle, Inbox, LayoutDashboard, Link2, LogOut, MessageSquare, Moon, Search, ShieldCheck, Sun, Upload, Webhook,
+  BarChart3, Book, Bot, Download, Eye, FileSpreadsheet, FileText, HelpCircle, Inbox, LayoutDashboard, Link2, LogOut, Mail, MessageSquare, Moon, Search, ShieldCheck, Sun, Upload, Webhook,
   type LucideIcon,
 } from "lucide-react";
 import Link from "next/link";
@@ -16,7 +16,7 @@ import { initials, type Caller } from "@/lib/signin";
 const ICONS: Record<string, LucideIcon> = {
   inbox: Inbox, "file-text": FileText, upload: Upload, search: Search, "message-square": MessageSquare, book: Book,
   "bar-chart": BarChart3, "help-circle": HelpCircle, bot: Bot, "shield-check": ShieldCheck, webhook: Webhook,
-  dashboard: LayoutDashboard, download: Download, link: Link2, "file-spreadsheet": FileSpreadsheet,
+  dashboard: LayoutDashboard, download: Download, link: Link2, "file-spreadsheet": FileSpreadsheet, mail: Mail,
 };
 
 const THEME_KEY = "docforge.theme";

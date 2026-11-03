@@ -8,6 +8,7 @@ const MAIN: NavItem[] = [
   { href: "/exports", label: "Export to Tally / Marg", icon: "download" },
   { href: "/settings/mappings", label: "Tally / Marg names", icon: "link" },
   { href: "/settings/marg-profile", label: "Marg profile", icon: "file-spreadsheet" },
+  { href: "/settings/intake", label: "Email intake", icon: "mail" },
   { href: "/upload", label: "Upload", icon: "upload" },
   { href: "/search", label: "Search", icon: "search" },
   { href: "/chat", label: "Chat", icon: "message-square" },
