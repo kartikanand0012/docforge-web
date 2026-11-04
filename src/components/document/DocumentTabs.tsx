@@ -4,6 +4,7 @@ import { AlertTriangle, Check, GitCompare, X } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 import { LinkOrderDialog } from "@/components/document/LinkOrderDialog";
+import { VariancePanel } from "@/components/document/VariancePanel";
 import { Marks, ReasonLine, StatusBadge, Time } from "@/components/ui";
 import { label as fieldLabel } from "@/lib/fields";
 import type { Review } from "@/lib/review";
@@ -107,6 +108,7 @@ export function OrderTab({ review, mayLink = false, onLinked }: OrderTabProps) {
       {errors.map((item, index) => (
         <ReasonLine key={index} kind="fail" label="Does not match its order" box text={`${item.message} Correct the value if the page was misread, or reject the invoice.`} />
       ))}
+      {review.variance && <VariancePanel variance={review.variance} />}
       {link}
     </div>
   );

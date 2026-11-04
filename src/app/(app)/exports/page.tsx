@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { Exports } from "@/components/exports/Exports";
+import { PoVarianceReport } from "@/components/exports/PoVarianceReport";
 import { PurchaseRegister } from "@/components/exports/PurchaseRegister";
 import { useCaller, useViewing } from "@/components/Shell";
 import { mayMap } from "@/lib/mappings";
@@ -19,7 +20,8 @@ export default function ExportsPage() {
           <h1>Export to Tally / Marg</h1>
           <p className="sub">
             Approved bills as a file for your books, under the names your books already use. Anything not yet mapped stops the export and is
-            listed here to map once. Below, a month&apos;s purchase register as Excel for your CA.
+            listed here to map once. Below, a month&apos;s purchase register as Excel for your CA, and the month&apos;s bills against their
+            purchase orders in rupees.
           </p>
         </div>
         <Link className="btn btn-secondary" href="/settings/mappings">
@@ -29,6 +31,7 @@ export default function ExportsPage() {
       <div className="screen-body" style={{ maxWidth: 960, display: "flex", flexDirection: "column", gap: 24 }}>
         <Exports mayMap={mayMap(caller.role, viewing)} />
         <PurchaseRegister />
+        <PoVarianceReport />
       </div>
     </div>
   );

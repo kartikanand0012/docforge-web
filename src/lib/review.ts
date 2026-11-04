@@ -6,6 +6,7 @@ import type { NearExpiryLine } from "@/lib/flags";
 import { fieldAt, label } from "@/lib/fields";
 import type { Box } from "@/lib/geometry";
 import { classify } from "@/lib/reasons";
+import type { Variance } from "@/lib/variance";
 
 export type PageInfo = { number: number; width: number; height: number };
 export type FieldAssessment = { path: string; status: string; needs_review: boolean; reasons: string[]; boxes: Box[]; found_in: string[] };
@@ -52,6 +53,7 @@ export type Review = {
   near_expiry_months?: number; // the workspace's window the checks used, 0 for off; absent before 3.4
   schedule_h1?: H1Line[]; // absent before Schedule H1 checks
   near_expiry?: NearExpiryLine[]; // each near-expiry line, from the bill date; absent before V2 P0
+  variance?: Variance | null; // the bill against its PO in rupees; null without a linked PO, absent before V2 P7
 };
 
 export type FieldStatus = "passed" | "uncertain" | "failed" | "corrected";
