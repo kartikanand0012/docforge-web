@@ -13,6 +13,8 @@ const WORDS: Record<string, string> = {
   ready: "Ready",
   retrying: "Retrying",
   failed: "Failed",
+  split: "Split into invoices",
+  split_review: "Group its pages",
 };
 
 const STEPS: Record<string, number> = {
@@ -29,7 +31,7 @@ export function stageWord(stage: string): string {
 export function stageKind(stage: string): StatusKind {
   if (stage === "ready" || stage === "processed") return "ok";
   if (stage === "failed") return "fail";
-  if (stage === "retrying") return "warn";
+  if (stage === "retrying" || stage === "split_review") return "warn";
   return "info";
 }
 
@@ -40,5 +42,5 @@ export function stageStep(stage: string): { step: number; of: number } | null {
 }
 
 export function isFinished(stage: string): boolean {
-  return stage === "ready" || stage === "processed" || stage === "failed";
+  return stage === "ready" || stage === "processed" || stage === "failed" || stage === "split" || stage === "split_review";
 }

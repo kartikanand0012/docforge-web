@@ -21,10 +21,12 @@ import { heldByOther, useReviewClaim } from "@/lib/claim";
 import { stream } from "@/lib/sse";
 import { isFinished, stageKind, stageWord } from "@/lib/stages";
 import { useTitle } from "@/lib/useTitle";
+import { SplitBanner } from "@/components/split/SplitBanner";
 
 type DocumentOut = {
   id: string; doc_type: string; filename: string; status: string; stage: string; page_count: number | null;
   ready_for_chat: boolean; created_at: string; media_type: string;
+  parent_document_id?: string | null; parent_pages?: number[] | null;
 };  // prettier-ignore
 type Cost = { model_cost_usd: number | null; input_tokens: number; output_tokens: number; model_calls: number };
 type Detail = { document: DocumentOut; versions: { version_no: number; status: string; error: string | null }[]; cost?: Cost };
@@ -415,6 +417,8 @@ function DocumentView() {
           </p>
         </Dialog>
       )}
+
+      <SplitBanner document={doc} />
 
       {review?.superseded && (
         <div className="offline-strip" role="status">

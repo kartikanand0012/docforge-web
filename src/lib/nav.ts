@@ -10,6 +10,7 @@ const MAIN: NavItem[] = [
   { href: "/settings/marg-profile", label: "Marg profile", icon: "file-spreadsheet" },
   { href: "/settings/intake", label: "Email intake", icon: "mail" },
   { href: "/upload", label: "Upload", icon: "upload" },
+  { href: "/splits", label: "Split review", icon: "layers" },
   { href: "/search", label: "Search", icon: "search" },
   { href: "/chat", label: "Chat", icon: "message-square" },
   { href: "/collections", label: "Knowledge bases", icon: "book" },
