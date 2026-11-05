@@ -56,7 +56,7 @@ describe("navigation", () => {
   it("shows administration only to administrators", () => {
     const reviewer = navFor("reviewer").map((item) => item.href);
     const admin = navFor("admin").map((item) => item.href);
-    expect(reviewer).toEqual(["/", "/documents", "/upload", "/search", "/chat", "/collections", "/evals"]);
+    expect(reviewer).toEqual(["/", "/documents", "/exports", "/settings/mappings", "/settings/marg-profile", "/settings/intake", "/upload", "/splits", "/search", "/chat", "/collections", "/evals"]);
     expect(admin).toEqual([...reviewer, "/questions", "/agents", "/audit", "/webhooks"]);
     expect(isAdminPath("/audit")).toBe(true);
     expect(isAdminPath("/documents/abc")).toBe(false);

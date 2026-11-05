@@ -69,6 +69,19 @@ describe("the values of a document", () => {
     expect(both.find((field) => field.path === "place_of_supply_code")!.display).toBe("24");
   });
 
+  it("never shows the printed place as its code when the code was not read (QA 2026-10-09)", () => {
+    const place = { raw: "Gujarat [24]", block_ids: ["b5"] };
+    const at = (record: Record<string, unknown>) =>
+      buildFields({ ...review, record: { ...review.record, ...record }, editable_paths: [...review.editable_paths, "place_of_supply", "place_of_supply_code"] });
+    const unread = at({ place_of_supply: { ...place, value: null }, place_of_supply_code: { ...place, value: null } });
+    expect(unread.find((field) => field.path === "place_of_supply_code")!.display).toBe("—");
+    expect(unread.find((field) => field.path === "place_of_supply")!.display).toBe("—");
+    // A value read from part of the text is shown as the value, even where the text does not hold it as such.
+    const read = at({ place_of_supply: { raw: "24-Gujarat", block_ids: ["b5"], value: "Gujarat" }, place_of_supply_code: { raw: "Gujarat", block_ids: ["b5"], value: "24" } });
+    expect(read.find((field) => field.path === "place_of_supply")!.display).toBe("Gujarat");
+    expect(read.find((field) => field.path === "place_of_supply_code")!.display).toBe("24");
+  });
+
   it("says each check in words, the most serious first", () => {
     expect(at("invoice_no")).toMatchObject({ status: "passed", flagged: false });
     expect(at("lines[0].qty")).toMatchObject({ status: "uncertain", flagged: true });

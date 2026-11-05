@@ -5,7 +5,12 @@ export type NavItem = { href: string; label: string; icon: string; admin?: boole
 const MAIN: NavItem[] = [
   { href: "/", label: "Review queue", icon: "inbox" },
   { href: "/documents", label: "Documents", icon: "file-text" },
+  { href: "/exports", label: "Export to Tally / Marg", icon: "download" },
+  { href: "/settings/mappings", label: "Tally / Marg names", icon: "link" },
+  { href: "/settings/marg-profile", label: "Marg profile", icon: "file-spreadsheet" },
+  { href: "/settings/intake", label: "Email intake", icon: "mail" },
   { href: "/upload", label: "Upload", icon: "upload" },
+  { href: "/splits", label: "Split review", icon: "layers" },
   { href: "/search", label: "Search", icon: "search" },
   { href: "/chat", label: "Chat", icon: "message-square" },
   { href: "/collections", label: "Knowledge bases", icon: "book" },

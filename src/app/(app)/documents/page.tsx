@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useMemo, useRef, useState } from "react";
-import { Alert, DocTypeTag, Marks, Seg, StageProgress, StatusBadge, Time } from "@/components/ui";
+import { Alert, DocTypeTag, Marks, Seg, StageProgress, StatusBadge, Tag, Time } from "@/components/ui";
 import { ApiError, api } from "@/lib/api";
 import { IN_PROGRESS, isFinished, stageKind, stageWord } from "@/lib/stages";
 import { useLiveStages } from "@/lib/useLiveStages";
@@ -11,7 +11,7 @@ import { useTitle } from "@/lib/useTitle";
 
 type Item = {
   id: string; filename: string; doc_type: string; status: string; stage: string; ready_for_chat: boolean;
-  page_count: number | null; created_at: string;
+  page_count: number | null; created_at: string; source?: "upload" | "email";
 };  // prettier-ignore
 type Page = { items: Item[]; next_before: string | null };
 
@@ -21,6 +21,11 @@ const TYPES = [
   { value: "purchase_order", label: "Orders" },
   { value: "coa", label: "CoAs" },
   { value: "general", label: "General" },
+];
+const SOURCES = [
+  { value: "", label: "All" },
+  { value: "upload", label: "Upload" },
+  { value: "email", label: "Email" },
 ];
 const STAGES = ["stored", "converting", "parsing", "extracting", "checking", "indexing", "retrying", "ready", "processed", "failed"];
 
@@ -39,6 +44,8 @@ function Documents() {
   const search = useSearchParams();
   const type = search.get("type") ?? "";
   const stage = search.get("stage") ?? "";
+  const asked = search.get("source") ?? "";
+  const source = SOURCES.some((option) => option.value === asked) ? asked : "";
   const [items, setItems] = useState<Item[]>([]);
   const [next, setNext] = useState<string | null>(null);
   const [state, setState] = useState<"loading" | "ok" | "error">("loading");
@@ -51,6 +58,7 @@ function Documents() {
     const params = new URLSearchParams({ limit: "50" });
     if (type) params.set("doc_type", type);
     if (stage) params.set("stage", stage);
+    if (source) params.set("source", source);
     if (before) params.set("before", before);
     return `/documents?${params}`;
   };
@@ -60,6 +68,7 @@ function Documents() {
     const params = new URLSearchParams({ limit: "50" });
     if (type) params.set("doc_type", type);
     if (stage) params.set("stage", stage);
+    if (source) params.set("source", source);
     api<Page>(`/documents?${params}`).then(
       (page) => {
         if (ticket !== loads.current) return;
@@ -73,7 +82,7 @@ function Documents() {
         setState("error");
       },
     );
-  }, [type, stage]);
+  }, [type, stage, source]);
 
   const loadMore = async () => {
     if (!next || more) return;
@@ -112,14 +121,23 @@ function Documents() {
           <h1>Documents</h1>
           <p className="sub">Every document in the organisation, newest first. Where each one is updates live.</p>
         </div>
-        <Link className="btn btn-primary marked" href="/upload">
+        <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+          <Link className="btn btn-secondary" href="/intake">
+            Mail received
+          </Link>
+          <Link className="btn btn-primary marked" href="/upload">
           <Marks />
           Upload documents
-        </Link>
+          </Link>
+        </div>
       </header>
       <div className="screen-body">
         <div className="filters">
           <Seg name="doc-type" label="Document type" value={type} onChange={(value) => setFilter("type", value)} options={TYPES} />
+          <div className="field">
+            <span className="label">Came in by</span>
+            <Seg name="doc-source" label="Came in by" value={source} onChange={(value) => setFilter("source", value)} options={SOURCES} />
+          </div>
           <label className="filter-select">
             <span className="label">Where it is</span>
             <select className="input" value={stage} onChange={(e) => setFilter("stage", e.target.value)}>
@@ -162,6 +180,12 @@ function Documents() {
                         <Link href={`/documents/${item.id}`} style={{ fontWeight: 500, overflowWrap: "anywhere" }}>
                           {item.filename}
                         </Link>
+                        {item.source === "email" && (
+                          <>
+                            {" "}
+                            <Tag tone="neutral">Email</Tag>
+                          </>
+                        )}
                       </td>
                       <td>
                         <DocTypeTag docType={item.doc_type} />

@@ -21,10 +21,12 @@ import { heldByOther, useReviewClaim } from "@/lib/claim";
 import { stream } from "@/lib/sse";
 import { isFinished, stageKind, stageWord } from "@/lib/stages";
 import { useTitle } from "@/lib/useTitle";
+import { SplitBanner } from "@/components/split/SplitBanner";
 
 type DocumentOut = {
   id: string; doc_type: string; filename: string; status: string; stage: string; page_count: number | null;
   ready_for_chat: boolean; created_at: string; media_type: string;
+  parent_document_id?: string | null; parent_pages?: number[] | null;
 };  // prettier-ignore
 type Cost = { model_cost_usd: number | null; input_tokens: number; output_tokens: number; model_calls: number };
 type Detail = { document: DocumentOut; versions: { version_no: number; status: string; error: string | null }[]; cost?: Cost };
@@ -203,6 +205,8 @@ function DocumentView() {
   // Another reviewer has it open: everything reads, nothing changes (the API refuses it too).
   const locked = heldByOther(claim);
   const readOnly = locked || viewing;
+  // Who may review: correct, mark Schedule H1, link an order.
+  const mayReview = caller.role === "admin" || caller.role === "reviewer" || caller.role === "member";
   const fields = useMemo(() => {
     const all = review ? buildFields(review) : [];
     return readOnly ? all.map((field) => ({ ...field, editable: false })) : all;
@@ -414,6 +418,8 @@ function DocumentView() {
         </Dialog>
       )}
 
+      <SplitBanner document={doc} />
+
       {review?.superseded && (
         <div className="offline-strip" role="status">
           <p>
@@ -506,7 +512,7 @@ function DocumentView() {
                 editingPath={editingPath}
                 onEdit={setEditingPath}
                 callerEmail={caller.email}
-                mayMarkH1={caller.role === "admin" || caller.role === "reviewer" || caller.role === "member"}
+                mayMarkH1={mayReview}
                 onReviewChanged={(nextReview, message) => {
                   setReview(nextReview);
                   toast(message);
@@ -521,7 +527,17 @@ function DocumentView() {
                 }}
               />
             )}
-            {currentTab === "order" && review && <OrderTab review={review} />}
+            {currentTab === "order" && review && (
+              <OrderTab
+                review={review}
+                mayLink={mayReview && !readOnly && !review.review && !review.superseded}
+                onLinked={(nextReview, message) => {
+                  setReview(nextReview);
+                  toast(message);
+                  void api<AuditEntry[]>(`/documents/${id}/audit`).then(setAudit).catch(() => undefined);
+                }}
+              />
+            )}
             {currentTab === "certificates" && review && <CertificatesTab review={review} />}
             {currentTab === "timeline" && <TimelineTab steps={steps} live={!isFinished(doc.stage)} />}
             {currentTab === "audit" && <AuditTab entries={audit} />}

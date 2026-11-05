@@ -2,9 +2,11 @@
  * values a person checks, each with its checks in words and its boxes on the page. */
 
 import type { Einvoice } from "@/lib/einvoice";
+import type { NearExpiryLine } from "@/lib/flags";
 import { fieldAt, label } from "@/lib/fields";
 import type { Box } from "@/lib/geometry";
 import { classify } from "@/lib/reasons";
+import type { Variance } from "@/lib/variance";
 
 export type PageInfo = { number: number; width: number; height: number };
 export type FieldAssessment = { path: string; status: string; needs_review: boolean; reasons: string[]; boxes: Box[]; found_in: string[] };
@@ -50,6 +52,8 @@ export type Review = {
   duplicates?: Duplicate[]; // absent from an API before duplicate checks
   near_expiry_months?: number; // the workspace's window the checks used, 0 for off; absent before 3.4
   schedule_h1?: H1Line[]; // absent before Schedule H1 checks
+  near_expiry?: NearExpiryLine[]; // each near-expiry line, from the bill date; absent before V2 P0
+  variance?: Variance | null; // the bill against its PO in rupees; null without a linked PO, absent before V2 P7
 };
 
 export type FieldStatus = "passed" | "uncertain" | "failed" | "corrected";
@@ -93,9 +97,14 @@ const sentence = (text: string) => {
   return /[.!?]$/.test(capital) ? capital : `${capital}.`;
 };
 
-function display(value: unknown): string {
+// Values read from part of a printed string: the string is never theirs to show ("Gujarat [24]"
+// holds the place and its code; neither is the whole of it).
+const PART_OF_PRINTED = new Set(["place_of_supply", "place_of_supply_code"]);
+
+function display(value: unknown, path = ""): string {
   const field = value as { value?: unknown; raw?: string | null } | undefined;
   if (!field) return "—";
+  if (PART_OF_PRINTED.has(path)) return field.value === null || field.value === undefined || field.value === "" ? "—" : String(field.value);
   // Shown as printed, unless the value is only part of what was printed: one string can hold
   // two values ("Gujarat (24)" is the place and its code).
   if (typeof field.value === "string" && field.value && field.raw && field.raw !== field.value && field.raw.includes(field.value)) return field.value;
@@ -168,7 +177,7 @@ export function buildFields(review: Review): FieldView[] {
       path,
       label: label(path),
       group: groupOf(path, review.doc_type),
-      display: display(fieldAt(review.record, path)),
+      display: display(fieldAt(review.record, path), path),
       status,
       checks,
       boxes: assessment?.boxes ?? [],

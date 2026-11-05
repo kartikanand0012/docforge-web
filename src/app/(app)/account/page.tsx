@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useState, type FormEvent } from "react";
 import { Dialog } from "@/components/Dialog";
 import { useCaller } from "@/components/Shell";
@@ -43,6 +44,18 @@ export default function AccountPage() {
         </dl>
 
         <WorkspaceSettings mayChange={caller.role === "admin" || caller.role === "member"} />
+
+        <section className="panel" aria-labelledby="books-names" style={{ display: "flex", flexDirection: "column", gap: 10, marginBottom: 16, alignItems: "flex-start", textAlign: "left" }}>
+          <h2 id="books-names" style={{ fontSize: 18 }}>
+            Tally and Marg names
+          </h2>
+          <p>
+            The name your books use for each supplier and item, so an export never makes a second ledger for a supplier you already have.
+          </p>
+          <Link className="btn btn-secondary" href="/settings/mappings">
+            Open mappings
+          </Link>
+        </section>
 
         {own ? (
           <section className="panel" aria-labelledby="delete-account" style={{ display: "flex", flexDirection: "column", gap: 10 }}>

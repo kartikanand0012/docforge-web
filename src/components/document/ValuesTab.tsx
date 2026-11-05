@@ -4,6 +4,7 @@ import { AlertTriangle, Check, HelpCircle, Info, Pencil, X } from "lucide-react"
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import { EinvoiceBanner } from "@/components/document/EinvoiceBanner";
+import { FlagStrip } from "@/components/document/FlagStrip";
 import { PinInput } from "@/components/PinInput";
 import { useSecret } from "@/components/Shell";
 import { ReasonLine, Seg } from "@/components/ui";
@@ -11,7 +12,7 @@ import { ApiError, api } from "@/lib/api";
 import { fieldAt } from "@/lib/fields";
 import { rememberEmail, savedEmail } from "@/lib/reviewer";
 import {
-  blockerKind, blockerTarget, groupOrder, h1Reason, h1Summary, nearExpiryPaths, nearExpirySummary,
+  blockerKind, blockerTarget, groupOrder, h1Reason, nearExpiryPaths,
   type FieldView, type H1Line, type Review,
 } from "@/lib/review";  // prettier-ignore
 
@@ -48,6 +49,7 @@ export function ValuesTab(props: Props) {
   return (
     <div className="values">
       {review.doc_type === "invoice" && <EinvoiceBanner einvoice={review.einvoice} />}
+      {review.doc_type === "invoice" && <FlagStrip review={review} />}
       {review.blockers.length > 0 && !review.review && (
         <div className="blockers" role="region" aria-label="What needs a person">
           <p className="blockers-title">
@@ -73,8 +75,6 @@ export function ValuesTab(props: Props) {
           })}
         </div>
       )}
-
-      {review.doc_type === "invoice" && <StockNotes review={review} />}
 
       <div className="values-filter">
         <Seg
@@ -127,19 +127,6 @@ export function ValuesTab(props: Props) {
             ))}
         </section>
       ))}
-    </div>
-  );
-}
-
-/** What a person should know about the stock on the bill, without anything to approve. */
-function StockNotes({ review }: { review: Review }) {
-  const nearExpiry = nearExpirySummary(review);
-  const h1 = h1Summary(review);
-  if (!nearExpiry && !h1) return null;
-  return (
-    <div className="stock-notes" role="region" aria-label="About the stock">
-      {nearExpiry && <ReasonLine kind="warn" label="Near expiry" text={`${nearExpiry}.`} box />}
-      {h1 && <ReasonLine kind="info" label="Schedule H1" text={`${h1}.`} box />}
     </div>
   );
 }

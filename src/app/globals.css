@@ -390,7 +390,18 @@ a.person-name:hover { text-decoration: underline; }
 .doc-tabpanel { flex: 1; min-height: 0; overflow-y: auto; position: relative; }
 .tab-body { padding: 14px 16px; display: flex; flex-direction: column; gap: 12px; }
 .blockers { margin: 12px 16px 4px; padding: 12px; border-radius: var(--radius-lg); border: 1px solid var(--st-warn-line); background: var(--st-warn-bg); display: flex; flex-direction: column; gap: 6px; }
-.stock-notes { margin: 12px 16px 4px; display: flex; flex-direction: column; gap: 6px; }
+.flag-strip { margin: 12px 16px 4px; display: flex; flex-direction: column; gap: 6px; }
+.flag-more { font-size: 12.5px; padding-inline: 2px; }
+.flag-badges { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 6px; }
+.flags-card { padding: 14px clamp(16px, 4vw, 28px); border-bottom: 1px solid var(--color-divider); display: flex; flex-direction: column; gap: 8px; }
+.flags-card-head { display: flex; gap: 12px; align-items: center; justify-content: space-between; flex-wrap: wrap; }
+.flags-card h2 { font-size: 16px; }
+.flags-figures { padding: 0; border-bottom: 0; }
+.order-options { border: 0; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+.order-option { display: flex; gap: 10px; align-items: flex-start; padding: 8px 10px; border: 1px solid var(--color-divider); border-radius: var(--radius-md); cursor: pointer; }
+.order-option-same { border-color: var(--st-info-line); background: var(--st-info-bg); }
+.order-option-text { display: flex; flex-wrap: wrap; gap: 4px 8px; align-items: center; font-size: 13px; }
+.order-option-text .muted { flex-basis: 100%; font-size: 12px; }
 .h1-badge { margin-left: 6px; vertical-align: middle; }
 .h1-mark { margin-left: 4px; padding-block: 0; font-size: 12px; min-height: 0; }
 .einvoice-banner { margin: 12px 16px 4px; }
@@ -633,3 +644,40 @@ a.stats-figure:hover { text-decoration: underline; }
 .account-facts { margin: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px 24px; }
 .account-facts dt { font-size: 12px; color: var(--color-neutral-700); }
 .account-facts dd { margin: 2px 0 0; font-weight: 500; overflow-wrap: anywhere; }
+
+/* — V2 P1: mappings and exports — */
+.section-card { padding: 16px; border: 1px solid var(--color-divider); border-radius: var(--radius-xl); display: flex; flex-direction: column; gap: 10px; }
+.mapping-list, .task-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+.mapping-row { display: flex; gap: 12px; padding: 12px 14px; border: 1px solid var(--color-divider); border-radius: var(--radius-lg); flex-wrap: wrap; }
+.mapping-row-found { border-color: var(--color-accent); box-shadow: inset 3px 0 0 var(--color-accent); }
+.mapping-fields { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 10px 14px; }
+.task-card { padding: 12px 14px; border: 1px solid var(--color-divider); border-radius: var(--radius-lg); }
+.task-suggestions { display: flex; flex-wrap: wrap; gap: 6px; }
+.task-problems { margin: 0; padding-left: 18px; display: flex; flex-direction: column; gap: 4px; }
+
+/* — V2 P3: Marg profile — */
+.task-lines { margin: 4px 0 0; padding-left: 18px; display: flex; flex-direction: column; gap: 2px; }
+.profile-settings { border: 0; padding: 0; margin: 0; display: flex; flex-wrap: wrap; gap: 12px 16px; align-items: flex-end; min-width: 0; }
+.profile-settings legend { font-weight: 600; margin-bottom: 6px; }
+.profile-columns { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+.profile-column { display: flex; flex-direction: column; gap: 8px; min-width: 0; margin: 0; }
+.profile-column-missing { border-color: var(--st-warn-line); box-shadow: inset 3px 0 0 var(--st-warn-line); }
+
+/* — purchase register (V2 P4) — */
+.register-totals { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px 20px; }
+.register-totals li { display: flex; flex-direction: column; gap: 2px; font-size: 12.5px; }
+.register-totals .stats-figure { font-size: 18px; }
+.register-twob { display: flex; flex-direction: column; gap: 8px; padding-top: 6px; border-top: 1px solid var(--color-divider); }
+.register-table { min-width: 1280px; font-size: 13px; }
+.register-table td, .register-table th { white-space: nowrap; }
+.register-table td:last-child { white-space: normal; min-width: 220px; }
+
+/* — V2 P5: invoices by email — */
+.intake-messages, .intake-items, .intake-senders { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+.intake-message { padding: 12px 14px; border: 1px solid var(--color-divider); border-radius: var(--radius-lg); display: flex; flex-direction: column; gap: 8px; }
+.intake-message-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
+.intake-subject { font-weight: 500; overflow-wrap: anywhere; }
+.intake-item { display: flex; gap: 12px; align-items: center; justify-content: space-between; flex-wrap: wrap; padding-top: 8px; border-top: 1px solid var(--color-row-rule); }
+.intake-senders li { display: flex; gap: 12px; align-items: center; justify-content: space-between; padding: 8px 12px; border: 1px solid var(--color-divider); border-radius: var(--radius-lg); }
+.intake-fresh { display: flex; flex-direction: column; gap: 10px; }
+.intake-masked { font: 13px var(--font-mono); overflow-wrap: anywhere; }

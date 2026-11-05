@@ -2,10 +2,11 @@
 
 import { Upload as UploadIcon } from "lucide-react";
 import Link from "next/link";
-import { useMemo, useRef, useState, type DragEvent } from "react";
+import { useEffect, useMemo, useRef, useState, type DragEvent } from "react";
 import { useViewing } from "@/components/Shell";
 import { Alert, Seg, StageProgress, StatusBadge } from "@/components/ui";
 import { ApiError, upload } from "@/lib/api";
+import { SENT_AT_ONCE, TOO_MANY, batchPath, createBatch, planDrop, pool, sendFile, sendZip } from "@/lib/batches";
 import { bytes } from "@/lib/format";
 import { isFinished } from "@/lib/stages";
 import { clientCheck, refusal, type Refusal } from "@/lib/uploads";
@@ -17,7 +18,9 @@ type Row = {
   key: string;
   file: File;
   docType: DocType;
-  status: "uploading" | "processing" | "existing" | "refused";
+  status: "uploading" | "processing" | "existing" | "refused" | "batch";
+  batchId?: string;
+  summary?: string;
   progress: number;
   documentId?: string;
   stage?: string;
@@ -38,6 +41,8 @@ export default function UploadPage() {
   const [docType, setDocType] = useState<DocType>("invoice");
   const [rows, setRows] = useState<Row[]>([]);
   const [dragging, setDragging] = useState(false);
+  const [batches, setBatches] = useState<{ id: string; label: string }[]>([]);
+  const [notice, setNotice] = useState<string | null>(null);
   const input = useRef<HTMLInputElement>(null);
 
   const change = (key: string, update: Partial<Row>) => setRows((current) => current.map((row) => (row.key === key ? { ...row, ...update } : row)));
@@ -65,18 +70,79 @@ export default function UploadPage() {
     }
   };
 
-  const add = (files: FileList | null) => {
-    if (!files?.length) return;
-    const added: Row[] = [...files].map((file, index) => ({
-      key: `${Date.now()}-${index}-${file.name}`, file, docType, status: "uploading", progress: 0,
-    }));  // prettier-ignore
-    setRows((current) => [...added, ...current]);
-    for (const row of added) {
-      const early = clientCheck(row.file);
-      if (early) change(row.key, { status: "refused", refusal: { kind: "fail", word: "Refused", text: early } });
-      else void send(row);
+  /** A ZIP, sent whole: the server unpacks it and makes one document per file in it. */
+  const sendZipRow = async (row: Row) => {
+    change(row.key, { status: "uploading", progress: 0, refusal: undefined });
+    try {
+      const reply = await sendZip(row.file, row.docType, (progress) => change(row.key, { progress }));
+      const counts = reply.body.counts;
+      change(row.key, {
+        status: "batch", batchId: reply.body.id, progress: 1,
+        summary: `${counts.total} files: ${counts.received} new, ${counts.already_received} already here, ${counts.refused} refused.`,
+      });  // prettier-ignore
+      setBatches((current) => [{ id: reply.body.id, label: row.file.name }, ...current]);
+    } catch (caught) {
+      const detail = caught instanceof ApiError ? caught.detail : "The upload failed.";
+      change(row.key, { status: "refused", refusal: { kind: "fail", word: "Refused", text: detail, retry: !(caught instanceof ApiError) || caught.status === 0 } });
     }
   };
+
+  /** Files dropped together: one batch, each file sent on its own into it, a few at a time. */
+  const sendBatch = async (batchRows: Row[]) => {
+    let batchId: string;
+    try {
+      batchId = (await createBatch(batchRows.length, docType)).id;
+    } catch (caught) {
+      const detail = caught instanceof ApiError ? caught.detail : "The batch could not be started.";
+      for (const row of batchRows) change(row.key, { status: "refused", refusal: { kind: "warn", word: "Not sent", text: detail } });
+      return;
+    }
+    setBatches((current) => [{ id: batchId, label: `${batchRows.length} files` }, ...current]);
+    await pool(batchRows, SENT_AT_ONCE, async (row) => {
+      try {
+        const reply = await sendFile(batchId, row.file, (progress) => change(row.key, { progress }));
+        const item = reply.body;
+        if (item.outcome === "refused") change(row.key, { status: "refused", batchId, refusal: { kind: "fail", word: "Refused", text: item.reason ?? "Not accepted." } });
+        else change(row.key, { status: item.outcome === "received" ? "processing" : "existing", batchId, documentId: item.document_id ?? undefined, stage: "stored", progress: 1 });
+      } catch (caught) {
+        const detail = caught instanceof ApiError ? caught.detail : "The upload failed.";
+        change(row.key, { status: "refused", batchId, refusal: { kind: "warn", word: "Not sent", text: detail } });
+      }
+    });
+  };
+
+  const add = (files: FileList | null) => {
+    if (!files?.length) return;
+    const plan = planDrop([...files]);
+    if (plan.tooMany) {
+      setNotice(TOO_MANY);
+      return;
+    }
+    setNotice(null);
+    const stamp = Date.now();
+    const row = (file: File, index: number): Row => ({ key: `${stamp}-${index}-${file.name}`, file, docType, status: "uploading", progress: 0 });
+    const zipRows = plan.zips.map((file, index) => row(file, index));
+    const fileRows = plan.files.map((file, index) => row(file, plan.zips.length + index));
+    setRows((current) => [...zipRows, ...fileRows, ...current]);
+    for (const zip of zipRows) void sendZipRow(zip);
+    const ok: Row[] = [];
+    for (const each of fileRows) {
+      const early = clientCheck(each.file);
+      if (early) change(each.key, { status: "refused", refusal: { kind: "fail", word: "Refused", text: early } });
+      else ok.push(each);
+    }
+    if (ok.length === 1) void send(ok[0]);
+    else if (ok.length > 1) void sendBatch(ok);
+  };
+
+  // Files still being sent are lost if the page closes; what has arrived carries on.
+  const sending = rows.some((each) => each.status === "uploading");
+  useEffect(() => {
+    if (!sending) return;
+    const warn = (event: BeforeUnloadEvent) => event.preventDefault();
+    window.addEventListener("beforeunload", warn);
+    return () => window.removeEventListener("beforeunload", warn);
+  }, [sending]);
 
   const following = useMemo(
     () => rows.filter((row) => row.status === "processing" && row.documentId && !isFinished(row.stage ?? "")).map((row) => row.documentId!),
@@ -100,7 +166,10 @@ export default function UploadPage() {
       <header className="screen-header">
         <div>
           <h1>Upload</h1>
-          <p className="sub">PDF, Word, Excel, PowerPoint or images (PNG, JPEG, TIFF). Up to 10 MB and 20 pages each.</p>
+          <p className="sub">
+            PDF, Word, Excel, PowerPoint or images (PNG, JPEG, TIFF), up to 10 MB each; up to 50 files at once, or a ZIP of up to 200. A PDF holding
+            several invoices is divided into one document per invoice.
+          </p>
         </div>
       </header>
       <div className="screen-body" style={{ maxWidth: 920 }}>
@@ -132,14 +201,14 @@ export default function UploadPage() {
             >
               <UploadIcon size={28} strokeWidth={1.5} aria-hidden="true" />
               <span style={{ fontSize: 17, fontWeight: 600 }}>Drop files here</span>
-              <span className="muted">or choose files. Many at once is fine; each is checked on its own.</span>
+              <span className="muted">or choose files. Up to 50 at once, or one ZIP of a whole folder; each file is checked on its own.</span>
               <input
                 ref={input}
                 id="file-input"
                 type="file"
                 multiple
                 className="sr-only"
-                accept=".pdf,.docx,.xlsx,.pptx,.png,.jpg,.jpeg,.tif,.tiff"
+                accept=".pdf,.docx,.xlsx,.pptx,.png,.jpg,.jpeg,.tif,.tiff,.zip"
                 onChange={(event) => {
                   add(event.target.files);
                   event.target.value = "";
@@ -147,6 +216,24 @@ export default function UploadPage() {
               />
             </label>
           </>
+        )}
+
+        {notice && (
+          <Alert kind="warn" title="Too many files at once">
+            {notice}
+          </Alert>
+        )}
+
+        {batches.length > 0 && (
+          <p role="status" style={{ fontSize: 13.5 }}>
+            {batches.map((batch, index) => (
+              <span key={batch.id}>
+                {index > 0 && " · "}
+                <Link href={batchPath(batch.id)}>Batch view: {batch.label}</Link>
+              </span>
+            ))}
+            <span className="muted"> — you can leave once every file is sent; reading carries on.</span>
+          </p>
         )}
 
         {rows.length > 0 && (
@@ -178,6 +265,7 @@ export default function UploadPage() {
                       )}
                       {row.status === "processing" && stage === "failed" && <p style={{ fontSize: 13, color: "var(--st-fail-fg)" }}>It could not be read. Open it to see why.</p>}
                       {row.status === "existing" && <p style={{ fontSize: 13 }}>This exact file is already in DocForge. Nothing new was stored.</p>}
+                      {row.status === "batch" && <p style={{ fontSize: 13 }}>{row.summary}</p>}
                       {row.status === "refused" && row.refusal && (
                         <p style={{ fontSize: 13, color: `var(--st-${row.refusal.kind}-fg)` }}>{row.refusal.text}</p>
                       )}
@@ -201,11 +289,19 @@ export default function UploadPage() {
                           </Link>
                         </>
                       )}
+                      {row.status === "batch" && row.batchId && (
+                        <>
+                          <StatusBadge kind="ok">Unpacked</StatusBadge>
+                          <Link className="btn btn-secondary" href={batchPath(row.batchId)}>
+                            Open batch
+                          </Link>
+                        </>
+                      )}
                       {row.status === "refused" && row.refusal && (
                         <>
                           <StatusBadge kind={row.refusal.kind}>{row.refusal.word}</StatusBadge>
-                          {row.refusal.retry && (
-                            <button className="btn btn-secondary" onClick={() => void send(row)}>
+                          {row.refusal.retry && !row.batchId && (
+                            <button className="btn btn-secondary" onClick={() => void (planDrop([row.file]).zips.length ? sendZipRow(row) : send(row))}>
                               Try again
                             </button>
                           )}
